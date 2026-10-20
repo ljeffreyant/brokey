@@ -84,6 +84,12 @@ export interface Settings {
   activeWalletId: string;
   notifyWish: boolean;
   notifyWeekly: boolean;
+  /** heads-up the day before the money runs out at the current pace */
+  notifyPace: boolean;
+  /** heads-up the day before a repeating charge is due */
+  notifyRecurring: boolean;
+  /** ask for Face ID (or the passcode) to open the app */
+  lockApp: boolean;
   /** user said they are 18+, needed for the unhinged roast level */
   adultConfirmed: boolean;
 }

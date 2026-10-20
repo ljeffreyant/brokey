@@ -4,16 +4,18 @@ import { ScrollView, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Mood } from '../../art/mascot';
-import { Regret, categoryMeta } from '../../core';
+import { Regret, categoryMeta, currencyDef } from '../../core';
 import { catLabel, useT } from '../../i18n';
 import { useStore } from '../../store';
 import { useTheme } from '../../theme';
+import { AmountField } from '../../ui/AmountField';
 import { Brokey } from '../../ui/Brokey';
 import { IconDisc } from '../../ui/CatIcon';
 import { CategoryPicker } from '../../ui/CategoryPicker';
 import { Sheet } from '../../ui/Sheet';
 import { Txt } from '../../ui/Txt';
-import { Btn, Card, Chip, RoundBtn } from '../../ui/kit';
+import { DayChips, dayTs, daysAgoOf } from '../../ui/DayChips';
+import { Btn, Card, Chip, Field, RoundBtn } from '../../ui/kit';
 import { haptic } from '../../ui/haptics';
 import { formatClock, formatDate, formatDayName, useFmt } from '../../ui/useFmt';
 
@@ -32,7 +34,12 @@ export default function PurchaseDetail() {
   const removeShame = useStore((s) => s.removeShame);
   const removePurchase = useStore((s) => s.removePurchase);
   const updatePurchase = useStore((s) => s.updatePurchase);
+  const settings = useStore((s) => s.settings);
   const [catOpen, setCatOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editCents, setEditCents] = useState<number | null>(null);
+  const [editShop, setEditShop] = useState('');
+  const [editDay, setEditDay] = useState(0);
   const [delOpen, setDelOpen] = useState(false);
 
   const close = () => (router.canGoBack() ? router.back() : router.replace('/home'));
@@ -130,7 +137,9 @@ export default function PurchaseDetail() {
                     key={r}
                     label={t(answerKey(r))}
                     tone={on ? (r === 'nah' ? 'danger' : r === 'meh' ? 'yellow' : 'primary') : 'card'}
-                    style={{ flex: 1 }}
+                    size="sm"
+                    compact
+                    style={{ flex: r === 'worth' ? 1.35 : 1 }}
                     full
                     onPress={() => choose(r)}
                   />
@@ -151,6 +160,18 @@ export default function PurchaseDetail() {
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(270).springify().damping(15)} style={{ gap: 10 }}>
+          <Btn
+            label={t('detail.edit')}
+            tone="card"
+            glyph="edit"
+            full
+            onPress={() => {
+              setEditCents(purchase.amountCents);
+              setEditShop(purchase.merchant ?? '');
+              setEditDay(daysAgoOf(purchase.ts));
+              setEditOpen(true);
+            }}
+          />
           <Btn label={t('detail.changeCat')} tone="card" glyph="grid" full onPress={() => setCatOpen(true)} />
           <Btn label={t('detail.delete')} tone="danger" glyph="trash" full onPress={() => setDelOpen(true)} />
         </Animated.View>
@@ -164,6 +185,38 @@ export default function PurchaseDetail() {
               haptic.good();
               updatePurchase(purchase.id, { category: cid });
               setCatOpen(false);
+            }}
+          />
+        </View>
+      </Sheet>
+
+      <Sheet visible={editOpen} onClose={() => setEditOpen(false)} title={t('detail.editTitle')}>
+        <View style={{ gap: 14, paddingBottom: 8 }}>
+          <View style={{ gap: 6 }}>
+            <Txt v="label" dim>
+              {t('detail.amount')}
+            </Txt>
+            <AmountField cents={editCents} onChange={setEditCents} symbol={currencyDef(settings.currency).symbol} label={t('detail.amount')} />
+          </View>
+          <Field value={editShop} onChangeText={setEditShop} placeholder={t('log.where')} glyph="edit" maxLength={40} />
+          <DayChips daysAgo={editDay} onChange={setEditDay} />
+          <Btn
+            label={t('detail.editSave')}
+            glyph="check"
+            full
+            disabled={!editCents || editCents <= 0}
+            onPress={() => {
+              if (!editCents || editCents <= 0) return;
+              const patch: { amountCents: number; merchant?: string; ts?: number } = { amountCents: editCents, merchant: editShop.trim() || undefined };
+              if (editDay !== daysAgoOf(purchase.ts)) {
+                const old = new Date(purchase.ts);
+                const d = new Date(dayTs(editDay));
+                d.setHours(old.getHours(), old.getMinutes(), 0, 0);
+                patch.ts = Math.min(d.getTime(), Date.now());
+              }
+              updatePurchase(purchase.id, patch);
+              haptic.good();
+              setEditOpen(false);
             }}
           />
         </View>

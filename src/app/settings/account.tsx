@@ -27,7 +27,7 @@ export default function Account() {
   if (!authAvailable) {
     return (
       <Page title={t('account.title')}>
-        <Card inner={{ alignItems: 'center', gap: 10, paddingVertical: 22 }}>
+        <Card weight="quiet" inner={{ alignItems: 'center', gap: 10, paddingVertical: 22 }}>
           <Brokey mood="ok" width={150} still />
           <Txt v="heading" align="center">
             {t('account.localTitle')}
@@ -47,7 +47,7 @@ export default function Account() {
     <Page title={t('account.title')}>
       {a.status === 'signedIn' ? (
         <>
-          <Card inner={{ gap: 6 }}>
+          <Card weight="quiet" inner={{ gap: 6 }}>
             <Txt v="label" dim>
               {t('settings.profile.in')}
             </Txt>
@@ -58,7 +58,7 @@ export default function Account() {
           </Card>
           <Btn label={t('account.syncNow')} glyph="undo" tone="yellow" disabled={a.busy} onPress={() => a.syncNow()} />
           <Btn label={t('account.signOut')} glyph="logout" tone="card" onPress={() => a.signOut()} />
-          <Card inner={{ gap: 10 }}>
+          <Card weight="quiet" inner={{ gap: 10 }}>
             <Txt v="small" dim>
               {t('account.deleteSub')}
             </Txt>

@@ -23,7 +23,7 @@ def state(seed, theme, lang):
                     roundSummaries=False, theme=theme, activeWalletId='main', notifyWish=True, notifyWeekly=False, adultConfirmed=False)
     wallet = dict(id='main', name='Main', icon='hsp', color='#FFD23F', income=[], recurring=[], savingsWeeklyCents=0, budgetMode='manual', manualWeeklyCents=15000, createdTs=NOW - 20 * D)
     ps = []
-    if seed in ('mid', 'broke', 'over'):
+    if seed in ('mid', 'broke', 'over', 'subs'):
         ps = [
             purchase(1, 1.2, 650, 'coffee', 'Corner Cafe', 'tap', 'A flat white. Bold of you to call it a personality.'),
             purchase(2, 5, 1800, 'takeaway', 'Halal Bros', 'card', 'An actual HSP. Respect, and also: wow.', regret='worth'),
@@ -31,15 +31,18 @@ def state(seed, theme, lang):
             purchase(4, 30, 2999, 'streaming', 'Streamflix', 'card', 'Another sub you will forget about.', regret='meh'),
             purchase(5, 52, 8900, 'clothes', 'Thrift Haul', 'card', 'New jacket. The old jacket is also fine.'),
         ]
+    if seed == 'subs':
+        ps += [purchase(10, 31 * 24 + 3, 1699, 'music', 'Tunebox', 'card'), purchase(11, 2, 1699, 'music', 'Tunebox', 'card'),
+               purchase(12, 60 * 24, 5500, 'health', 'Fit Gym Co', 'card'), purchase(13, 30 * 24, 5500, 'health', 'Fit Gym Co', 'card'), purchase(14, 0.5 * 24, 5500, 'health', 'Fit Gym Co', 'card')]
     if seed == 'broke':
         ps.append(purchase(6, 2, 9000, 'tech', 'Gadget Hut', 'card', 'Tech. The spreadsheet is crying.'))
     if seed == 'over':
         ps.append(purchase(6, 2, 19000, 'tech', 'Gadget Hut', 'card', 'Tech.'))
     wishes = []
-    if seed in ('mid', 'broke'):
+    if seed in ('mid', 'broke', 'subs'):
         wishes = [dict(id='w1', walletId='main', label='Noise-cancelling headphones', amountCents=24900, category='headphones', createdTs=NOW - 10 * H, unlockTs=NOW + 38 * H, status='cooling')]
     shame = []
-    if seed in ('mid', 'broke'):
+    if seed in ('mid', 'broke', 'subs'):
         shame = [dict(id='s1', ts=NOW - 3 * D, label='Air fryer', amountCents=12900, category='homewares', source='manual', story='Used it twice.')]
     return dict(state=dict(settings=settings, wallets=[wallet], purchases=ps, wishes=wishes, shame=shame, customCats=[], hiddenCats=[], recentRoasts=[], seenStickers=[]), version=1)
 

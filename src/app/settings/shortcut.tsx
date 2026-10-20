@@ -20,7 +20,7 @@ export default function Shortcut() {
       <Txt v="body" dim>
         {t('sc.intro')}
       </Txt>
-      <Card inner={{ gap: 16, padding: 16 }}>
+      <Card weight="quiet" inner={{ gap: 16, padding: 16 }}>
         {steps.map((k, i) => (
           <View key={k} style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
             <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: p.accent2, borderWidth: 2.5, borderColor: p.ink, alignItems: 'center', justifyContent: 'center' }}>

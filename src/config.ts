@@ -8,6 +8,9 @@ export const BODY_ROASTS_AVAILABLE = false;
 /** Accounts and cloud sync. Off until a Supabase project exists. When on, in-app account deletion is required (guideline 5.1.1(v)). */
 export const AUTH_ENABLED = false;
 
+/** Home screen widgets need a native widget target that is not built yet. Keep off so the app has no "coming soon" screens (App Store guideline 2.1). */
+export const WIDGETS_AVAILABLE = false;
+
 /** Fill these in before submitting. The preflight script fails while they are placeholders. */
 export const SUPPORT_EMAIL = 'support@brokey.example';
 export const PRIVACY_URL = 'https://brokey.example/privacy';

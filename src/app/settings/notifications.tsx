@@ -1,7 +1,7 @@
 import { Linking, Platform } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useT } from '../../i18n';
-import { ensurePermission, hasPermission, setWeeklyRecap } from '../../notify';
+import { ensurePermission, permissionDenied, setWeeklyRecap } from '../../notify';
 import { useStore } from '../../store';
 import { Page } from '../../ui/Page';
 import { Txt } from '../../ui/Txt';
@@ -14,7 +14,7 @@ export default function NotificationSettings() {
   const [blocked, setBlocked] = useState(false);
 
   useEffect(() => {
-    hasPermission().then((ok) => setBlocked(!ok && Platform.OS !== 'web' && (settings.notifyWish || settings.notifyWeekly)));
+    permissionDenied().then((no) => setBlocked(no && Platform.OS !== 'web' && (settings.notifyWish || settings.notifyWeekly)));
   }, [settings.notifyWish, settings.notifyWeekly]);
 
   const setWish = async (on: boolean) => {
@@ -36,14 +36,25 @@ export default function NotificationSettings() {
     update({ notifyWeekly: on });
   };
 
+  const setFlag = async (key: 'notifyPace' | 'notifyRecurring', on: boolean) => {
+    if (on && !(await ensurePermission())) {
+      setBlocked(true);
+      return;
+    }
+    setBlocked(false);
+    update({ [key]: on });
+  };
+
   return (
     <Page title={t('notifs.title')}>
-      <Card inner={{ padding: 4 }}>
+      <Card weight="quiet" inner={{ padding: 4 }}>
         <Row title={t('notifs.wish')} sub={t('notifs.wishSub')} glyph="snow" right={<Toggle value={settings.notifyWish} onChange={setWish} label={t('notifs.wish')} />} />
         <Row title={t('notifs.weekly')} sub={t('notifs.weeklySub')} glyph="chart" right={<Toggle value={settings.notifyWeekly} onChange={setWeekly} label={t('notifs.weekly')} />} />
+        <Row title={t('notifs.pace')} sub={t('notifs.paceSub')} glyph="chart" right={<Toggle value={settings.notifyPace} onChange={(v) => setFlag('notifyPace', v)} label={t('notifs.pace')} />} />
+        <Row title={t('notifs.recurring')} sub={t('notifs.recurringSub')} glyph="coins" right={<Toggle value={settings.notifyRecurring} onChange={(v) => setFlag('notifyRecurring', v)} label={t('notifs.recurring')} />} />
       </Card>
       {blocked ? (
-        <Card fill="#FFE3DD" inner={{ gap: 10 }}>
+        <Card weight="quiet" fill="#FFE3DD" inner={{ gap: 10 }}>
           <Txt v="small" color="#5A1A10" style={{ fontFamily: 'DMSans_700Bold' }}>
             {t('notifs.denied')}
           </Txt>

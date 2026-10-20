@@ -73,7 +73,7 @@ function Spin({ children, ms }: { children: React.ReactNode; ms: number }) {
 
 /** The "money weather" behind Brokey: sun, cloud or rain, drawn in the same sticker style. */
 export function WeatherArt({ weather, c, ink, w, h }: { weather: WeatherId; c: WeatherColor; ink: string; w: number; h: number }) {
-  const sunX = w * 0.82;
+  const sunX = w * 0.87;
   const sunY = 118;
   const dots: [number, number, number][] = [];
   for (let i = 0; i < 8; i++) for (let j = 0; j < 4; j++) dots.push([18 + i * 17, h - 130 + j * 17, Math.max(0.8, 5.4 - (i + j) * 0.55)]);
@@ -95,12 +95,12 @@ export function WeatherArt({ weather, c, ink, w, h }: { weather: WeatherId; c: W
       {weather === 'mild' ? (
         <Svg width={w} height={h} style={StyleSheet.absoluteFill}>
           <Sun x={sunX + 6} y={sunY - 6} r={30} fill="#FFF6C9" ink={ink} ray={c.blob} />
-          <Cloud x={sunX - 50} y={sunY + 22} s={0.8} fill="#FFFDF6" ink={ink} />
+          <Cloud x={sunX - 38} y={sunY + 26} s={0.8} fill="#FFFDF6" ink={ink} />
         </Svg>
       ) : null}
       {weather === 'tight' ? (
         <Svg width={w} height={h} style={StyleSheet.absoluteFill}>
-          <Cloud x={sunX - 44} y={sunY} s={0.95} fill="#E7DCCB" ink={ink} />
+          <Cloud x={sunX - 34} y={sunY + 4} s={0.95} fill="#E7DCCB" ink={ink} />
           <Cloud x={w * 0.08} y={sunY + 70} s={0.55} fill="#EFE4D2" ink={ink} />
         </Svg>
       ) : null}
@@ -108,7 +108,7 @@ export function WeatherArt({ weather, c, ink, w, h }: { weather: WeatherId; c: W
         <>
           <Rain w={w} h={h} color={c.textDim} />
           <Svg width={w} height={h} style={StyleSheet.absoluteFill}>
-            <Cloud x={sunX - 54} y={sunY - 6} s={1} fill="#8C7A6A" ink={ink} />
+            <Cloud x={sunX - 42} y={sunY - 2} s={1} fill="#8C7A6A" ink={ink} />
             <Cloud x={w * 0.06} y={sunY + 56} s={0.6} fill="#A08D7C" ink={ink} />
           </Svg>
         </>

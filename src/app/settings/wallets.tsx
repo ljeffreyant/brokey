@@ -132,7 +132,7 @@ export default function WalletsScreen() {
   return (
     <Page title={t('wallets.title')} sub={t('wallets.sub')} right={<RoundBtn glyph="plus" label={t('wallets.add')} fill={p.accent2} color={p.onAccent2} onPress={() => open()} />}>
       {live.length > 1 ? (
-        <Card fill={p.accent} inner={{ paddingVertical: 12 }}>
+        <Card weight="quiet" fill={p.accent} inner={{ paddingVertical: 12 }}>
           <Txt v="label" color={p.onAccent} style={{ opacity: 0.85 }}>
             {t('wallets.total')}
           </Txt>
@@ -145,7 +145,7 @@ export default function WalletsScreen() {
         </Card>
       ) : null}
 
-      <Card inner={{ padding: 0 }}>
+      <Card weight="quiet" inner={{ padding: 0 }}>
         {overview.wallets.map((x, i) => (
           <View key={x.wallet.id}>
             {i > 0 ? <View style={{ height: 1.5, backgroundColor: p.line, marginLeft: 14 }} /> : null}
@@ -157,7 +157,7 @@ export default function WalletsScreen() {
       {archived.length > 0 ? (
         <>
           <SectionTitle>{t('wallets.archived')}</SectionTitle>
-          <Card inner={{ padding: 0 }}>
+          <Card weight="quiet" inner={{ padding: 0 }}>
             {archived.map((w, i) => (
               <View key={w.id} style={{ opacity: 0.6 }}>
                 {i > 0 ? <View style={{ height: 1.5, backgroundColor: p.line, marginLeft: 14 }} /> : null}
@@ -266,7 +266,7 @@ export default function WalletsScreen() {
               </View>
             )}
 
-            <Card fill={p.card2} depth={0} inner={{ padding: 12 }}>
+            <Card weight="quiet" fill={p.card2} depth={0} inner={{ padding: 12 }}>
               <Txt v="bodyBold">{t('wallets.pool', { amount: `${f.sum(pool)} (${f.hsp(pool)})` })}</Txt>
             </Card>
 

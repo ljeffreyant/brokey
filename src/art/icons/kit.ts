@@ -5,6 +5,18 @@ import { shape } from '../draw';
 
 export type Pt = G.Pt;
 
+/** A hand-set expression. Every hero icon gets its own, so they stop looking stamped from one template. */
+export interface Look {
+  eyes?: 'dot' | 'half' | 'wide' | 'squint' | 'uneven' | 'wink';
+  brow?: 'none' | 'flat' | 'angry' | 'raised' | 'worried';
+  mouth?: 'smile' | 'smirk' | 'flat' | 'open' | 'wavy' | 'tongue' | 'grin' | 'o';
+  blush?: 'none' | 'one' | 'both';
+  /** tired marks under the eyes */
+  bags?: boolean;
+  /** lean the whole face, in degrees */
+  tilt?: number;
+}
+
 function hex(c: string): [number, number, number] {
   const h = c.replace('#', '');
   return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
@@ -52,6 +64,8 @@ export interface Opts {
 export class Ico {
   sb = new SceneBuilder(100, 100, 'i');
   r: G.Rand;
+  /** Only hero icons get a face. Everything else is just an object, which is how real icon sets work. */
+  faces = false;
 
   constructor(seed: number) {
     this.sb.vb = [-6, -6, 112, 112];
@@ -138,8 +152,95 @@ export class Ico {
     return this;
   }
 
-  /** A cute face: dot eyes, blush, little smile. kind picks the mood. */
+  /** A face with its own expression (hero icons only). */
+  look(x: number, y: number, s: number, o: Look = {}): this {
+    if (!this.faces) return this;
+    const n0 = this.sb.prims.length;
+    const eyes = o.eyes ?? 'dot';
+    const ink = (cx: number, cy: number, rx: number, ry: number, hi = true) => {
+      this.sb.add({ d: G.blob(cx, cy, rx * s, ry * s, this.r, { n: 8, amp: 0.02 }).d, fill: INK });
+      if (hi) this.sb.add({ d: G.blob(cx - 0.8 * s, cy - 1 * s, 0.9 * s, 0.9 * s, this.r, { n: 6, amp: 0.02 }).d, fill: '#FFFFFF' });
+    };
+    const lx = x - 6 * s;
+    const rx = x + 6 * s;
+    const sq = (cx: number, dir: 1 | -1) => this.line([[cx - 3 * s * dir, y - 2.4 * s], [cx + 2 * s * dir, y], [cx - 3 * s * dir, y + 2.4 * s]], 1.9 * s);
+    if (eyes === 'half') {
+      for (const cx of [lx, rx]) {
+        ink(cx, y + 0.8 * s, 2.7, 2, false);
+        this.line([[cx - 3.6 * s, y - 0.6 * s], [cx + 3.6 * s, y - 0.6 * s]], 1.8 * s);
+      }
+    } else if (eyes === 'wide') {
+      ink(lx, y, 3.2, 3.9);
+      ink(rx, y, 3.2, 3.9);
+    } else if (eyes === 'squint') {
+      sq(lx, 1);
+      sq(rx, -1);
+    } else if (eyes === 'uneven') {
+      ink(lx, y + 0.6 * s, 2.1, 2.5);
+      ink(rx + 0.8 * s, y - 0.6 * s, 3.5, 4.2);
+    } else if (eyes === 'wink') {
+      ink(lx, y, 2.5, 3);
+      this.line([[rx - 3 * s, y + 0.5 * s], [rx, y - 1.5 * s], [rx + 3 * s, y + 0.5 * s]], 1.9 * s);
+    } else {
+      ink(lx, y, 2.5, 3);
+      ink(rx, y, 2.5, 3);
+    }
+    const brow = o.brow ?? 'none';
+    const by = y - 6.4 * s;
+    if (brow === 'flat') {
+      this.line([[lx - 3.4 * s, by], [lx + 3.2 * s, by]], 1.8 * s);
+      this.line([[rx - 3.2 * s, by], [rx + 3.4 * s, by]], 1.8 * s);
+    } else if (brow === 'angry') {
+      this.line([[lx - 3.6 * s, by - 1.6 * s], [lx + 3.4 * s, by + 1.4 * s]], 2 * s);
+      this.line([[rx - 3.4 * s, by + 1.4 * s], [rx + 3.6 * s, by - 1.6 * s]], 2 * s);
+    } else if (brow === 'worried') {
+      this.line([[lx - 3.6 * s, by + 1.4 * s], [lx + 3.4 * s, by - 1.6 * s]], 1.9 * s);
+      this.line([[rx - 3.4 * s, by - 1.6 * s], [rx + 3.6 * s, by + 1.4 * s]], 1.9 * s);
+    } else if (brow === 'raised') {
+      this.line([[rx - 3.4 * s, by - 0.4 * s], [rx, by - 2.6 * s], [rx + 3.6 * s, by - 0.6 * s]], 1.9 * s);
+    }
+    if (o.bags) {
+      for (const cx of [lx, rx]) this.line([[cx - 3 * s, y + 5 * s], [cx, y + 6.1 * s], [cx + 3 * s, y + 5 * s]], 1.2 * s, '#8A5A44');
+    }
+    const blush = o.blush ?? 'none';
+    if (blush !== 'none') {
+      this.sb.add({ d: G.blob(x - 11 * s, y + 4.2 * s, 3.2 * s, 1.9 * s, this.r).d, fill: P.pink, op: 0.8 });
+      if (blush === 'both') this.sb.add({ d: G.blob(x + 11 * s, y + 4.2 * s, 3.2 * s, 1.9 * s, this.r).d, fill: P.pink, op: 0.8 });
+    }
+    const my = y + 6.4 * s;
+    switch (o.mouth ?? 'smile') {
+      case 'smirk':
+        this.line([[x - 3.4 * s, my - 0.2 * s], [x + 0.6 * s, my + 0.8 * s], [x + 4.6 * s, my - 1.8 * s]], 2 * s);
+        break;
+      case 'flat':
+        this.line([[x - 3.4 * s, my], [x + 3.4 * s, my + 0.2 * s]], 2 * s);
+        break;
+      case 'wavy':
+        this.line([[x - 4.4 * s, my + 0.4 * s], [x - 2.2 * s, my - 1 * s], [x, my + 0.6 * s], [x + 2.2 * s, my - 1 * s], [x + 4.4 * s, my + 0.4 * s]], 1.8 * s, INK, 0.1);
+        break;
+      case 'open':
+      case 'grin':
+        this.sb.add({ d: G.blob(x, my + 1 * s, (o.mouth === 'grin' ? 4.8 : 3.4) * s, (o.mouth === 'grin' ? 2.6 : 3) * s, this.r).d, fill: C.mouth, stroke: INK, sw: 1.6 * s });
+        break;
+      case 'o':
+        this.sb.add({ d: G.blob(x, my + 0.6 * s, 2 * s, 2.7 * s, this.r).d, fill: C.mouth, stroke: INK, sw: 1.6 * s });
+        break;
+      case 'tongue':
+        this.sb.add({ d: G.blob(x + 2.4 * s, my + 3.6 * s, 2.3 * s, 2.7 * s, this.r).d, fill: C.tongue, stroke: INK, sw: 1.4 * s });
+        this.line([[x - 3.6 * s, my - 0.6 * s], [x, my + 1.6 * s], [x + 4 * s, my - 0.4 * s]], 2 * s);
+        break;
+      default:
+        this.line([[x - 3.6 * s, my - 1.8 * s], [x, my + 1 * s], [x + 3.6 * s, my - 1.8 * s]], 2 * s);
+    }
+    if (o.tilt) {
+      for (let i = n0; i < this.sb.prims.length; i++) this.sb.prims[i].transform = `rotate(${o.tilt} ${x} ${y})`;
+    }
+    return this;
+  }
+
+  /** The old one-size face. Only draws on hero icons now. */
   face(x: number, y: number, s = 1, kind: 'happy' | 'derp' | 'wink' | 'oh' | 'cool' = 'happy'): this {
+    if (!this.faces) return this;
     const e = (cx: number, cy: number) => {
       this.sb.add({ d: G.blob(cx, cy, 2.5 * s, 3 * s, this.r, { n: 8, amp: 0.02 }).d, fill: INK });
       this.sb.add({ d: G.blob(cx - 0.8 * s, cy - 1 * s, 0.9 * s, 0.9 * s, this.r, { n: 6, amp: 0.02 }).d, fill: '#FFFFFF' });

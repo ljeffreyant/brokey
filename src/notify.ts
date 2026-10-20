@@ -26,6 +26,17 @@ export async function hasPermission(): Promise<boolean> {
   }
 }
 
+/** True only when the person has said no. "Never asked yet" is not blocked. */
+export async function permissionDenied(): Promise<boolean> {
+  if (!native) return false;
+  try {
+    const s = await Notifications.getPermissionsAsync();
+    return !s.granted && s.ios?.status !== Notifications.IosAuthorizationStatus.PROVISIONAL && s.status === 'denied';
+  } catch {
+    return false;
+  }
+}
+
 /** Asks politely, and only when the person has just done something that needs it. */
 export async function ensurePermission(): Promise<boolean> {
   if (!native) return false;
@@ -81,5 +92,76 @@ export async function setWeeklyRecap(on: boolean, lang: LangId): Promise<boolean
     return true;
   } catch {
     return false;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Heads-ups the app works out for itself. All local, all replaced (never stacked) every time the numbers change.
+// ---------------------------------------------------------------------------
+const PACE_ID = 'brokey-pace';
+const RECUR_PREFIX = 'brokey-recurring-';
+
+/** 9am on the day before `ts`. */
+function morningBefore(ts: number): number {
+  const d = new Date(ts);
+  d.setHours(9, 0, 0, 0);
+  d.setDate(d.getDate() - 1);
+  return d.getTime();
+}
+
+async function cancelPrefix(prefix: string): Promise<void> {
+  try {
+    const all = await Notifications.getAllScheduledNotificationsAsync();
+    await Promise.all(all.filter((n) => n.identifier.startsWith(prefix)).map((n) => Notifications.cancelScheduledNotificationAsync(n.identifier)));
+  } catch {
+    /* nothing scheduled */
+  }
+}
+
+/** "At this pace the budget runs out tomorrow", sent the morning before. Pass null to clear it. */
+export async function syncPaceAlert(args: { on: boolean; lang: LangId; runOutTs: number | null; now?: number }): Promise<void> {
+  if (!native) return;
+  await cancelNotification(PACE_ID);
+  if (!args.on || !args.runOutTs) return;
+  const at = morningBefore(args.runOutTs);
+  if (at <= (args.now ?? Date.now()) + 60_000) return;
+  if (!(await hasPermission())) return;
+  try {
+    await Notifications.scheduleNotificationAsync({
+      identifier: PACE_ID,
+      content: { title: translate(args.lang, 'notif.paceTitle'), body: translate(args.lang, 'notif.paceBody') },
+      trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: new Date(at) },
+    });
+  } catch {
+    /* best effort */
+  }
+}
+
+export interface DueItem {
+  key: string;
+  label: string;
+  amountLabel: string;
+  nextTs: number;
+}
+
+/** A morning-before reminder for each repeating charge (subscriptions, regular bills). */
+export async function syncRecurringReminders(args: { on: boolean; lang: LangId; items: DueItem[]; now?: number }): Promise<void> {
+  if (!native) return;
+  await cancelPrefix(RECUR_PREFIX);
+  if (!args.on || args.items.length === 0) return;
+  if (!(await hasPermission())) return;
+  const now = args.now ?? Date.now();
+  for (const it of args.items.slice(0, 8)) {
+    const at = morningBefore(it.nextTs);
+    if (at <= now + 60_000) continue;
+    try {
+      await Notifications.scheduleNotificationAsync({
+        identifier: RECUR_PREFIX + it.key,
+        content: { title: translate(args.lang, 'notif.recurringTitle'), body: translate(args.lang, 'notif.recurringBody', { what: it.label, amount: it.amountLabel }) },
+        trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: new Date(at) },
+      });
+    } catch {
+      /* best effort */
+    }
   }
 }

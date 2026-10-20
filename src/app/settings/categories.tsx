@@ -31,7 +31,7 @@ export default function CategorySettings() {
           {t('cats.none')}
         </Txt>
       ) : (
-        <Card inner={{ padding: 4 }}>
+        <Card weight="quiet" inner={{ padding: 4 }}>
           {custom.map((c) => (
             <Row
               key={c.id}
@@ -49,7 +49,7 @@ export default function CategorySettings() {
         return (
           <View key={g.id}>
             <SectionTitle>{`${t('cats.builtin')} · ${groupLabel(t, g.id)}`}</SectionTitle>
-            <Card inner={{ padding: 4 }}>
+            <Card weight="quiet" inner={{ padding: 4 }}>
               {builtin.map((c) => {
                 const off = hidden.includes(c.id);
                 return (

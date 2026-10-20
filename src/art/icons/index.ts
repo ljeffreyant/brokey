@@ -7,6 +7,9 @@ import { BILLS } from './bills';
 import { LIFE } from './life';
 import { EXTRA } from './extra';
 
+/** The few icons that keep a face, each with a hand-set expression. Everything else is a plain object. */
+export const HERO_ICONS: ReadonlySet<string> = new Set(['hsp', 'coffee', 'boba', 'burger', 'chips', 'beer', 'pizza', 'kebab', 'taco', 'noodles']);
+
 export const ICON_DEFS: IconDef[] = [...FOOD, ...GO, ...SHOP, ...BILLS, ...LIFE, ...EXTRA];
 
 const byId = new Map(ICON_DEFS.map((d) => [d.id, d]));
@@ -28,6 +31,7 @@ export function iconScene(id: string): Scene {
   let seed = 1;
   for (const ch of d.id) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
   const b = new Ico(seed);
+  b.faces = HERO_ICONS.has(d.id);
   d.draw(b);
   const sc = b.build();
   cache.set(id, sc);

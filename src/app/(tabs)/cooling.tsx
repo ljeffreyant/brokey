@@ -101,7 +101,7 @@ export default function Cooling() {
         <RoundBtn glyph="plus" label={t('want.title')} fill={p.accent2} color={p.onAccent2} onPress={() => router.push('/want')} />
       </View>
 
-      <Card fill={p.info} inner={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 10 }}>
+      <Card weight="quiet" fill={p.info} inner={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 10 }}>
         <Brokey mood={saved > 0 ? 'proud' : 'ok'} width={96} />
         <View style={{ flex: 1 }}>
           <Txt v="label" color={p.ink} style={{ opacity: 0.7 }}>

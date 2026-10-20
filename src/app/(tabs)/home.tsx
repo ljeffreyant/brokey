@@ -3,7 +3,7 @@ import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown, FadeOutLeft, LinearTransition } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FRIES_TOTAL, Purchase, WishItem, categoryMeta, regretQueue, startOfDay, wishPhase } from '../../core';
+import { FRIES_TOTAL, Purchase, WishItem, categoryMeta, forecastRunOut, regretQueue, startOfDay, wishPhase } from '../../core';
 import { catLabel, useT } from '../../i18n';
 import { useStore } from '../../store';
 import { Glyph } from '../../ui/Glyph';
@@ -32,6 +32,7 @@ export default function Home() {
   const answerRegret = useStore((s) => s.answerRegret);
   const addShame = useStore((s) => s.addShame);
   const [pick, setPick] = useState(false);
+  const roastLevel = useStore((s) => s.settings.roastLevel);
   const [quipN, setQuipN] = useState(0);
   const [poke, setPoke] = useState(0);
   const [heroH, setHeroH] = useState(520);
@@ -39,7 +40,7 @@ export default function Home() {
   const weather = weatherOf(budget.remainingCents, budget.budgetCents);
   const wc = p.weather[weather];
   const mood = purchases.length === 0 ? 'happy' : budget.mood;
-  const bw = Math.min(width * 0.6, 232);
+  const bw = Math.min(width * (purchases.length === 0 ? 0.5 : 0.6), purchases.length === 0 ? 190 : 232);
 
   const safe = budget.safeTodayCents;
   const quip = t.pick(`quip.${mood}` as never, quipN + (budget.dayIndex * 3 + purchases.length));
@@ -57,6 +58,14 @@ export default function Home() {
   }, [week]);
 
   const due = useMemo(() => regretQueue(purchases, now, 1)[0], [purchases, now]);
+  const forecast = useMemo(() => forecastRunOut(budget, now), [budget, now]);
+  const forecastLine = forecast
+    ? forecast.inDays === 0
+      ? t(`forecast.today.${roastLevel}` as never)
+      : forecast.inDays === 1
+        ? t(`forecast.tomorrow.${roastLevel}` as never)
+        : t(`forecast.${roastLevel}` as never, { day: formatDayName(forecast.runOutTs, f.lang) })
+    : null;
   const cooling = wishes.filter((w) => w.status === 'cooling');
   const ready = cooling.filter((w) => wishPhase(w, now) === 'ready').length;
   const today = startOfDay(now);
@@ -136,12 +145,18 @@ export default function Home() {
 
         <View style={{ alignItems: 'center', marginTop: 14, paddingHorizontal: 28 }}>
           <View style={{ width: 0, height: 0, borderLeftWidth: 10, borderRightWidth: 10, borderBottomWidth: 12, borderLeftColor: 'transparent', borderRightColor: 'transparent', borderBottomColor: p.ink, marginBottom: -3 }} />
-          <Slab depth={3} r={20} fill={p.card} border={2.5} inner={{ paddingHorizontal: 16, paddingVertical: 11 }}>
+          <Slab weight="quiet" r={20} fill={p.card} inner={{ paddingHorizontal: 16, paddingVertical: 11 }}>
             <Txt v="small" align="center" numberOfLines={3} style={{ fontFamily: 'DMSans_700Bold' }}>
               {quip}
             </Txt>
           </Slab>
         </View>
+
+        {purchases.length === 0 ? (
+          <View style={{ alignItems: 'center', marginTop: 16 }}>
+            <Btn label={t('home.emptyCta')} glyph="plus" tone="dark" onPress={() => router.push('/log')} />
+          </View>
+        ) : null}
       </View>
 
       <View style={{ paddingHorizontal: 18, paddingTop: 18, gap: 14 }}>
@@ -152,10 +167,29 @@ export default function Home() {
           <Stat label={t('home.statDays')} value={String(budget.daysLeft)} sub={budget.streak > 1 ? t('home.streak', { n: budget.streak }) : t('home.statWeek')} />
         </View>
 
+        {/* ------------------------------------------------ pace check */}
+        {forecastLine ? (
+          <Animated.View entering={FadeInDown.springify().damping(16)} layout={LinearTransition}>
+            <Slab weight="quiet" r={20} fill={p.card} inner={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 11, paddingHorizontal: 14 }}>
+              <View style={{ width: 34, height: 34, borderRadius: 11, backgroundColor: wc.field, borderWidth: 2, borderColor: p.ink, alignItems: 'center', justifyContent: 'center' }}>
+                <Glyph name="chart" size={18} color={wc.text} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Txt v="label" dim>
+                  {t('forecast.title')}
+                </Txt>
+                <Txt v="small" style={{ fontFamily: 'DMSans_700Bold' }}>
+                  {forecastLine}
+                </Txt>
+              </View>
+            </Slab>
+          </Animated.View>
+        ) : null}
+
         {/* ------------------------------------------------ regret check-in */}
         {due ? (
           <Animated.View key={due.id} entering={FadeInDown.springify().damping(16)} exiting={FadeOutLeft.duration(220)} layout={LinearTransition}>
-            <Card fill={p.accent2} inner={{ gap: 12 }}>
+            <Card weight="hero" fill={p.accent2} inner={{ gap: 12 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 <IconDisc id={categoryMeta(due.category).icon} size={46} color={p.card} ring />
                 <View style={{ flex: 1 }}>
@@ -221,7 +255,6 @@ export default function Home() {
               <Txt v="small" dim align="center">
                 {t('home.emptyBody')}
               </Txt>
-              <Btn label={t('home.emptyCta')} glyph="plus" tone="primary" onPress={() => router.push('/log')} />
             </Card>
           ) : (
             groups.map((g) => (
@@ -277,7 +310,7 @@ function WalletPickRow({ name, sub, hideSub, icon, color, on, onPress }: { id: s
 function Stat({ label, value, sub, bad }: { label: string; value: string; sub: string; bad?: boolean }) {
   const p = useTheme();
   return (
-    <Slab depth={3} r={20} style={{ flex: 1 }} inner={{ paddingVertical: 11, paddingHorizontal: 12 }}>
+    <Slab weight="quiet" r={20} style={{ flex: 1 }} inner={{ paddingVertical: 11, paddingHorizontal: 12 }}>
       <Txt v="label" dim size={10}>
         {label}
       </Txt>

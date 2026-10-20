@@ -45,6 +45,7 @@ export default function Want() {
   const cents = parseAmountToCents(amount) ?? 0;
   const zeroDecimal = !!currencyDef(settings.currency).zeroDecimal;
   const tight = H < 740;
+  const tiny = H < 680;
 
   useEffect(() => {
     if (!catTouched && label.length > 2) {
@@ -96,9 +97,9 @@ export default function Want() {
         </Txt>
       </View>
 
-      <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 12, gap: 12 }}>
+      <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 12, gap: tiny ? 8 : 12 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <Brokey mood="tempted" width={tight ? 90 : 118} still={false} />
+          <Brokey mood="tempted" width={tiny ? 64 : tight ? 90 : 118} still={false} />
           <View style={{ flex: 1, backgroundColor: p.card, borderRadius: 20, borderWidth: 2.5, borderColor: p.ink, padding: 12 }}>
             <Txt v="small" style={{ fontFamily: 'DMSans_700Bold' }}>
               {nudge}
@@ -160,7 +161,7 @@ export default function Want() {
           />
         </View>
 
-        <Keypad value={amount} onChange={setAmount} zeroDecimal={zeroDecimal} keyH={tight ? 42 : 48} />
+        <Keypad value={amount} onChange={setAmount} zeroDecimal={zeroDecimal} keyH={tiny ? 36 : tight ? 42 : 48} />
       </ScrollView>
 
       <View style={{ paddingHorizontal: 18, paddingTop: 8, paddingBottom: ins.bottom + 12 }}>

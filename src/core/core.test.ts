@@ -84,6 +84,9 @@ const settings = (over: Partial<Combined> = {}): Combined => ({
   activeWalletId: 'w1',
   notifyWish: true,
   notifyWeekly: false,
+  notifyPace: true,
+  notifyRecurring: true,
+  lockApp: false,
   adultConfirmed: false,
   ...over,
 });

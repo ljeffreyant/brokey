@@ -11,7 +11,7 @@ export default function About() {
   const t = useT();
   return (
     <Page title={t('about.title')} sub={t('about.version', { v: APP_VERSION })}>
-      <Card inner={{ alignItems: 'center', gap: 12, paddingVertical: 22 }}>
+      <Card weight="quiet" inner={{ alignItems: 'center', gap: 12, paddingVertical: 22 }}>
         <Brokey mood="happy" width={190} />
         <View style={{ gap: 10 }}>
           <Txt v="body" align="center">

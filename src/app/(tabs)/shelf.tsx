@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ShameItem, allStickers, categoryMeta, unlockedStickerIds } from '../../core';
+import { Recurring, ShameItem, allStickers, categoryMeta, detectRecurring, unlockedStickerIds } from '../../core';
 import { catLabel, useT } from '../../i18n';
 import { useStore } from '../../store';
 import { useTheme } from '../../theme';
@@ -77,6 +77,10 @@ export default function Shelf() {
     return out;
   }, [shame]);
 
+  const recurring = useMemo(() => detectRecurring(state.purchases, now).slice(0, 5), [state.purchases, now]);
+  const onShelf = (r: Recurring) => shame.some((x) => x.label.trim().toLowerCase() === r.label.toLowerCase());
+  const everyKey = (r: Recurring) => (r.everyDays === 7 ? 'recurring.weekly' : r.everyDays === 14 ? 'recurring.fortnightly' : 'recurring.monthly');
+
   const stickers = useMemo(() => allStickers(), []);
   const unlocked = useMemo(
     () => new Set(unlockedStickerIds({ purchases: state.purchases, wishes: state.wishes, shame: state.shame, settings: state.settings, wallets: state.wallets, now })),
@@ -106,6 +110,41 @@ export default function Shelf() {
           <Txt v="small" color={p.onAccent} style={{ fontFamily: 'DMSans_700Bold' }}>
             {f.sum(total)} · {t.n('shelf.items', shame.length)}
           </Txt>
+        </Card>
+      ) : null}
+
+      {recurring.length > 0 ? (
+        <Card style={{ marginTop: 14 }} inner={{ gap: 12 }}>
+          <View>
+            <Txt v="heading">{t('recurring.title')}</Txt>
+            <Txt v="small" dim>
+              {t('recurring.sub')}
+            </Txt>
+          </View>
+          {recurring.map((r) => {
+            const shelved = onShelf(r);
+            return (
+              <View key={r.key} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <IconDisc id={categoryMeta(r.category).icon} size={42} ring />
+                <View style={{ flex: 1 }}>
+                  <Txt v="bodyBold" numberOfLines={1}>
+                    {r.label}
+                  </Txt>
+                  <Txt v="small" dim numberOfLines={2}>
+                    {f.money(r.amountCents)} {t(everyKey(r) as never)} · {t('recurring.year', { amount: f.sum(Math.round(r.yearlyCents / 100) * 100) })}
+                  </Txt>
+                </View>
+                <Btn
+                  label={shelved ? t('recurring.shelved') : t('recurring.shelve')}
+                  size="sm"
+                  compact
+                  tone={shelved ? 'card' : 'dark'}
+                  disabled={shelved}
+                  onPress={() => addShame({ label: r.label, amountCents: r.amountCents, category: r.category, story: t('recurring.story'), source: 'manual' })}
+                />
+              </View>
+            );
+          })}
         </Card>
       ) : null}
 

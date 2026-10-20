@@ -146,7 +146,7 @@ export default function ExportScreen() {
 function Action({ glyph, bg, fg, title, body, cta, busy, disabled, onPress, making }: { glyph: GlyphName; bg: string; fg: string; title: string; body: string; cta: string; busy: boolean; disabled: boolean; onPress: () => void; making: string }) {
   const p = useTheme();
   return (
-    <PressSlab depth={5} r={26} onPress={onPress} disabled={disabled} label={title} inner={{ padding: 14, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+    <PressSlab weight="quiet" r={26} onPress={onPress} disabled={disabled} label={title} inner={{ padding: 14, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
       <View style={{ width: 58, height: 58, borderRadius: 18, backgroundColor: bg, borderWidth: 2.5, borderColor: p.ink, alignItems: 'center', justifyContent: 'center' }}>
         <Glyph name={glyph} size={28} color={fg} />
       </View>

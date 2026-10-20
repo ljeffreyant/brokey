@@ -10,7 +10,7 @@ export default function Widgets() {
   const t = useT();
   return (
     <Page title={t('widgets.title')}>
-      <Card inner={{ alignItems: 'center', gap: 10, paddingVertical: 22 }}>
+      <Card weight="quiet" inner={{ alignItems: 'center', gap: 10, paddingVertical: 22 }}>
         <View style={{ marginBottom: -6 }}>
           <Brokey mood="tempted" width={150} still />
         </View>

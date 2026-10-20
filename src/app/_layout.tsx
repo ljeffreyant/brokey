@@ -14,12 +14,15 @@ import { ThemeProvider, useTheme } from '../theme';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth, startAutoSync } from '../auth/store';
 import { initNotifications } from '../notify';
+import { LockGate } from '../ui/LockGate';
+import { useSmartAlerts } from '../ui/useSmartAlerts';
 
 function Shell() {
   const p = useTheme();
   const router = useRouter();
   const path = usePathname();
   const onboarded = useStore((s) => s.settings.onboarded);
+  useSmartAlerts();
 
   useEffect(() => {
     if (!onboarded && path !== '/onboarding') router.replace('/onboarding');
@@ -38,6 +41,7 @@ function Shell() {
         <Stack.Screen name="export" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
         <Stack.Screen name="receipt" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
       </Stack>
+      <LockGate />
     </View>
   );
 }

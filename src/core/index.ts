@@ -9,3 +9,5 @@ export * from './regret';
 export * from './recap';
 export * from './stickers';
 export * from './keypad';
+export * from './forecast';
+export * from './recurring';

@@ -2,6 +2,7 @@ import { BODY_ROASTS_AVAILABLE } from '../config';
 import { categoryMeta, roastSetFor } from './categories';
 import { MoneyFmt, formatMoney, formatUnits, formatWork } from './money';
 import { ES } from './roasts-es';
+import { melbLines } from './roasts-melb';
 import * as EN from './roasts-en';
 import { ID } from './roasts-id';
 import { ZH } from './roasts-zh';
@@ -29,6 +30,8 @@ export interface RoastCtx {
   recent?: string[];
   fmt?: Partial<MoneyFmt>;
   lang?: LangId;
+  /** Mix in the Melbourne-only jokes (on for Australian dollar wallets). */
+  melbourne?: boolean;
 }
 
 export interface RoastBanks {
@@ -103,6 +106,20 @@ export function roastKind(ctx: RoastCtx): RoastKind {
   return 'base';
 }
 
+/** Lines that only make sense when this is not the first one, so they must not be used on a first buy. */
+export const REPEATISH: Record<LangId, RegExp> = {
+  en: /\b(again|once more|back at it|back already|keep (buying|ordering|doing)|here we go|the usual|as usual|regular)\b/i,
+  zh: /又(是|来|买|点|喝|吃)|再(来|次|买|点)|老是|总是|依旧|照旧|继续|常客/,
+  id: /\b(lagi-lagi|lagi|terus|kambuh|sekali lagi|seperti biasa|langganan)\b/i,
+  es: /\b(otra vez|de nuevo|nuevamente|como siempre|vuelves|otra ronda|de siempre|habitual)\b/i,
+};
+
+/** First buy of its kind this week: drop lines that talk as if there was a last time (never leaves the bank empty). */
+function forFirstBuy(bank: string[], lang: LangId): string[] {
+  const fresh = bank.filter((l) => !REPEATISH[lang].test(l) && !/\{n(th)?\}/.test(l));
+  return fresh.length > 0 ? fresh : bank;
+}
+
 export function roastFor(ctx: RoastCtx): string {
   const b = banks(ctx.lang);
   const set = roastSetFor(ctx.category);
@@ -127,6 +144,11 @@ export function roastFor(ctx: RoastCtx): string {
     default:
       bank = (b.BASE[set] ?? b.BASE.other)[ctx.level];
   }
+  if (ctx.melbourne && kind !== 'body') {
+    const key = kind === 'over' ? 'OVER' : kind === 'big' ? 'BIG' : kind === 'repeat' ? 'REPEAT' : kind === 'late' ? 'LATE' : set;
+    bank = [...bank, ...melbLines(ctx.lang ?? 'en', key, ctx.level)];
+  }
+  if (kind !== 'repeat' && ctx.countThisWeek <= 1) bank = forFirstBuy(bank, ctx.lang ?? 'en');
   // fill first, then pick, so "recent" (which holds finished lines) can be compared properly
   let line = pick(bank.map((l) => fill(l, ctx)), ctx.seed, ctx.recent);
   if (ctx.method === 'bnpl') line += ' ' + fill(pick(b.BNPL[ctx.level], ctx.seed), ctx);

@@ -11,11 +11,23 @@ import { haptic } from './haptics';
 
 // ---------------------------------------------------------------- Slab
 
+/**
+ * Not everything on a screen should shout. The one thing you came for gets a thick outline and a deep shadow,
+ * supporting cards sit in the middle, and small info panels are a thin line with a whisper of shadow.
+ */
+export type Weight = 'hero' | 'normal' | 'quiet';
+export const WEIGHTS: Record<Weight, { border: number; depth: number }> = {
+  hero: { border: 3.5, depth: 6 },
+  normal: { border: 2.5, depth: 4 },
+  quiet: { border: 1.75, depth: 2 },
+};
+
 export interface SlabProps {
   children?: ReactNode;
   fill?: string;
   ink?: string;
   r?: number;
+  weight?: Weight;
   depth?: number;
   border?: number;
   style?: StyleProp<ViewStyle>;
@@ -23,7 +35,7 @@ export interface SlabProps {
 }
 
 /** A sticker: ink outline plus a hard offset shadow, the look of the whole app. */
-export function Slab({ children, fill, ink, r = 22, depth = 4, border = 2.5, style, inner }: SlabProps) {
+export function Slab({ children, fill, ink, r = 22, weight = 'normal', depth = WEIGHTS[weight].depth, border = WEIGHTS[weight].border, style, inner }: SlabProps) {
   const p = useTheme();
   const i = ink ?? p.ink;
   return (
@@ -44,7 +56,7 @@ export interface PressSlabProps extends SlabProps {
 }
 
 /** A Slab that physically presses down. */
-export function PressSlab({ children, fill, ink, r = 22, depth = 4, border = 2.5, style, inner, onPress, onLongPress, disabled, tone = 'soft', label, hitSlop }: PressSlabProps) {
+export function PressSlab({ children, fill, ink, r = 22, weight = 'normal', depth = WEIGHTS[weight].depth, border = WEIGHTS[weight].border, style, inner, onPress, onLongPress, disabled, tone = 'soft', label, hitSlop }: PressSlabProps) {
   const p = useTheme();
   const i = ink ?? p.ink;
   const down = useSharedValue(0);
@@ -105,19 +117,21 @@ export interface BtnProps {
   glyph?: GlyphName;
   size?: 'md' | 'lg' | 'sm';
   full?: boolean;
+  /** tighter side padding, for several buttons in one row */
+  compact?: boolean;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
-export function Btn({ label, onPress, tone = 'primary', glyph, size = 'md', full, disabled, style }: BtnProps) {
+export function Btn({ label, onPress, tone = 'primary', glyph, size = 'md', full, compact, disabled, style }: BtnProps) {
   const p = useTheme();
   const c = toneColors(p, tone);
   const h = size === 'lg' ? 62 : size === 'sm' ? 40 : 52;
   const fs = size === 'lg' ? 20 : size === 'sm' ? 14.5 : 17;
   return (
-    <PressSlab fill={c.fill} r={h / 2.4} depth={size === 'sm' ? 3 : 5} onPress={onPress} disabled={disabled} label={label} style={[full ? { alignSelf: 'stretch' } : { alignSelf: 'flex-start' }, style]} inner={{ height: h, paddingHorizontal: size === 'sm' ? 16 : 24, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}>
+    <PressSlab fill={c.fill} r={h / 2.4} depth={size === 'sm' ? 3 : 5} onPress={onPress} disabled={disabled} label={label} style={[full ? { alignSelf: 'stretch' } : { alignSelf: 'flex-start' }, style]} inner={{ height: h, paddingHorizontal: compact ? 8 : size === 'sm' ? 16 : 24, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}>
       {glyph ? <Glyph name={glyph} size={fs + 3} color={c.fg} /> : null}
-      <Txt v="heading" color={c.fg} size={fs} numberOfLines={1}>
+      <Txt v="heading" color={c.fg} size={fs} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
         {label}
       </Txt>
     </PressSlab>
@@ -153,9 +167,9 @@ export function Chip({ label, on, onPress, glyph, color, small, right }: ChipPro
 
 // ---------------------------------------------------------------- Card
 
-export function Card({ children, style, inner, fill, depth = 4, r = 24 }: { children?: ReactNode; style?: StyleProp<ViewStyle>; inner?: StyleProp<ViewStyle>; fill?: string; depth?: number; r?: number }) {
+export function Card({ children, style, inner, fill, weight = 'normal', depth, r = 24 }: { children?: ReactNode; style?: StyleProp<ViewStyle>; inner?: StyleProp<ViewStyle>; fill?: string; weight?: Weight; depth?: number; r?: number }) {
   return (
-    <Slab fill={fill} depth={depth} r={r} style={style} inner={[{ padding: 16 }, inner]}>
+    <Slab fill={fill} weight={weight} depth={depth ?? WEIGHTS[weight].depth} r={r} style={style} inner={[{ padding: 16 }, inner]}>
       {children}
     </Slab>
   );

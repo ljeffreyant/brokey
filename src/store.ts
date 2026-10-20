@@ -47,6 +47,9 @@ export const defaultSettings = (): Settings => ({
   activeWalletId: 'main',
   notifyWish: true,
   notifyWeekly: false,
+  notifyPace: true,
+  notifyRecurring: true,
+  lockApp: false,
   adultConfirmed: false,
 });
 
@@ -120,7 +123,7 @@ interface State {
   setCategoryHidden: (id: string, hidden: boolean) => void;
   logPurchase: (input: LogInput) => LogResult;
   removePurchase: (id: string) => void;
-  updatePurchase: (id: string, patch: Partial<Pick<Purchase, 'category' | 'merchant' | 'note'>>) => void;
+  updatePurchase: (id: string, patch: Partial<Pick<Purchase, 'category' | 'merchant' | 'note' | 'amountCents' | 'ts'>>) => void;
   answerRegret: (id: string, regret: Regret) => void;
   addShame: (item: Omit<ShameItem, 'id' | 'ts'> & { ts?: number }) => ShameItem;
   removeShame: (id: string) => void;
@@ -269,6 +272,7 @@ export const useStore = create<State>()(
           recent: st.recentRoasts,
           fmt: moneyFmt(st.settings),
           lang: st.settings.language,
+          melbourne: st.settings.currency === 'AUD',
         });
         const unlockedNow = unlockedStickerIds({ purchases: all, wishes: st.wishes, shame: st.shame, settings: st.settings, wallets: st.wallets, now: ts });
         const newStickers = unlockedNow.filter((id) => !st.seenStickers.includes(id));
@@ -281,7 +285,12 @@ export const useStore = create<State>()(
 
       removePurchase: (id) => set((s) => ({ purchases: s.purchases.filter((p) => p.id !== id), shame: s.shame.filter((x) => x.purchaseId !== id) })),
 
-      updatePurchase: (id, patch) => set((s) => ({ purchases: s.purchases.map((p) => (p.id === id ? { ...p, ...patch } : p)) })),
+      updatePurchase: (id, patch) =>
+        set((s) => ({
+          purchases: s.purchases.map((p) => (p.id === id ? { ...p, ...patch } : p)),
+          // a shame-shelf item made from this buy shows the same amount
+          shame: patch.amountCents != null ? s.shame.map((x) => (x.purchaseId === id ? { ...x, amountCents: patch.amountCents as number } : x)) : s.shame,
+        })),
 
       answerRegret: (id, regret) =>
         set((s) => ({ purchases: s.purchases.map((p) => (p.id === id ? { ...p, regret, regretTs: Date.now() } : p)) })),
@@ -357,6 +366,11 @@ export const useStore = create<State>()(
         recentRoasts: s.recentRoasts,
         seenStickers: s.seenStickers,
       }),
+      // keep new settings keys filled in for people whose saved data predates them
+      merge: (persisted, current) => {
+        const saved = (persisted ?? {}) as Partial<typeof current>;
+        return { ...current, ...saved, settings: { ...current.settings, ...(saved.settings ?? {}) } };
+      },
       onRehydrateStorage: () => (state) => {
         registerCustomCategories(state?.customCats ?? []);
         useStore.setState({ hydrated: true });

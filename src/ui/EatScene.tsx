@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { Platform, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import Animated, {
   Easing,
   interpolate,
@@ -12,14 +12,17 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { captureRef } from 'react-native-view-shot';
 import { BudgetState } from '../core';
+import { ShareUnavailable, exportFileName, shareImage } from '../export/share';
 import { useT } from '../i18n';
 import { useTheme } from '../theme';
 import { Brokey, MOUTH } from './Brokey';
 import { Burst } from './Burst';
 import { CatIcon } from './CatIcon';
+import { ROAST_CARD_H, ROAST_CARD_W, RoastCard } from './RoastCard';
 import { Txt } from './Txt';
-import { Btn, Slab } from './kit';
+import { Btn, RoundBtn, Slab } from './kit';
 import { haptic } from './haptics';
 import { useFmt } from './useFmt';
 import { weatherOf } from './weather';
@@ -81,6 +84,9 @@ export function EatScene({ input, onDone, onUndo }: { input: EatInput; onDone: (
   const [showRoast, setShowRoast] = useState(false);
   const [showChip, setShowChip] = useState(false);
   const [foodGone, setFoodGone] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const [shareErr, setShareErr] = useState<string | null>(null);
+  const cardRef = useRef<View>(null);
 
   const fly = useSharedValue(0);
   const bg = useSharedValue(0);
@@ -141,6 +147,23 @@ export function EatScene({ input, onDone, onUndo }: { input: EatInput; onDone: (
   }));
   const bubble = useAnimatedStyle(() => ({ opacity: rise.value, transform: [{ translateY: (1 - rise.value) * 40 }] }));
 
+  const shareRoast = async () => {
+    if (sharing) return;
+    haptic.tap();
+    setShareErr(null);
+    setSharing(true);
+    try {
+      await new Promise((r) => setTimeout(r, 380)); // let the card mount and paint
+      const width = 1080;
+      const uri = await captureRef(cardRef, { format: 'png', quality: 1, result: Platform.OS === 'web' ? 'data-uri' : 'tmpfile', width, height: Math.round((width * ROAST_CARD_H) / ROAST_CARD_W) });
+      await shareImage(uri, exportFileName(['Brokey', 'roast'], 'png'));
+    } catch (e) {
+      setShareErr(e instanceof ShareUnavailable ? t('export.noShare') : t('receipt.failed'));
+    } finally {
+      setSharing(false);
+    }
+  };
+
   const allDone = showRoast && tw.done;
   const cost = input.amountCents;
 
@@ -174,7 +197,7 @@ export function EatScene({ input, onDone, onUndo }: { input: EatInput; onDone: (
       {showRoast ? (
         <Animated.View style={[{ position: 'absolute', left: 20, right: 20, bottom: ins.bottom + 22 }, bubble]}>
           <Pressable onPress={tw.skip} accessibilityRole="button" accessibilityLabel={input.roast}>
-            <Slab depth={4} r={26} fill={p.card} inner={{ padding: 18, minHeight: 92, justifyContent: 'center' }}>
+            <Slab weight="hero" r={26} fill={p.card} inner={{ padding: 18, minHeight: 92, justifyContent: 'center' }}>
               <Txt v="heading" size={20} style={{ lineHeight: 26 }}>
                 {tw.shown}
                 <Txt v="heading" size={20} color="transparent">
@@ -184,7 +207,17 @@ export function EatScene({ input, onDone, onUndo }: { input: EatInput; onDone: (
             </Slab>
           </Pressable>
           <View style={{ marginTop: 16, opacity: allDone ? 1 : 0.0, gap: 10 }} pointerEvents={allDone ? 'auto' : 'none'}>
-            <Btn label={t('eat.fair')} tone="primary" size="lg" full onPress={onDone} />
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <View style={{ flex: 1 }}>
+                <Btn label={t('eat.fair')} tone="primary" size="lg" full onPress={onDone} />
+              </View>
+              <RoundBtn glyph="share" label={t('eat.share')} onPress={shareRoast} fill={p.card} size={62} />
+            </View>
+            {shareErr ? (
+              <Txt v="small" color={wAfter.textDim} align="center">
+                {shareErr}
+              </Txt>
+            ) : null}
             <Pressable onPress={onUndo} accessibilityRole="button" hitSlop={10} style={{ alignSelf: 'center', paddingVertical: 4 }}>
               <Txt v="small" color={wAfter.textDim} style={{ fontFamily: 'DMSans_700Bold', textDecorationLine: 'underline' }}>
                 {t('eat.undo')}
@@ -192,6 +225,23 @@ export function EatScene({ input, onDone, onUndo }: { input: EatInput; onDone: (
             </Pressable>
           </View>
         </Animated.View>
+      ) : null}
+
+      {sharing ? (
+        <View style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, backgroundColor: 'rgba(8,4,2,0.62)', alignItems: 'center', justifyContent: 'center', gap: 14 }}>
+          <RoastCard
+            ref={cardRef}
+            field={wAfter.field}
+            mood={input.after.mood}
+            friesLeft={input.after.friesLeft}
+            amountLabel={`-${f.hspNum(cost)} ${f.unit.singular}`}
+            moneyLabel={f.money(cost)}
+            roast={input.roast}
+          />
+          <Txt v="small" color="#FFF6E6" style={{ fontFamily: 'DMSans_700Bold' }}>
+            {t('eat.sharing')}
+          </Txt>
+        </View>
       ) : null}
     </Animated.View>
   );

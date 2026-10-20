@@ -40,3 +40,20 @@ export function dayLabel(ts: number): string {
 export function sameDay(a: number, b: number): boolean {
   return startOfDay(a) === startOfDay(b);
 }
+
+
+/** The moment `n` calendar days ago at the current time of day (calendar maths, so clock changes do not shift the day). */
+export function dayTs(n: number, now = Date.now()): number {
+  const d = new Date(now);
+  d.setDate(d.getDate() - n);
+  return d.getTime();
+}
+
+/** Whole calendar days between `ts` and today (0 = today, never negative). */
+export function daysAgoOf(ts: number, now = Date.now()): number {
+  const a = new Date(now);
+  a.setHours(0, 0, 0, 0);
+  const b = new Date(ts);
+  b.setHours(0, 0, 0, 0);
+  return Math.max(0, Math.round((a.getTime() - b.getTime()) / 86400000));
+}

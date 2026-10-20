@@ -16,7 +16,7 @@ export default function Legal() {
   const d = isTerms ? TERMS : PRIVACY;
   return (
     <Page title={isTerms ? t('legal.terms') : t('legal.privacy')} sub={t('legal.updated', { date: d.updated })}>
-      <Card inner={{ gap: 16, padding: 18 }}>
+      <Card weight="quiet" inner={{ gap: 16, padding: 18 }}>
         <Txt v="body">{d.intro}</Txt>
         {d.sections.map((s) => (
           <View key={s.heading} style={{ gap: 6 }}>

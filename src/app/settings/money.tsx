@@ -21,6 +21,7 @@ export default function MoneySettings() {
   const settings = useStore((s) => s.settings);
   const setCurrency = useStore((s) => s.setCurrency);
   const update = useStore((s) => s.updateSettings);
+  const hasBuys = useStore((s) => s.purchases.length > 0);
   const cur = currencyDef(settings.currency);
   const major = Math.round(settings.unit.priceCents / 100);
   const setPrice = (v: number) => update({ unit: { ...settings.unit, priceCents: Math.max(1, v) * 100 } });
@@ -34,6 +35,11 @@ export default function MoneySettings() {
           <Chip key={c.code} label={`${c.code} ${c.symbol}`} on={settings.currency === c.code} onPress={() => setCurrency(c.code)} small />
         ))}
       </View>
+      {hasBuys ? (
+        <Txt v="small" faint style={{ marginTop: 8 }}>
+          {t('money.currencyNote')}
+        </Txt>
+      ) : null}
 
       <SectionTitle>{t('money.unit')}</SectionTitle>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
@@ -41,7 +47,7 @@ export default function MoneySettings() {
           <Chip key={u.id} label={u.singular} on={settings.unit.id === u.id} onPress={() => update({ unit: u.id === 'hsp' ? { ...u, priceCents: cur.hsp * 100 } : u })} small />
         ))}
       </View>
-      <Card inner={{ alignItems: 'center', gap: 8, paddingVertical: 16 }}>
+      <Card weight="quiet" inner={{ alignItems: 'center', gap: 8, paddingVertical: 16 }}>
         <Txt v="label" dim>
           {t('money.price', { unit: settings.unit.singular })}
         </Txt>
@@ -61,7 +67,7 @@ export default function MoneySettings() {
       </Txt>
 
       <SectionTitle>{t('money.preview')}</SectionTitle>
-      <Card inner={{ padding: 4 }}>
+      <Card weight="quiet" inner={{ padding: 4 }}>
         <Row title={t('money.showCents')} sub={t('money.showCentsSub')} right={<Toggle value={settings.showCents} onChange={(v) => update({ showCents: v })} label={t('money.showCents')} />} />
         <Row title={t('money.round')} sub={t('money.roundSub')} right={<Toggle value={settings.roundSummaries} onChange={(v) => update({ roundSummaries: v })} label={t('money.round')} />} />
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 14, paddingVertical: 12, alignItems: 'baseline' }}>

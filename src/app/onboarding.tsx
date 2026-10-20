@@ -1,27 +1,25 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
-import Animated, { FadeInDown, FadeInRight, FadeOutLeft } from 'react-native-reanimated';
+import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Mood } from '../art/mascot';
 import { CURRENCIES, RoastLevel, currencyDef, parseAmountToCents } from '../core';
 import { formatTyped } from '../core/keypad';
 import { LANGUAGES, useT } from '../i18n';
-import { ensurePermission, setWeeklyRecap } from '../notify';
 import { useStore } from '../store';
 import { useTheme } from '../theme';
 import { Brokey } from '../ui/Brokey';
-import { Glyph } from '../ui/Glyph';
 import { Keypad } from '../ui/Keypad';
 import { Say } from '../ui/Say';
 import { RoastPicker } from '../ui/RoastPicker';
-import { ThemePicker } from '../ui/ThemePicker';
 import { Txt } from '../ui/Txt';
-import { Btn, Card, Chip, RoundBtn, Row, Toggle } from '../ui/kit';
+import { Btn, Card, Chip, RoundBtn } from '../ui/kit';
 import { haptic } from '../ui/haptics';
 import { useFmt } from '../ui/useFmt';
 
-const STEPS = ['welcome', 'vibe', 'money', 'budget', 'roast', 'nudge', 'done'] as const;
+/** Four quick steps. Theme lives in Settings, and the notification prompt waits until the first time you lock a want. */
+const STEPS = ['welcome', 'money', 'budget', 'roast'] as const;
 type Step = (typeof STEPS)[number];
 
 /** 144 becomes 140, 96 stays 96, 600000 stays 600000. Keeps defaults looking like numbers a person would type. */
@@ -51,11 +49,6 @@ export default function Onboarding() {
   const [step, setStep] = useState<Step>('welcome');
   const [budget, setBudget] = useState('');
   const [level, setLevel] = useState<RoastLevel>('medium');
-  const [wishOn, setWishOn] = useState(true);
-  const [weeklyOn, setWeeklyOn] = useState(false);
-  const [asked, setAsked] = useState(false);
-  const [denied, setDenied] = useState(false);
-  const [granted, setGranted] = useState(false);
   const [poke, setPoke] = useState(0);
 
   const cur = currencyDef(settings.currency);
@@ -80,44 +73,30 @@ export default function Onboarding() {
     updateSettings({ unit: { ...settings.unit, priceCents: v * 100 } });
   };
 
-  const finish = async () => {
+  const finish = () => {
     haptic.good();
-    if (weeklyOn && granted) await setWeeklyRecap(true, settings.language);
-    completeOnboarding(
-      { roastLevel: level, adultConfirmed: settings.adultConfirmed, notifyWish: wishOn && granted, notifyWeekly: weeklyOn && granted },
-      { budgetMode: 'manual', manualWeeklyCents: budgetCents },
-    );
+    // wish reminders stay on by default; iOS is only asked when the first want is locked
+    completeOnboarding({ roastLevel: level, adultConfirmed: settings.adultConfirmed }, { budgetMode: 'manual', manualWeeklyCents: budgetCents });
     router.replace('/home');
   };
 
-  const next = async () => {
-    if (step === 'nudge' && !asked && (wishOn || weeklyOn)) {
-      const ok = await ensurePermission();
-      setAsked(true);
-      setGranted(ok);
-      if (!ok) {
-        setDenied(true);
-        return;
-      }
-    }
-    if (step === 'done') return finish();
+  const next = () => {
+    if (step === 'roast') return finish();
     go(1);
   };
 
-  const mood: Mood =
-    step === 'welcome' || step === 'vibe' || step === 'nudge' ? 'happy' : step === 'money' ? 'tempted' : step === 'budget' ? 'sideeye' : step === 'roast' ? (level === 'unhinged' ? 'shock' : level === 'mild' ? 'happy' : 'sideeye') : 'proud';
+  const mood: Mood = step === 'welcome' ? 'happy' : step === 'money' ? 'tempted' : step === 'budget' ? 'sideeye' : level === 'unhinged' ? 'shock' : level === 'mild' ? 'happy' : 'sideeye';
 
-  const say =
-    step === 'vibe' ? t('ob.vibe.say') : step === 'money' ? t('ob.money.say') : step === 'budget' ? t('ob.budget.say') : step === 'roast' ? t('ob.roast.say') : step === 'nudge' ? t('ob.nudge.say') : '';
+  const say = step === 'money' ? t('ob.money.say') : step === 'budget' ? t('ob.budget.say') : step === 'roast' ? t('ob.roast.say') : '';
 
-  const ctaLabel = step === 'welcome' ? t('ob.welcome.cta') : step === 'nudge' ? t('ob.nudge.cta') : step === 'done' ? t('ob.done.cta') : t('common.next');
+  const ctaLabel = step === 'welcome' ? t('ob.welcome.cta') : step === 'roast' ? t('ob.done.cta') : t('common.next');
   const ctaDisabled = step === 'budget' && budgetCents <= 0;
 
   return (
     <View style={{ flex: 1, backgroundColor: p.bg, paddingTop: ins.top }}>
       {/* top bar: back + progress */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 18, paddingTop: 8, height: 60 }}>
-        {idx > 0 && step !== 'done' ? <RoundBtn glyph="back" label={t('common.back')} onPress={() => go(-1)} size={42} /> : <View style={{ width: 42 }} />}
+        {idx > 0 ? <RoundBtn glyph="back" label={t('common.back')} onPress={() => go(-1)} size={42} /> : <View style={{ width: 42 }} />}
         <View style={{ flex: 1, flexDirection: 'row', gap: 6, justifyContent: 'center' }}>
           {STEPS.map((s, i) => (
             <View key={s} style={{ width: i === idx ? 26 : 9, height: 9, borderRadius: 5, backgroundColor: i === idx ? p.accent2 : i < idx ? p.ink : p.line, borderWidth: i === idx ? 2 : 0, borderColor: p.ink }} />
@@ -148,14 +127,12 @@ export default function Onboarding() {
             </View>
           ) : null}
 
-          {step !== 'welcome' && step !== 'done' ? (
+          {step !== 'welcome' ? (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
               <Brokey mood={mood} width={tight ? 84 : 104} poke={poke} still={false} />
               <Say text={say} />
             </View>
           ) : null}
-
-          {step === 'vibe' ? <ThemePicker /> : null}
 
           {step === 'money' ? (
             <View style={{ gap: 14 }}>
@@ -219,42 +196,12 @@ export default function Onboarding() {
               }}
             />
           ) : null}
-
-          {step === 'nudge' ? (
-            <View style={{ gap: 12 }}>
-              <Card inner={{ padding: 4 }}>
-                <Row title={t('ob.nudge.wish')} sub={t('ob.nudge.wishSub')} glyph="snow" right={<Toggle value={wishOn} onChange={setWishOn} label={t('ob.nudge.wish')} />} />
-                <Row title={t('ob.nudge.weekly')} sub={t('ob.nudge.weeklySub')} glyph="chart" right={<Toggle value={weeklyOn} onChange={setWeeklyOn} label={t('ob.nudge.weekly')} />} />
-              </Card>
-              {denied ? (
-                <Animated.View entering={FadeInDown}>
-                  <Txt v="small" dim align="center">
-                    {t('ob.nudge.denied')}
-                  </Txt>
-                </Animated.View>
-              ) : null}
-            </View>
-          ) : null}
-
-          {step === 'done' ? (
-            <View style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-              <Brokey mood="proud" width={Math.min(W * (tight ? 0.52 : 0.7), 280)} poke={poke} onPress={() => setPoke((n) => n + 1)} />
-              <Txt v="display" align="center">
-                {t('ob.done.title')}
-              </Txt>
-              <Txt v="body" dim align="center" style={{ maxWidth: 320 }}>
-                {t('ob.done.body')}
-              </Txt>
-            </View>
-          ) : null}
         </Animated.View>
       </ScrollView>
 
       <View style={{ paddingHorizontal: 18, paddingBottom: Math.max(ins.bottom, 14), paddingTop: 8, gap: 8 }}>
-        <Btn label={ctaLabel} size="lg" full tone={step === 'done' ? 'primary' : 'dark'} disabled={ctaDisabled} onPress={next} />
-        {step === 'nudge' ? <Btn label={t('common.skip')} tone="card" full onPress={() => { setWishOn(false); setWeeklyOn(false); setStep('done'); }} /> : null}
+        <Btn label={ctaLabel} size="lg" full tone={step === 'roast' ? 'primary' : 'dark'} disabled={ctaDisabled} onPress={next} />
       </View>
-
     </View>
   );
 }

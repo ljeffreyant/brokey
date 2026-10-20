@@ -10,7 +10,7 @@ export const FOOD: IconDef[] = [
     b.tube([[33, 53], [41, 47], [49, 53], [57, 47], [66, 53]], 4, P.garlic);
     b.poly([[22, 57], [78, 55], [72, 91], [28, 93]], P.cream, { round: 8 });
     b.poly([[18, 52], [82, 50], [80, 63], [20, 65]], P.creamHi, { round: 4 });
-    b.face(50, 79, 0.95);
+    b.look(50, 79, 0.95, { eyes: 'half', brow: 'flat', mouth: 'smirk', blush: 'none', tilt: -3 });
   }),
 
   def('coffee', 'Coffee', ['cafe', 'latte', 'flat white', 'espresso'], (b) => {
@@ -20,7 +20,7 @@ export const FOOD: IconDef[] = [
     b.blob(49, 38, 27, 6.5, '#6B3A1E', { flat: true, sw: 3.6 });
     b.line([[40, 30], [35, 22], [42, 14]], 3, '#FFFFFF');
     b.line([[58, 30], [62, 22], [56, 12]], 3, '#FFFFFF');
-    b.face(48, 62, 0.95);
+    b.look(48, 62, 0.95, { eyes: 'half', mouth: 'flat', bags: true, tilt: 2 });
   }),
 
   def('matcha', 'Matcha', ['green tea', 'latte', 'iced'], (b) => {
@@ -38,13 +38,13 @@ export const FOOD: IconDef[] = [
     b.poly([[27, 30], [73, 30], [67, 90], [33, 90]], '#EBCDA3', { round: 9 });
     b.poly([[25, 24], [75, 24], [75, 34], [25, 34]], P.steel, { round: 4 });
     for (const [x, y] of [[40, 84], [50, 85], [60, 84], [45, 77], [55, 78]] as const) b.dot(x, y, 4.2, '#3A1F10', true);
-    b.face(50, 58, 0.95);
+    b.look(50, 58, 0.95, { eyes: 'wide', mouth: 'o', blush: 'one' });
   }),
 
   def('chips', 'Chips', ['crisps', 'snack', 'packet'], (b) => {
     b.poly([[24, 14], [34, 10], [44, 14], [54, 10], [64, 14], [76, 12], [74, 88], [64, 92], [54, 88], [44, 92], [34, 88], [26, 90]], P.fry, { round: 3, amp: 0.4 });
     b.rect(30, 38, 40, 34, P.tomato, { round: 10 });
-    b.face(50, 55, 0.95, 'wink');
+    b.look(50, 55, 0.95, { eyes: 'wink', mouth: 'tongue', blush: 'both', tilt: -4 });
   }),
 
   def('burger', 'Burger', ['fast food', 'hamburger'], (b) => {
@@ -54,7 +54,7 @@ export const FOOD: IconDef[] = [
     b.poly([[26, 48], [74, 48], [60, 60], [40, 60]], P.fry, { round: 2 });
     b.poly([[18, 46], [26, 24], [50, 14], [74, 24], [82, 46]], '#E8A85C', { round: 16 });
     for (const [x, y, a] of [[40, 28, 30], [54, 24, -20], [64, 34, 50], [34, 38, -30]] as const) b.blob(x, y, 3, 1.6, P.cream, { rot: a, flat: true, sw: 1.8 });
-    b.face(50, 38, 0.8);
+    b.look(50, 38, 0.8, { eyes: 'dot', brow: 'raised', mouth: 'smirk', tilt: 3 });
   }),
 
   def('delivery', 'Delivery', ['scooter', 'uber', 'takeaway', 'courier'], (b) => {
@@ -109,7 +109,7 @@ export const FOOD: IconDef[] = [
     b.blob(48, 20, 14, 11, P.creamHi, { sw: 3.8 });
     b.blob(64, 24, 12, 10, P.creamHi, { sw: 3.8 });
     b.line([[34, 46], [34, 78]], 4, '#FFE9A0');
-    b.face(48, 58, 0.95);
+    b.look(48, 58, 0.95, { eyes: 'half', mouth: 'wavy', blush: 'both', tilt: -5 });
   }),
 
   def('wine', 'Wine', ['red wine', 'glass', 'vino'], (b) => {
@@ -136,7 +136,7 @@ export const FOOD: IconDef[] = [
     b.blob(36, 44, 6, 6, P.tomato, { sw: 3.4 });
     b.blob(62, 42, 6.5, 6.5, P.tomato, { sw: 3.4 });
     b.blob(50, 62, 5.5, 5.5, P.tomato, { sw: 3.4 });
-    b.face(50, 48, 0.62, 'happy');
+    b.look(50, 50, 0.7, { eyes: 'dot', mouth: 'grin', blush: 'none', tilt: 4 });
   }),
 
   def('sushi', 'Sushi', ['nigiri', 'japanese', 'salmon'], (b) => {
@@ -156,7 +156,7 @@ export const FOOD: IconDef[] = [
     b.poly([[10, 46], [90, 46], [78, 84], [22, 84]], P.tomato, { round: 14 });
     b.blob(50, 46, 40, 8, P.gold, { flat: true, sw: 3.6 });
     b.blob(34, 46, 8, 5.5, P.cream, { flat: true, sw: 2.4 });
-    b.face(50, 68, 0.9);
+    b.look(50, 68, 0.9, { eyes: 'squint', mouth: 'o', blush: 'none' });
   }),
 
   def('dumpling', 'Dumplings', ['gyoza', 'dim sum', 'bao'], (b) => {
@@ -170,7 +170,7 @@ export const FOOD: IconDef[] = [
     b.blob(52, 34, 26, 10, P.meat, { rot: -18, sw: 4 });
     b.poly([[42, 26], [58, 20], [70, 28], [56, 34]], P.green, { round: 3 });
     b.tube([[36, 38], [50, 32], [64, 38], [76, 32]], 3.4, P.garlic);
-    b.face(46, 66, 0.9);
+    b.look(46, 66, 0.9, { eyes: 'dot', brow: 'angry', mouth: 'flat', tilt: -3 });
   }),
 
   def('salad', 'Salad & bowls', ['poke', 'bowl', 'healthy', 'greens'], (b) => {
@@ -235,7 +235,7 @@ export const FOOD: IconDef[] = [
     b.poly([[8, 78], [14, 40], [50, 22], [86, 40], [92, 78]], '#F2C25A', { round: 24 });
     b.poly([[22, 50], [36, 36], [50, 46], [64, 34], [78, 50], [78, 60], [22, 60]], P.green, { round: 4 });
     b.blob(40, 54, 8, 5, P.tomato, { flat: true, sw: 2.6 });
-    b.face(50, 70, 0.85);
+    b.look(50, 70, 0.85, { eyes: 'uneven', mouth: 'open', blush: 'one', tilt: 5 });
   }),
 
   def('popcorn', 'Popcorn', ['cinema snack', 'movie'], (b) => {

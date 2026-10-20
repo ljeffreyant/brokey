@@ -152,7 +152,7 @@ export default function Week() {
 
       {/* ---------------------------------------------------------- hero */}
       <Section i={0}>
-        <Card fill={wc.field} style={{ marginTop: 8 }} inner={{ padding: 18, paddingRight: 8 }}>
+        <Card weight="hero" fill={wc.field} style={{ marginTop: 8 }} inner={{ padding: 18, paddingRight: 8 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ flex: 1, paddingRight: 6 }}>
               <Txt v="label" color={wc.textDim}>
@@ -200,7 +200,7 @@ export default function Week() {
       {/* ---------------------------------------------------------- sauce bottles */}
       <Section i={1}>
         <SectionTitle>{t('week.bottles')}</SectionTitle>
-        <Card inner={{ padding: 14 }}>
+        <Card weight="quiet" inner={{ padding: 14 }}>
           <Txt v="small" dim style={{ marginBottom: 10 }}>
             {t('week.bottlesSub')}
           </Txt>
@@ -247,7 +247,7 @@ export default function Week() {
       {/* ---------------------------------------------------------- the tray */}
       <Section i={2}>
         <SectionTitle>{t('week.tray')}</SectionTitle>
-        <Card inner={{ padding: 16, alignItems: 'center' }}>
+        <Card weight="quiet" inner={{ padding: 16, alignItems: 'center' }}>
           <Txt v="small" dim style={{ alignSelf: 'flex-start', marginBottom: 6 }}>
             {t('week.traySub')}
           </Txt>
@@ -348,7 +348,7 @@ export default function Week() {
       {/* ---------------------------------------------------------- regret */}
       <Section i={4}>
         <SectionTitle>{t('week.regret')}</SectionTitle>
-        <Card inner={{ padding: 16, gap: 12 }}>
+        <Card weight="quiet" inner={{ padding: 16, gap: 12 }}>
           {rs.answered === 0 ? (
             <Txt v="body" dim>
               {t('week.regretEmpty')}
