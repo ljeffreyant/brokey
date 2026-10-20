@@ -4,6 +4,7 @@ import {
   computeOverview,
   formatMoney,
   formatUnits,
+  displayUnit,
   friendlyNumber,
   unitLabel,
   unitsNumber,
@@ -18,7 +19,7 @@ export function useFmt() {
   return useMemo(() => {
     const f = moneyFmt(settings);
     const fs = moneyFmt(settings, true);
-    const unit = settings.unit;
+    const unit = displayUnit(settings.unit, settings.hourlyCents, settings.unitMode);
     const lang = settings.language;
     return {
       unit,
@@ -30,6 +31,9 @@ export function useFmt() {
       hsp: (cents: number) => formatUnits(cents, unit, lang),
       hspNum: (cents: number) => unitsNumber(cents, unit, lang),
       hspLabel: (cents: number) => unitLabel(cents, unit),
+      /** the short unit tag next to a big number: "HSP" in HSP mode, nothing in work mode ("35m" says it already) */
+      unitTag: (_cents: number) => (unit.id === 'work' ? '' : unit.singular),
+      workMode: unit.id === 'work',
       work: (cents: number): string | null => {
         const h = settings.hourlyCents;
         if (!h || h <= 0) return null;

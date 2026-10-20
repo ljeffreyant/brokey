@@ -23,8 +23,8 @@ export function RoastPicker({ value, onChange }: { value: RoastLevel; onChange: 
   const [gate, setGate] = useState(false);
 
   const samples = useMemo(
-    () => Object.fromEntries(LEVELS.map((l) => [l, sampleRoast(l, false, settings.unit, settings.language, f.fmt)])) as Record<RoastLevel, string>,
-    [settings.unit, settings.language, f.fmt],
+    () => Object.fromEntries(LEVELS.map((l) => [l, sampleRoast(l, false, f.unit, settings.language, f.fmt)])) as Record<RoastLevel, string>,
+    [f.unit, settings.language, f.fmt],
   );
 
   const pick = (l: RoastLevel) => {

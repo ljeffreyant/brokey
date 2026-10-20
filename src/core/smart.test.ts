@@ -75,3 +75,49 @@ describe('detectRecurring', () => {
     expect(r.map((x) => x.label)).toEqual(['Big', 'Small']);
   });
 });
+
+import { DEFAULT_UNIT, displayUnit, formatUnits, unitsNumber, unitLabel, workUnit } from './money';
+import { roastFor } from './roasts';
+
+describe('work mode', () => {
+  const unit = workUnit(2800); // $28 an hour
+  it('only switches on with an hourly rate', () => {
+    expect(displayUnit(DEFAULT_UNIT, 2800, 'work').id).toBe('work');
+    expect(displayUnit(DEFAULT_UNIT, null, 'work')).toBe(DEFAULT_UNIT);
+    expect(displayUnit(DEFAULT_UNIT, 2800, 'hsp')).toBe(DEFAULT_UNIT);
+    expect(displayUnit(DEFAULT_UNIT, 2800, undefined)).toBe(DEFAULT_UNIT);
+  });
+  it('shows minutes under an hour and hours above, with the unit inside the text', () => {
+    expect(formatUnits(650, unit)).toBe('14m');
+    expect(formatUnits(1400, unit)).toBe('30m');
+    expect(formatUnits(2800, unit)).toBe('1h');
+    expect(formatUnits(5880, unit)).toBe('2.1h');
+    expect(formatUnits(28000, unit)).toBe('10h');
+    expect(formatUnits(0, unit)).toBe('0m');
+    expect(formatUnits(1, unit)).toBe('1m');
+    expect(formatUnits(-1400, unit)).toBe('-30m');
+    expect(unitsNumber(650, unit)).toBe('14m');
+    expect(unitLabel(650, unit)).toBe('');
+  });
+  it('rounds 59.6 minutes up to an hour instead of saying 60m', () => {
+    expect(formatUnits(2780, unit)).toBe('1h');
+  });
+  it('speaks the language', () => {
+    expect(formatUnits(650, unit, 'zh')).toBe('14分钟');
+    expect(formatUnits(5880, unit, 'id')).toBe('2,1 jam');
+    expect(formatUnits(650, unit, 'es')).toBe('14 min');
+  });
+  it('leaves HSP formatting alone', () => {
+    expect(formatUnits(5400, DEFAULT_UNIT)).toBe('3 HSPs');
+  });
+  it('never uses the snack pack lines when prices are in time', () => {
+    for (let seed = 0; seed < 30; seed++) {
+      const line = roastFor({
+        category: 'coffee', amountCents: 9000, level: 'unhinged', bodyRoasts: false, unit, bigAtCents: 3600, hourlyCents: 2800,
+        countThisWeek: 1, overBudget: false, weeklyBudgetCents: 14000, method: 'tap', hour: 14, seed, lang: 'en',
+      });
+      expect(line).not.toMatch(/snack pack/i);
+      expect(line).not.toMatch(/\{[a-z]+\}/);
+    }
+  });
+});

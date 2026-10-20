@@ -69,6 +69,8 @@ export interface Settings {
   unit: UnitDef;
   /** after-tax hourly pay, used to show prices as hours of work */
   hourlyCents: number | null;
+  /** show prices in HSPs, or as hours of work (needs hourlyCents) */
+  unitMode: 'hsp' | 'work';
   roastLevel: RoastLevel;
   bodyRoasts: boolean;
   weekStartsOn: number;

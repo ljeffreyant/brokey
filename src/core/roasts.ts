@@ -16,6 +16,8 @@ export interface RoastCtx {
   bodyRoasts: boolean;
   unit: UnitDef;
   hourlyCents: number | null;
+  /** the amount from which a buy counts as big (defaults to two units) */
+  bigAtCents?: number;
   /** purchases in this category this week, counting this one */
   countThisWeek: number;
   /** after this purchase, is the week's budget blown? */
@@ -99,7 +101,7 @@ export function roastKind(ctx: RoastCtx): RoastKind {
   if (set === 'groceries' && !ctx.overBudget) return 'praise';
   if (set === 'health' && !ctx.overBudget) return 'praise';
   if (ctx.overBudget) return 'over';
-  if (ctx.amountCents >= ctx.unit.priceCents * 2) return 'big';
+  if (ctx.amountCents >= (ctx.bigAtCents ?? ctx.unit.priceCents * 2)) return 'big';
   if (ctx.countThisWeek >= 3 && set !== 'subscription' && set !== 'uni') return 'repeat';
   if (ctx.hour >= 23 || ctx.hour < 5) return 'late';
   if (BODY_ROASTS_AVAILABLE && ctx.level === 'unhinged' && ctx.bodyRoasts && banks(ctx.lang).BODY[set]) return 'body';
@@ -113,6 +115,9 @@ export const REPEATISH: Record<LangId, RegExp> = {
   id: /\b(lagi-lagi|lagi|terus|kambuh|sekali lagi|seperti biasa|langganan)\b/i,
   es: /\b(otra vez|de nuevo|nuevamente|como siempre|vuelves|otra ronda|de siempre|habitual)\b/i,
 };
+
+/** Lines that only make sense when prices are in HSPs ("{units} of actual snack packs"). */
+const HSP_ONLY = /snack\s*pack|HSP/i;
 
 /** First buy of its kind this week: drop lines that talk as if there was a last time (never leaves the bank empty). */
 function forFirstBuy(bank: string[], lang: LangId): string[] {
@@ -147,6 +152,10 @@ export function roastFor(ctx: RoastCtx): string {
   if (ctx.melbourne && kind !== 'body') {
     const key = kind === 'over' ? 'OVER' : kind === 'big' ? 'BIG' : kind === 'repeat' ? 'REPEAT' : kind === 'late' ? 'LATE' : set;
     bank = [...bank, ...melbLines(ctx.lang ?? 'en', key, ctx.level)];
+  }
+  if (ctx.unit.id === 'work') {
+    const rest = bank.filter((l) => !HSP_ONLY.test(l));
+    if (rest.length > 0) bank = rest;
   }
   if (kind !== 'repeat' && ctx.countThisWeek <= 1) bank = forFirstBuy(bank, ctx.lang ?? 'en');
   // fill first, then pick, so "recent" (which holds finished lines) can be compared properly

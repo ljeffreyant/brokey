@@ -112,9 +112,11 @@ export default function Home() {
             <Txt v="hero" color={wc.text} adjustsFontSizeToFit numberOfLines={1}>
               {f.hspNum(budget.remainingCents <= 0 ? budget.remainingCents : safe)}
             </Txt>
-            <Txt v="title" color={wc.text}>
-              {f.unit.singular}
-            </Txt>
+            {f.unitTag(0) ? (
+              <Txt v="title" color={wc.text}>
+                {f.unitTag(0)}
+              </Txt>
+            ) : null}
           </View>
           <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
             <View style={{ backgroundColor: p.ink, borderRadius: 999, paddingHorizontal: 12, height: 30, justifyContent: 'center' }}>

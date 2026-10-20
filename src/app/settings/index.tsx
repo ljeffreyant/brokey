@@ -59,7 +59,7 @@ export default function Settings() {
         <Row title={t('settings.wallets')} sub={t.n('settings.wallets.sub', live)} glyph="wallet" tint={p.groups.chips.bg} onPress={() => go('/settings/wallets')} />
         <Row
           title={t('settings.money')}
-          sub={t('settings.money.sub', { cur: currencyDef(settings.currency).code, unit: settings.unit.singular, price: f.money(settings.unit.priceCents) })}
+          sub={t('settings.money.sub', { cur: currencyDef(settings.currency).code, unit: f.unit.singular, price: f.money(f.unit.priceCents) })}
           glyph="coins"
           tint={p.groups.meat.bg}
           onPress={() => go('/settings/money')}

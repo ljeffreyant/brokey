@@ -116,7 +116,7 @@ export default function Log() {
   const stickerDefs = useMemo(() => allStickers(), []);
   const shown = formatTyped(amount, settings.language);
   const sym = currencyDef(settings.currency).symbol;
-  const workLine = cents > 0 ? f.work(cents) : null;
+  const workLine = cents > 0 && !f.workMode ? f.work(cents) : null;
 
   return (
     <View style={{ flex: 1, backgroundColor: p.bg, paddingTop: ins.top }}>

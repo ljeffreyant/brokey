@@ -17,8 +17,8 @@ def purchase(i, hours_ago, cents, cat, merchant=None, method='tap', roast='', re
     if regret: p['regret'] = regret; p['regretTs'] = NOW
     return p
 
-def state(seed, theme, lang):
-    settings = dict(onboarded=True, startedTs=NOW - 20 * D, unit=dict(id='hsp', singular='HSP', plural='HSPs', priceCents=1800), hourlyCents=2800,
+def state(seed, theme, lang, mode='hsp'):
+    settings = dict(onboarded=True, startedTs=NOW - 20 * D, unit=dict(id='hsp', singular='HSP', plural='HSPs', priceCents=1800), hourlyCents=2800, unitMode=mode,
                     roastLevel='medium', bodyRoasts=False, weekStartsOn=1, goalName='', language=lang, currency='AUD', showCents=False,
                     roundSummaries=False, theme=theme, activeWalletId='main', notifyWish=True, notifyWeekly=False, adultConfirmed=False)
     wallet = dict(id='main', name='Main', icon='hsp', color='#FFD23F', income=[], recurring=[], savingsWeeklyCents=0, budgetMode='manual', manualWeeklyCents=15000, createdTs=NOW - 20 * D)
@@ -53,13 +53,13 @@ def main():
     ap.add_argument('--w', type=int, default=390); ap.add_argument('--h', type=int, default=844)
     ap.add_argument('--click', action='append', default=[]); ap.add_argument('--wait', type=int, default=1800)
     ap.add_argument('--full', action='store_true'); ap.add_argument('--scale', type=float, default=2)
-    ap.add_argument('--port', type=int, default=8099); ap.add_argument('--scroll', type=int, default=0)
+    ap.add_argument('--port', type=int, default=8099); ap.add_argument('--scroll', type=int, default=0); ap.add_argument('--mode', default='hsp')
     a = ap.parse_args()
     with sync_playwright() as pw:
         b = pw.chromium.launch(executable_path='/opt/pw-browsers/chromium', args=['--no-sandbox'])
         ctx = b.new_context(viewport=dict(width=a.w, height=a.h), device_scale_factor=a.scale, is_mobile=True, has_touch=True)
         if a.seed != 'fresh':
-            ctx.add_init_script(f"if(!localStorage.getItem('__seeded')){{localStorage.setItem('brokey-v1', {json.dumps(json.dumps(state(a.seed, a.theme, a.lang)))});localStorage.setItem('__seeded','1');}}")
+            ctx.add_init_script(f"if(!localStorage.getItem('__seeded')){{localStorage.setItem('brokey-v1', {json.dumps(json.dumps(state(a.seed, a.theme, a.lang, a.mode)))});localStorage.setItem('__seeded','1');}}")
         page = ctx.new_page()
         logs = []
         page.on('console', lambda m: logs.append(f'{m.type}: {m.text}') if m.type in ('error', 'warning') else None)

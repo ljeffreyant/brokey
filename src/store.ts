@@ -27,6 +27,7 @@ import {
   uid,
   unitForCurrency,
   unlockedStickerIds,
+  displayUnit,
 } from './core';
 import { cancelNotification, scheduleWishUnlock } from './notify';
 
@@ -35,6 +36,7 @@ export const defaultSettings = (): Settings => ({
   startedTs: Date.now(),
   unit: DEFAULT_UNIT,
   hourlyCents: null,
+  unitMode: 'hsp',
   roastLevel: 'medium',
   bodyRoasts: false,
   weekStartsOn: 1,
@@ -260,7 +262,8 @@ export const useStore = create<State>()(
           amountCents: input.amountCents,
           level: st.settings.roastLevel,
           bodyRoasts: st.settings.bodyRoasts,
-          unit: st.settings.unit,
+          unit: displayUnit(st.settings.unit, st.settings.hourlyCents, st.settings.unitMode),
+          bigAtCents: st.settings.unit.priceCents * 2,
           hourlyCents: st.settings.hourlyCents,
           countThisWeek,
           overBudget: after.overBudget,

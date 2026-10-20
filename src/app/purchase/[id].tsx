@@ -59,7 +59,7 @@ export default function PurchaseDetail() {
   const g = p.groups[meta.group];
   const wallet = wallets.find((w) => w.id === purchase.walletId);
   const title = purchase.merchant || catLabel(t, meta);
-  const work = f.work(purchase.amountCents);
+  const work = f.workMode ? null : f.work(purchase.amountCents);
   const answer = purchase.regret;
   const mood: Mood = answer === 'nah' ? 'sad' : answer === 'worth' ? 'happy' : 'sideeye';
 

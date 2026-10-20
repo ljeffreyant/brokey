@@ -124,7 +124,7 @@ export default function Want() {
         {cents > 0 ? (
           <Txt v="small" dim align="right" style={{ marginTop: -8 }}>
             = {f.hsp(cents)}
-            {f.work(cents) ? ` · ${f.work(cents)}` : ''}
+            {!f.workMode && f.work(cents) ? ` · ${f.work(cents)}` : ''}
           </Txt>
         ) : null}
 

@@ -72,6 +72,7 @@ const settings = (over: Partial<Combined> = {}): Combined => ({
   manualWeeklyCents: 14000,
   unit: DEFAULT_UNIT,
   hourlyCents: null,
+  unitMode: 'hsp',
   roastLevel: 'medium',
   bodyRoasts: false,
   weekStartsOn: 1,

@@ -185,7 +185,7 @@ export function EatScene({ input, onDone, onUndo }: { input: EatInput; onDone: (
         <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: 0, right: 0, top: top - 52, alignItems: 'center' }, chipStyle]}>
           <View style={{ backgroundColor: p.ink, paddingHorizontal: 18, paddingVertical: 8, borderRadius: 22, flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
             <Txt v="title" color="#FFF6E6">
-              -{f.hspNum(cost)} {f.unit.singular}
+              -{f.hspNum(cost)}{f.unitTag(cost) ? ` ${f.unitTag(cost)}` : ''}
             </Txt>
             <Txt v="small" color="#E5C3A6" style={{ fontFamily: 'DMSans_700Bold' }}>
               {f.money(cost)}
@@ -234,7 +234,7 @@ export function EatScene({ input, onDone, onUndo }: { input: EatInput; onDone: (
             field={wAfter.field}
             mood={input.after.mood}
             friesLeft={input.after.friesLeft}
-            amountLabel={`-${f.hspNum(cost)} ${f.unit.singular}`}
+            amountLabel={`-${f.hspNum(cost)}${f.unitTag(cost) ? ` ${f.unitTag(cost)}` : ''}`}
             moneyLabel={f.money(cost)}
             roast={input.roast}
           />

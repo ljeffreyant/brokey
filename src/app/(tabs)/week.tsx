@@ -163,7 +163,7 @@ export default function Week() {
                   {f.hspNum(total)}
                 </Txt>
                 <Txt v="title" size={22} color={wc.text}>
-                  {f.unit.plural}
+                  {f.hspLabel(total)}
                 </Txt>
               </View>
               <Txt v="small" color={wc.textDim} style={{ fontFamily: 'DMSans_700Bold' }}>
@@ -271,7 +271,7 @@ export default function Week() {
                   {f.hspNum(total)}
                 </Txt>
                 <Txt v="small" dim style={{ fontSize: 10.5, lineHeight: 12 }}>
-                  {f.unit.plural}
+                  {f.hspLabel(total)}
                 </Txt>
               </>
             )}

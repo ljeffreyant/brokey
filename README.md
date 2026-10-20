@@ -80,4 +80,5 @@ Web limits: no haptics, no reminder notifications, data stays in that browser. L
 - **Face ID lock** uses `expo-local-authentication`. Expo Go cannot show Face ID (it falls back to the phone passcode), so test the real prompt in a development build.
 - **Melbourne jokes** (`src/core/roasts-melb.ts`) are mixed into roasts only when the wallet currency is AUD.
 - **Icons**: only the ten `HERO_ICONS` (`src/art/icons/index.ts`) keep a face, each with its own hand-set expression. Everything else is a plain object.
+- **Work mode** (Settings > Money and units > Show prices as) swaps HSPs for time worked, using the hourly pay you enter. `displayUnit()` in `src/core/money.ts` decides which unit the UI shows. Exports and the HSP receipt always stay in HSPs, and roast lines that mention snack packs are skipped while it is on.
 - **Heads-ups** (pace warning, repeating charges) are local notifications rescheduled whenever your data changes. iOS is asked for permission the first time you lock a want.

@@ -45,6 +45,19 @@ export const UNIT_PRESETS: UnitDef[] = [
 
 export const DEFAULT_UNIT: UnitDef = UNIT_PRESETS[0];
 
+/** What prices are shown in: HSPs, or the time you had to work for them. */
+export type UnitMode = 'hsp' | 'work';
+
+/** "Work mode": one unit is one hour of your after-tax pay. */
+export function workUnit(hourlyCents: number): UnitDef {
+  return { id: 'work', singular: 'hour of work', plural: 'hours of work', priceCents: hourlyCents };
+}
+
+/** The unit to show prices in. Work mode needs an hourly rate; without one it quietly stays on the normal unit. */
+export function displayUnit(unit: UnitDef, hourlyCents: number | null | undefined, mode: UnitMode | undefined): UnitDef {
+  return mode === 'work' && hourlyCents && hourlyCents > 0 ? workUnit(hourlyCents) : unit;
+}
+
 /** A unit's price scaled for a currency (HSP is 18 AUD, so ~75,000 IDR). */
 export function unitForCurrency(unit: UnitDef, code: CurrencyCode): UnitDef {
   if (unit.id !== 'hsp') return unit;
@@ -114,7 +127,29 @@ export function friendlyNumber(v: number, locale: LangId = 'en'): string {
   return seps(locale).decimal === ',' ? out.replace('.', ',') : out;
 }
 
+const WORK_SUFFIX: Record<LangId, { h: string; m: string }> = {
+  en: { h: 'h', m: 'm' },
+  zh: { h: '小时', m: '分钟' },
+  id: { h: ' jam', m: ' mnt' },
+  es: { h: ' h', m: ' min' },
+};
+
+/** Time worked as one short string: "35m", "2.1h". The unit is inside the text, so there is no separate label. */
+function workText(cents: number, unit: UnitDef, locale: LangId): string {
+  const h = unitsOf(cents, unit);
+  const sfx = WORK_SUFFIX[locale] ?? WORK_SUFFIX.en;
+  const sign = h < 0 ? '-' : '';
+  const a = Math.abs(h);
+  if (a < 1) {
+    let m = Math.round(a * 60);
+    if (m === 0 && cents !== 0) m = 1;
+    if (m < 60) return `${m === 0 ? '' : sign}${m}${sfx.m}`;
+  }
+  return `${sign}${friendlyNumber(a, locale)}${sfx.h}`;
+}
+
 export function formatUnits(cents: number, unit: UnitDef, locale: LangId = 'en'): string {
+  if (unit.id === 'work') return workText(cents, unit, locale);
   const v = unitsOf(cents, unit);
   const n = friendlyNumber(v, locale);
   const one = Math.abs(parseFloat(n.replace(',', '.'))) === 1;
@@ -123,10 +158,12 @@ export function formatUnits(cents: number, unit: UnitDef, locale: LangId = 'en')
 
 /** Just the number part, for big display. */
 export function unitsNumber(cents: number, unit: UnitDef, locale: LangId = 'en'): string {
+  if (unit.id === 'work') return workText(cents, unit, locale);
   return friendlyNumber(unitsOf(cents, unit), locale);
 }
 
 export function unitLabel(cents: number, unit: UnitDef): string {
+  if (unit.id === 'work') return '';
   const n = friendlyNumber(unitsOf(cents, unit));
   return Math.abs(parseFloat(n)) === 1 ? unit.singular : unit.plural;
 }
