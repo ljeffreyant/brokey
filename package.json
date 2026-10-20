@@ -15,7 +15,8 @@
     "export:web": "expo export --platform web",
     "preflight": "tsx scripts/preflight.ts",
     "icons": "tsx scripts/render-icons.ts",
-    "site": "tsx scripts/build-site.ts"
+    "site": "tsx scripts/build-site.ts",
+    "build:web": "expo export --platform web && node scripts/web-postbuild.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/bricolage-grotesque": "^0.4.1",

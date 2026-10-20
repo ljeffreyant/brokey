@@ -20,6 +20,13 @@ npm run preflight       # App Store checks (fails until you fill in src/config.t
 
 Web preview for quick looks: `npx expo export --platform web`, then `python3 scripts/serve.py 8099`.
 
+## Share it as a web link (no app, no laptop for your friend)
+
+Pushing to `main` builds the web version and publishes it with GitHub Pages (`.github/workflows/pages.yml`).
+One-time setup: repo **Settings > Pages > Build and deployment > Source: GitHub Actions**.
+The link is `https://<your-github-username>.github.io/brokey/`. On an iPhone: open it in Safari, tap Share, then **Add to Home Screen**, and it runs full screen like an app.
+Web limits: no haptics, no reminder notifications, data stays in that browser. Local build: `npm run build:web`.
+
 ## What is in it
 
 | Feature | Where |
