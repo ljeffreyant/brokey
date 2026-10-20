@@ -16,6 +16,32 @@ export function initNotifications(): void {
   }
 }
 
+/** The only screens a notification is allowed to open. */
+const TAP_ROUTES = new Set(['/log', '/(tabs)/cooling', '/(tabs)/week']);
+
+/**
+ * Opens the right screen when the person taps one of our notifications, whether the app was closed (cold start)
+ * or already running. Returns the cleanup. Pattern from the expo-notifications docs.
+ */
+export function observeNotificationTaps(go: (path: string) => void): () => void {
+  if (!native) return () => {};
+  const open = (n: Notifications.Notification) => {
+    const url = n.request.content.data?.url;
+    if (typeof url === 'string' && TAP_ROUTES.has(url)) {
+      go(url);
+      Notifications.clearLastNotificationResponse();
+    }
+  };
+  try {
+    const last = Notifications.getLastNotificationResponse();
+    if (last?.notification) open(last.notification);
+    const sub = Notifications.addNotificationResponseReceivedListener((r) => open(r.notification));
+    return () => sub.remove();
+  } catch {
+    return () => {};
+  }
+}
+
 export async function hasPermission(): Promise<boolean> {
   if (!native) return false;
   try {
@@ -58,6 +84,7 @@ export async function scheduleWishUnlock(args: { lang: LangId; what: string; amo
       content: {
         title: translate(args.lang, 'notif.wishTitle'),
         body: translate(args.lang, 'notif.wishBody', { what: args.what, amount: args.amount }),
+        data: { url: '/(tabs)/cooling' },
       },
       trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: new Date(args.unlockTs) },
     });
@@ -86,7 +113,7 @@ export async function setWeeklyRecap(on: boolean, lang: LangId): Promise<boolean
   try {
     await Notifications.scheduleNotificationAsync({
       identifier: WEEKLY_ID,
-      content: { title: translate(lang, 'notif.weeklyTitle'), body: translate(lang, 'notif.weeklyBody') },
+      content: { title: translate(lang, 'notif.weeklyTitle'), body: translate(lang, 'notif.weeklyBody'), data: { url: '/(tabs)/week' } },
       trigger: { type: Notifications.SchedulableTriggerInputTypes.WEEKLY, weekday: 1, hour: 18, minute: 30 },
     });
     return true;
@@ -134,6 +161,29 @@ export async function syncPaceAlert(args: { on: boolean; lang: LangId; runOutTs:
     });
   } catch {
     /* best effort */
+  }
+}
+
+const EVENING_PREFIX = 'brokey-evening-';
+
+/** "Anything to log from today?" on the next few evenings, minus days that already have something logged. */
+export async function syncEveningNudge(args: { on: boolean; lang: LangId; slots: number[]; now?: number }): Promise<void> {
+  if (!native) return;
+  await cancelPrefix(EVENING_PREFIX);
+  if (!args.on || args.slots.length === 0) return;
+  if (!(await hasPermission())) return;
+  const now = args.now ?? Date.now();
+  for (const at of args.slots.slice(0, 4)) {
+    if (at <= now + 60_000) continue;
+    try {
+      await Notifications.scheduleNotificationAsync({
+        identifier: EVENING_PREFIX + at,
+        content: { title: translate(args.lang, 'notif.eveningTitle'), body: translate(args.lang, 'notif.eveningBody'), data: { url: '/log' } },
+        trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: new Date(at) },
+      });
+    } catch {
+      /* best effort */
+    }
   }
 }
 

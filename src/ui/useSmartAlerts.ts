@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
-import { computeOverview, detectRecurring, forecastRunOut, formatMoney } from '../core';
-import { syncPaceAlert, syncRecurringReminders } from '../notify';
+import { computeOverview, detectRecurring, eveningSlots, forecastRunOut, formatMoney } from '../core';
+import { syncEveningNudge, syncPaceAlert, syncRecurringReminders } from '../notify';
 import { moneyFmt, useStore } from '../store';
 
 /**
- * Keeps the two self-made heads-ups (pace warning, repeating charges) in step with the data.
+ * Keeps the self-made heads-ups (pace warning, repeating charges, evening log nudge) in step with the data.
  * Waits a beat after each change so a burst of logging only reschedules once.
  */
 export function useSmartAlerts(): void {
@@ -21,6 +21,7 @@ export function useSmartAlerts(): void {
       const mine = purchases.filter((p) => live.has(p.walletId));
       const fc = forecastRunOut(computeOverview(wallets, settings, purchases, now).total, now);
       syncPaceAlert({ on: settings.notifyPace, lang: settings.language, runOutTs: fc?.runOutTs ?? null, now });
+      syncEveningNudge({ on: settings.notifyEvening, lang: settings.language, slots: eveningSlots({ now, purchases: mine }), now });
       const fmt = moneyFmt(settings);
       syncRecurringReminders({
         on: settings.notifyRecurring,

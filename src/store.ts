@@ -54,9 +54,12 @@ export const defaultSettings = (): Settings => ({
   notifyWeekly: false,
   notifyPace: true,
   notifyRecurring: true,
+  notifyEvening: false,
   lockApp: false,
   lastBackupTs: null,
   adultConfirmed: false,
+  reviewAsks: 0,
+  lastReviewAskTs: null,
   sounds: true,
   haptics: true,
 });
@@ -115,6 +118,8 @@ interface State {
   hiddenCats: string[];
   recentRoasts: string[];
   seenStickers: string[];
+  /** repeat charges the person skipped this cycle: key -> the due time they skipped */
+  dueSkips: Record<string, number>;
   hydrated: boolean;
 
   completeOnboarding: (settings: Partial<Settings>, wallet: Partial<Wallet>) => void;
@@ -138,6 +143,7 @@ interface State {
   addWish: (label: string, amountCents: number, category: CategoryId, hours: number) => WishItem;
   decideWish: (id: string, outcome: 'bought' | 'ditched') => LogResult | null;
   markStickersSeen: (ids: string[]) => void;
+  skipDue: (key: string, nextTs: number) => void;
   resetAll: () => void;
   /** replace everything with a validated backup */
   restoreBackup: (data: BackupData) => void;
@@ -165,6 +171,7 @@ export const useStore = create<State>()(
       hiddenCats: [],
       recentRoasts: [],
       seenStickers: [],
+      dueSkips: {},
       hydrated: false,
 
       completeOnboarding: (settingsPatch, walletPatch) =>
@@ -345,6 +352,8 @@ export const useStore = create<State>()(
         });
       },
 
+      skipDue: (key, nextTs) => set((s) => ({ dueSkips: { ...s.dueSkips, [key]: nextTs } })),
+
       markStickersSeen: (ids) => set((s) => ({ seenStickers: Array.from(new Set([...s.seenStickers, ...ids])) })),
 
       restoreBackup: (data) => {
@@ -374,6 +383,7 @@ export const useStore = create<State>()(
           hiddenCats: [],
           recentRoasts: [],
           seenStickers: [],
+          dueSkips: {},
         });
       },
     }),
@@ -391,6 +401,7 @@ export const useStore = create<State>()(
         hiddenCats: s.hiddenCats,
         recentRoasts: s.recentRoasts,
         seenStickers: s.seenStickers,
+        dueSkips: s.dueSkips,
       }),
       // keep new settings keys filled in for people whose saved data predates them
       merge: (persisted, current) => {

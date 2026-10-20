@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
@@ -38,7 +38,7 @@ export default function Log() {
   const leave = useLeave();
   const ins = useSafeAreaInsets();
   const { width: W, height: H } = useWindowDimensions();
-  const params = useLocalSearchParams<{ amount?: string; merchant?: string; method?: string; cat?: string; wish?: string }>();
+  const params = useLocalSearchParams<{ amount?: string; merchant?: string; method?: string; cat?: string; wish?: string; wallet?: string; auto?: string }>();
   const settings = useStore((s) => s.settings);
   const wallets = useStore((s) => s.wallets);
   const purchases = useStore((s) => s.purchases);
@@ -64,6 +64,18 @@ export default function Log() {
   const [phase, setPhase] = useState<'what' | 'how'>(guessed && params.amount ? 'how' : 'what');
   const [eat, setEat] = useState<null | { res: LogResult; iconId: string }>(null);
   const [stickers, setStickers] = useState<string[]>([]);
+
+  // A repeat charge that is due: one tap on Home logs it and goes straight to the eating scene.
+  const autoDone = useRef(false);
+  useEffect(() => {
+    if (params.auto !== '1' || params.wish || autoDone.current) return;
+    const c = parseAmountToCents(params.amount ?? '') ?? 0;
+    if (!params.cat || c <= 0) return;
+    autoDone.current = true;
+    const wid = live.find((w) => w.id === params.wallet)?.id ?? startWallet;
+    const res = logPurchase({ amountCents: c, category: params.cat, merchant: params.merchant ?? '', method: 'card', ts: Date.now(), source: 'manual', walletId: wid });
+    setEat({ res, iconId: categoryMeta(params.cat).icon });
+  }, []);
 
   // A cooled-off wish the person still wants goes straight to the eating scene.
   useEffect(() => {

@@ -25,7 +25,7 @@ def state(seed, theme, lang, mode='hsp'):
     ps = []
     wishes = []
     shame = []
-    if seed in ('mid', 'broke', 'over', 'subs'):
+    if seed in ('mid', 'broke', 'over', 'subs', 'due'):
         ps = [
             purchase(1, 1.2, 650, 'coffee', 'Corner Cafe', 'tap', 'A flat white. Bold of you to call it a personality.'),
             purchase(2, 5, 1800, 'takeaway', 'Halal Bros', 'card', 'An actual HSP. Respect, and also: wow.', regret='worth'),
@@ -48,13 +48,15 @@ def state(seed, theme, lang, mode='hsp'):
     if seed == 'subs':
         ps += [purchase(10, 31 * 24 + 3, 1699, 'music', 'Tunebox', 'card'), purchase(11, 2, 1699, 'music', 'Tunebox', 'card'),
                purchase(12, 60 * 24, 5500, 'health', 'Fit Gym Co', 'card'), purchase(13, 30 * 24, 5500, 'health', 'Fit Gym Co', 'card'), purchase(14, 0.5 * 24, 5500, 'health', 'Fit Gym Co', 'card')]
+    if seed == 'due':
+        ps += [purchase(10, 60 * 24 + 2, 1699, 'music', 'Tunebox', 'card'), purchase(11, 30 * 24 + 5, 1699, 'music', 'Tunebox', 'card')]
     if seed == 'broke':
         ps.append(purchase(6, 2, 9000, 'tech', 'Gadget Hut', 'card', 'Tech. The spreadsheet is crying.'))
     if seed == 'over':
         ps.append(purchase(6, 2, 19000, 'tech', 'Gadget Hut', 'card', 'Tech.'))
-    if seed in ('mid', 'broke', 'subs'):
+    if seed in ('mid', 'broke', 'subs', 'due'):
         wishes = [dict(id='w1', walletId='main', label='Noise-cancelling headphones', amountCents=24900, category='headphones', createdTs=NOW - 10 * H, unlockTs=NOW + 38 * H, status='cooling')]
-    if seed in ('mid', 'broke', 'subs'):
+    if seed in ('mid', 'broke', 'subs', 'due'):
         shame = [dict(id='s1', ts=NOW - 3 * D, label='Air fryer', amountCents=12900, category='homewares', source='manual', story='Used it twice.')]
     return dict(state=dict(settings=settings, wallets=[wallet], purchases=ps, wishes=wishes, shame=shame, customCats=[], hiddenCats=[], recentRoasts=[], seenStickers=[]), version=1)
 
@@ -65,7 +67,7 @@ def main():
     ap.add_argument('--w', type=int, default=390); ap.add_argument('--h', type=int, default=844)
     ap.add_argument('--click', action='append', default=[]); ap.add_argument('--wait', type=int, default=1800)
     ap.add_argument('--full', action='store_true'); ap.add_argument('--scale', type=float, default=2)
-    ap.add_argument('--port', type=int, default=8099); ap.add_argument('--scroll', type=int, default=0); ap.add_argument('--mode', default='hsp')
+    ap.add_argument('--port', type=int, default=8099); ap.add_argument('--scroll', type=int, default=0); ap.add_argument('--mode', default='hsp'); ap.add_argument('--after', type=int, default=0)
     a = ap.parse_args()
     with sync_playwright() as pw:
         b = pw.chromium.launch(executable_path='/opt/pw-browsers/chromium', args=['--no-sandbox'])
@@ -81,6 +83,7 @@ def main():
         for c in a.click:
             page.get_by_text(c, exact=False).first.click()
             page.wait_for_timeout(700)
+        if a.after: page.wait_for_timeout(a.after)
         if a.scroll:
             page.evaluate("(y)=>{const els=[...document.querySelectorAll('*')].filter(e=>e.scrollHeight>e.clientHeight+40&&getComputedStyle(e).overflowY!=='visible'&&getComputedStyle(e).overflowY!=='hidden');const e=els.sort((x,y)=>y.scrollHeight-x.scrollHeight)[0];if(e)e.scrollTop=y;}", a.scroll)
             page.wait_for_timeout(900)

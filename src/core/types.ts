@@ -94,6 +94,8 @@ export interface Settings {
   notifyPace: boolean;
   /** heads-up the day before a repeating charge is due */
   notifyRecurring: boolean;
+  /** an evening "anything to log from today?" nudge, skipped on days that already have something logged */
+  notifyEvening: boolean;
   /** ask for Face ID (or the passcode) to open the app */
   lockApp: boolean;
   /** when the user last saved a backup file (ms), or null if never */
@@ -101,6 +103,9 @@ export interface Settings {
   /** user said they are 18+, needed for the unhinged roast level */
   adultConfirmed: boolean;
   /** little sound effects (they follow the silent switch) */
+  /** how many times we asked for an App Store rating, and when last */
+  reviewAsks: number;
+  lastReviewAskTs: number | null;
   sounds: boolean;
   /** haptic taps and buzzes */
   haptics: boolean;

@@ -8,6 +8,8 @@ export interface Recurring {
   key: string;
   label: string;
   category: CategoryId;
+  /** the wallet it was last logged in */
+  walletId: string;
   /** the usual amount (median) */
   amountCents: number;
   /** 7, 14 or 30 */
@@ -69,6 +71,7 @@ export function detectRecurring(purchases: Purchase[], now: number): Recurring[]
       key,
       label: (last.merchant ?? '').trim(),
       category: last.category,
+      walletId: last.walletId,
       amountCents: amt,
       everyDays: cadence.days,
       count: sorted.length,
@@ -79,4 +82,15 @@ export function detectRecurring(purchases: Purchase[], now: number): Recurring[]
     });
   }
   return out.sort((a, b) => b.yearlyCents - a.yearlyCents);
+}
+
+/**
+ * The repeat charges that should have landed by now and are not logged yet, so Home can offer a one-tap log.
+ * `skips` remembers the ones the person waved off (key -> the due time they skipped), so a skipped charge stays quiet
+ * until the next cycle. Anything long overdue is dropped: it was probably cancelled.
+ */
+export function dueRecurring(items: Recurring[], skips: Record<string, number>, now: number): Recurring[] {
+  return items
+    .filter((r) => now >= r.nextTs - DAY / 2 && now - r.nextTs <= r.everyDays * DAY * 0.6 && skips[r.key] !== r.nextTs)
+    .sort((a, b) => a.nextTs - b.nextTs);
 }

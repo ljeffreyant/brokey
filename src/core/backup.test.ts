@@ -6,7 +6,7 @@ import type { Purchase, Settings, Wallet } from './types';
 const base: Settings = {
   onboarded: true, startedTs: 1, unit: DEFAULT_UNIT, hourlyCents: null, unitMode: 'hsp', shiftHours: 6, roastLevel: 'medium', bodyRoasts: false, weekStartsOn: 1, goalName: '',
   language: 'en', currency: 'AUD', showCents: false, roundSummaries: false, theme: 'system', activeWalletId: 'main', notifyWish: true, notifyWeekly: false,
-  notifyPace: true, notifyRecurring: true, lockApp: false, lastBackupTs: null, adultConfirmed: false, sounds: true, haptics: true,
+  notifyPace: true, notifyRecurring: true, notifyEvening: false, lockApp: false, lastBackupTs: null, adultConfirmed: false, reviewAsks: 0, lastReviewAskTs: null, sounds: true, haptics: true,
 };
 const wallet: Wallet = { id: 'main', name: 'Main', icon: 'hsp', color: '#FFD23F', income: [], recurring: [], savingsWeeklyCents: 0, budgetMode: 'manual', manualWeeklyCents: 15000, createdTs: 1 };
 const buy = (id: string, over: Partial<Purchase> = {}): Purchase => ({ id, walletId: 'main', ts: 1_000 + Number(id.replace(/\D/g, '')), amountCents: 650, category: 'coffee', method: 'tap', roast: 'Coffee again.', source: 'manual', ...over });

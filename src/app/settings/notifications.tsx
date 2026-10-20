@@ -36,7 +36,7 @@ export default function NotificationSettings() {
     update({ notifyWeekly: on });
   };
 
-  const setFlag = async (key: 'notifyPace' | 'notifyRecurring', on: boolean) => {
+  const setFlag = async (key: 'notifyPace' | 'notifyRecurring' | 'notifyEvening', on: boolean) => {
     if (on && !(await ensurePermission())) {
       setBlocked(true);
       return;
@@ -52,6 +52,7 @@ export default function NotificationSettings() {
         <Row title={t('notifs.weekly')} sub={t('notifs.weeklySub')} glyph="chart" right={<Toggle value={settings.notifyWeekly} onChange={setWeekly} label={t('notifs.weekly')} />} />
         <Row title={t('notifs.pace')} sub={t('notifs.paceSub')} glyph="chart" right={<Toggle value={settings.notifyPace} onChange={(v) => setFlag('notifyPace', v)} label={t('notifs.pace')} />} />
         <Row title={t('notifs.recurring')} sub={t('notifs.recurringSub')} glyph="coins" right={<Toggle value={settings.notifyRecurring} onChange={(v) => setFlag('notifyRecurring', v)} label={t('notifs.recurring')} />} />
+        <Row title={t('notifs.evening')} sub={t('notifs.eveningSub')} glyph="moon" right={<Toggle value={settings.notifyEvening} onChange={(v) => setFlag('notifyEvening', v)} label={t('notifs.evening')} />} />
       </Card>
       {blocked ? (
         <Card weight="quiet" fill="#FFE3DD" inner={{ gap: 10 }}>

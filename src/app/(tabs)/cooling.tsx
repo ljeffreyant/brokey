@@ -15,6 +15,7 @@ import { Txt } from '../../ui/Txt';
 import { Btn, Card, Group, RoundBtn } from '../../ui/kit';
 import { haptic } from '../../ui/haptics';
 import { formatDate, useFmt, useNow } from '../../ui/useFmt';
+import { maybeAskForReview } from '../../ui/review';
 
 function WishCard({ w, now, onDitch, onBuy }: { w: WishItem; now: number; onDitch: () => void; onBuy: () => void }) {
   const p = useTheme();
@@ -176,7 +177,11 @@ export default function Cooling() {
         title={t('cool.partyTitle')}
         body={t('cool.partyBody', { amount: party ? f.money(party.cents) : '' })}
         cta={t('cool.partyCta')}
-        onClose={() => setParty(null)}
+        onClose={() => {
+          setParty(null);
+          // a good moment: you just talked yourself out of a buy
+          setTimeout(() => maybeAskForReview(), 900);
+        }}
       />
     </ScrollView>
   );

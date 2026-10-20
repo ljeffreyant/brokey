@@ -13,7 +13,7 @@ import { useStore } from '../store';
 import { ThemeProvider, useTheme } from '../theme';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth, startAutoSync } from '../auth/store';
-import { initNotifications } from '../notify';
+import { initNotifications, observeNotificationTaps } from '../notify';
 import { CrashScreen } from '../ui/CrashScreen';
 import { LockGate } from '../ui/LockGate';
 import { useSmartAlerts } from '../ui/useSmartAlerts';
@@ -29,6 +29,12 @@ function Shell() {
   useEffect(() => {
     if (!onboarded && path !== '/onboarding') router.replace('/onboarding');
   }, [onboarded, path]);
+
+  // Tapping one of our notifications opens the matching screen (log, Chill, Week).
+  useEffect(() => {
+    if (!onboarded) return;
+    return observeNotificationTaps((to) => router.push(to as never));
+  }, [onboarded]);
 
   return (
     <View style={{ flex: 1, backgroundColor: p.bg }}>

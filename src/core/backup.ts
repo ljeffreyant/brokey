@@ -84,12 +84,14 @@ function cleanSettings(raw: unknown, base: Settings, walletIds: string[]): Setti
   const bool = <K extends keyof Settings>(k: K) => {
     if (typeof r[k] === 'boolean') (s as unknown as Record<string, unknown>)[k] = r[k];
   };
-  (['onboarded', 'bodyRoasts', 'showCents', 'roundSummaries', 'notifyWish', 'notifyWeekly', 'notifyPace', 'notifyRecurring', 'adultConfirmed', 'sounds', 'haptics'] as const).forEach(bool);
+  (['onboarded', 'bodyRoasts', 'showCents', 'roundSummaries', 'notifyWish', 'notifyWeekly', 'notifyPace', 'notifyRecurring', 'notifyEvening', 'adultConfirmed', 'sounds', 'haptics'] as const).forEach(bool);
   if (isNum(r.startedTs)) s.startedTs = r.startedTs;
   s.unit = cleanUnit(r.unit, base.unit);
   s.hourlyCents = isNum(r.hourlyCents) && r.hourlyCents > 0 ? Math.round(r.hourlyCents) : null;
   s.unitMode = s.hourlyCents && (r.unitMode === 'work' || r.unitMode === 'shift') ? r.unitMode : 'hsp';
   s.shiftHours = cleanShiftHours(r.shiftHours);
+  s.reviewAsks = isNum(r.reviewAsks) && r.reviewAsks >= 0 ? Math.min(99, Math.round(r.reviewAsks)) : 0;
+  s.lastReviewAskTs = isNum(r.lastReviewAskTs) ? r.lastReviewAskTs : null;
   if (isStr(r.roastLevel) && LEVELS.includes(r.roastLevel)) s.roastLevel = r.roastLevel as Settings['roastLevel'];
   if (isNum(r.weekStartsOn) && r.weekStartsOn >= 0 && r.weekStartsOn <= 6) s.weekStartsOn = Math.round(r.weekStartsOn);
   if (isStr(r.goalName)) s.goalName = r.goalName.slice(0, 80);

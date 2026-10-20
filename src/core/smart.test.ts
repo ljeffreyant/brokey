@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { forecastRunOut } from './forecast';
-import { detectRecurring } from './recurring';
+import { eveningSlots } from './nudge';
+import { detectRecurring, dueRecurring } from './recurring';
 import type { Purchase } from './types';
 
 const DAY = 86400000;
@@ -79,6 +80,7 @@ describe('detectRecurring', () => {
 import { DEFAULT_UNIT, cleanShiftHours, displayUnit, formatUnits, isTimeUnit, nextUnitMode, shiftUnit, unitsNumber, unitLabel, workUnit } from './money';
 import { roastFor } from './roasts';
 import { SFX_NAMES, afterBuyCue, regretCue } from './cues';
+import { REVIEW_GAP_DAYS, REVIEW_MAX_ASKS, shouldAskForReview } from './review';
 
 describe('work mode', () => {
   const unit = workUnit(2800); // $28 an hour
@@ -204,5 +206,74 @@ describe('sound cues', () => {
   it('has a file for every cue', () => {
     expect(new Set(SFX_NAMES).size).toBe(SFX_NAMES.length);
     for (const n of SFX_NAMES) expect(require('node:fs').existsSync(`assets/sfx/${n}.wav`), n).toBe(true);
+  });
+});
+
+describe('rating prompt', () => {
+  const day = 86_400_000;
+  const base = { now: 100 * day, startedTs: 80 * day, purchaseCount: 12, asks: 0, lastAskTs: null as number | null };
+  it('asks someone who has really used the app', () => {
+    expect(shouldAskForReview(base)).toBe(true);
+  });
+  it('waits for a few days and a few buys', () => {
+    expect(shouldAskForReview({ ...base, startedTs: 98 * day })).toBe(false);
+    expect(shouldAskForReview({ ...base, purchaseCount: 3 })).toBe(false);
+  });
+  it('never nags: spaced out and capped', () => {
+    expect(shouldAskForReview({ ...base, asks: 1, lastAskTs: base.now - 10 * day })).toBe(false);
+    expect(shouldAskForReview({ ...base, asks: 1, lastAskTs: base.now - (REVIEW_GAP_DAYS + 1) * day })).toBe(true);
+    expect(shouldAskForReview({ ...base, asks: REVIEW_MAX_ASKS, lastAskTs: base.now - 400 * day })).toBe(false);
+  });
+});
+
+describe('dueRecurring', () => {
+  const base = monday + 60 * DAY;
+  const items = (daysSinceLast: number) => detectRecurring([buy('Streamflix', daysSinceLast + 30, 1699, 'subscription', base), buy('Streamflix', daysSinceLast, 1699, 'subscription', base)], base);
+
+  it('stays quiet until the charge is about due', () => {
+    expect(dueRecurring(items(20), {}, base)).toHaveLength(0);
+  });
+  it('offers a charge that is due today, or a little overdue', () => {
+    expect(dueRecurring(items(30), {}, base)).toHaveLength(1);
+    expect(dueRecurring(items(29.6), {}, base)).toHaveLength(1);
+    expect(dueRecurring(items(34), {}, base)).toHaveLength(1);
+  });
+  it('drops a charge that is long overdue, it was probably cancelled', () => {
+    expect(dueRecurring(items(50), {}, base)).toHaveLength(0);
+  });
+  it('stays quiet for a skipped cycle, then comes back for the next one', () => {
+    const due = dueRecurring(items(30), {}, base)[0];
+    expect(dueRecurring(items(30), { [due.key]: due.nextTs }, base)).toHaveLength(0);
+    const later = base + 30 * DAY;
+    const next = detectRecurring([buy('Streamflix', 60, 1699, 'subscription', later), buy('Streamflix', 30, 1699, 'subscription', later), buy('Streamflix', 0, 1699, 'subscription', later)], later);
+    expect(next).toHaveLength(1);
+    expect(dueRecurring(next, { [due.key]: due.nextTs }, later + 30 * DAY - 1000)).toHaveLength(1);
+  });
+});
+
+describe('eveningSlots', () => {
+  // 15 Oct 2026, 3pm local
+  const at = (d: number, h: number) => new Date(2026, 9, d, h, 0, 0, 0).getTime();
+  const logAt = (ts: number) => ({ ts });
+
+  it('picks the next three evenings at 8pm', () => {
+    const s = eveningSlots({ now: at(15, 15), purchases: [] });
+    expect(s).toEqual([at(15, 20), at(16, 20), at(17, 20)]);
+  });
+  it('skips tonight once something is logged today', () => {
+    const s = eveningSlots({ now: at(15, 15), purchases: [logAt(at(15, 9))] });
+    expect(s).toEqual([at(16, 20), at(17, 20), at(18, 20)]);
+  });
+  it('starts tomorrow when tonight has already passed', () => {
+    const s = eveningSlots({ now: at(15, 21), purchases: [] });
+    expect(s[0]).toBe(at(16, 20));
+    expect(s).toHaveLength(3);
+  });
+  it('only looks at today when skipping, other days are still nudged', () => {
+    const s = eveningSlots({ now: at(15, 15), purchases: [logAt(at(12, 10)), logAt(at(14, 18))] });
+    expect(s[0]).toBe(at(15, 20));
+  });
+  it('can be set to another hour', () => {
+    expect(eveningSlots({ now: at(15, 15), purchases: [], hour: 21 })[0]).toBe(at(15, 21));
   });
 });

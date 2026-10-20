@@ -3,7 +3,7 @@ import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown, FadeOutLeft, LinearTransition } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FRIES_TOTAL, Purchase, WishItem, categoryMeta, forecastRunOut, nextUnitMode, regretCue, regretQueue, startOfDay, wishPhase } from '../../core';
+import { FRIES_TOTAL, Purchase, WishItem, categoryMeta, forecastRunOut, detectRecurring, dueRecurring, nextUnitMode, regretCue, regretQueue, startOfDay, wishPhase } from '../../core';
 import { catLabel, useT } from '../../i18n';
 import { useStore } from '../../store';
 import { Glyph } from '../../ui/Glyph';
@@ -37,6 +37,8 @@ export default function Home() {
   const unitMode = useStore((s) => s.settings.unitMode);
   const hourlyCents = useStore((s) => s.settings.hourlyCents);
   const updateSettings = useStore((s) => s.updateSettings);
+  const dueSkips = useStore((s) => s.dueSkips);
+  const skipDue = useStore((s) => s.skipDue);
   const [quipN, setQuipN] = useState(0);
   const [poke, setPoke] = useState(0);
   const [heroH, setHeroH] = useState(520);
@@ -70,6 +72,7 @@ export default function Home() {
         ? t(`forecast.tomorrow.${roastLevel}` as never)
         : t(`forecast.${roastLevel}` as never, { day: formatDayName(forecast.runOutTs, f.lang) })
     : null;
+  const dueCharge = useMemo(() => dueRecurring(detectRecurring(purchases, now), dueSkips ?? {}, now)[0], [purchases, dueSkips, now]);
   const cooling = wishes.filter((w) => w.status === 'cooling');
   const ready = cooling.filter((w) => wishPhase(w, now) === 'ready').length;
   const today = startOfDay(now);
@@ -229,6 +232,37 @@ export default function Home() {
                 <MiniBtn label={t('regret.worth')} onPress={() => onRegret(due, 'worth')} fill={p.card} />
                 <MiniBtn label={t('regret.meh')} onPress={() => onRegret(due, 'meh')} fill={p.card} />
                 <MiniBtn label={t('regret.nope')} onPress={() => onRegret(due, 'nah')} fill={p.accent} fg={p.onAccent} />
+              </View>
+            </Card>
+          </Animated.View>
+        ) : null}
+
+        {/* ------------------------------------------------ a repeat charge is due: one tap logs it */}
+        {dueCharge ? (
+          <Animated.View key={dueCharge.key} entering={FadeInDown.springify().damping(16)} exiting={FadeOutLeft.duration(220)} layout={LinearTransition}>
+            <Card weight="quiet" inner={{ gap: 12 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <IconDisc id={categoryMeta(dueCharge.category).icon} size={44} color={p.card2} ring />
+                <View style={{ flex: 1 }}>
+                  <Txt v="label" dim>
+                    {t('due.kicker')}
+                  </Txt>
+                  <Txt v="bodyBold">{t('due.q', { what: dueCharge.label, amount: f.money(dueCharge.amountCents) })}</Txt>
+                </View>
+              </View>
+              <View style={{ flexDirection: 'row', gap: 8 }}>
+                <MiniBtn
+                  label={t('due.log')}
+                  fill={p.accent}
+                  fg={p.onAccent}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/log',
+                      params: { amount: (dueCharge.amountCents / 100).toFixed(2), merchant: dueCharge.label, cat: dueCharge.category, wallet: dueCharge.walletId, auto: '1' },
+                    })
+                  }
+                />
+                <MiniBtn label={t('due.skip')} fill={p.card} onPress={() => skipDue(dueCharge.key, dueCharge.nextTs)} />
               </View>
             </Card>
           </Animated.View>
