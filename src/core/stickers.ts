@@ -1,6 +1,7 @@
 import { computeOverview, pooledMoney, purchasesBetween, sumCents, weeklyPoolCents } from './budget';
 import { regretStats } from './regret';
 import { totalDitchedCents } from './cooldown';
+import { LADDER } from './ladder';
 import { addDays, startOfWeek } from './week';
 import type { Purchase, Settings, ShameItem, WishItem, Wallet } from './types';
 
@@ -39,6 +40,9 @@ export function underBudgetWeeks(s: StickerState): number {
   return n;
 }
 
+const LADDER_ART: Record<(typeof LADDER)[number]['id'], StickerDef['art']> = { side: 'fries', mini: 'coin', standard: 'bottle', banquet: 'crown' };
+const LADDER_NAME = { side: 'Side of Chips', mini: 'Mini Box', standard: 'Standard Box', banquet: 'Family Banquet' } as const;
+
 const RULES: Rule[] = [
   { id: 'first-log', title: 'First bite', blurb: 'Logged your first purchase.', art: 'fries', test: (s) => s.purchases.length >= 1 },
   { id: 'regular', title: 'Regular', blurb: 'Logged 25 purchases. Honesty is the best policy.', art: 'receipt', test: (s) => s.purchases.length >= 25 },
@@ -53,6 +57,15 @@ const RULES: Rule[] = [
   { id: 'streak-3', title: 'Three in a row', blurb: '3 days under your daily allowance.', art: 'flame', test: (s) => computeOverview(s.wallets, s.settings, s.purchases, s.now).total.streak >= 3 },
   { id: 'streak-7', title: 'Lock in', blurb: '7 days under your daily allowance.', art: 'crown', test: (s) => computeOverview(s.wallets, s.settings, s.purchases, s.now).total.streak >= 7 },
   { id: 'under-week', title: 'Under budget', blurb: 'A whole week under budget.', art: 'bottle', test: (s) => underBudgetWeeks(s) >= 1 },
+  ...LADDER.map(
+    (r): Rule => ({
+      id: `ladder-${r.id}`,
+      title: LADDER_NAME[r.id],
+      blurb: `Talked yourself out of ${r.units} HSPs of wants.`,
+      art: LADDER_ART[r.id],
+      test: (s) => totalDitchedCents(s.wishes) >= r.units * s.settings.unit.priceCents,
+    }),
+  ),
   { id: 'honest', title: 'Honest', blurb: 'Answered 5 regret check-ins.', art: 'hand', test: (s) => regretStats(s.purchases).answered >= 5 },
   { id: 'self-roast', title: 'Self roast', blurb: 'Added something to the shame shelf.', art: 'bin', test: (s) => s.shame.length >= 1 },
   {

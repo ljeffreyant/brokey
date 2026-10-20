@@ -10,6 +10,7 @@ import { useTheme } from '../../theme';
 import { Brokey } from '../../ui/Brokey';
 import { Celebrate } from '../../ui/Celebrate';
 import { Drawer, EmptyShelf, Fridge, Shelf } from '../../ui/Fridge';
+import { Ladder } from '../../ui/Ladder';
 import { IconDisc } from '../../ui/CatIcon';
 import { Txt } from '../../ui/Txt';
 import { Btn, Card, Group, RoundBtn } from '../../ui/kit';
@@ -171,6 +172,8 @@ export default function Cooling() {
           ))
         )}
       </Fridge>
+
+      <Ladder savedCents={saved} />
 
       <Celebrate
         visible={!!party}

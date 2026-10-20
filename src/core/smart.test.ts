@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { forecastRunOut } from './forecast';
+import { campaignToken, goTarget } from './golink';
+import { bleedTotals, ladderState } from './ladder';
 import { eveningSlots } from './nudge';
+import { noSpendDays } from './recap';
 import { detectRecurring, dueRecurring } from './recurring';
 import type { Purchase } from './types';
 
@@ -275,5 +278,81 @@ describe('eveningSlots', () => {
   });
   it('can be set to another hour', () => {
     expect(eveningSlots({ now: at(15, 15), purchases: [], hour: 21 })[0]).toBe(at(15, 21));
+  });
+});
+
+describe('noSpendDays', () => {
+  it('counts empty days up to today and ignores the future', () => {
+    // Monday week, now is Wednesday afternoon: Mon spent, Tue empty, Wed (today) empty so far, Thu to Sun are future
+    const daily = [500, 0, 0, 0, 0, 0, 0];
+    expect(noSpendDays(daily, monday, monday + 2 * DAY + 15 * 3600000)).toBe(2);
+  });
+  it('counts the whole week once it is over', () => {
+    expect(noSpendDays([0, 300, 0, 0, 0, 900, 0], monday, monday + 8 * DAY)).toBe(5);
+  });
+});
+
+describe('ladderState', () => {
+  const price = 1800;
+  it('starts at the bottom', () => {
+    const s = ladderState(0, price);
+    expect(s.rungs.every((r) => !r.reached)).toBe(true);
+    expect(s.next?.id).toBe('side');
+    expect(s.progress).toBe(0);
+    expect(s.toGoCents).toBe(10 * price);
+  });
+  it('measures progress between the last rung and the next', () => {
+    // 30 HSPs: past the side (10), halfway-ish to mini (50): (30 - 10) / (50 - 10) = 0.5
+    const s = ladderState(30 * price, price);
+    expect(s.rungs.filter((r) => r.reached).map((r) => r.id)).toEqual(['side']);
+    expect(s.next?.id).toBe('mini');
+    expect(s.progress).toBeCloseTo(0.5);
+    expect(s.toGoCents).toBe(20 * price);
+  });
+  it('counts a rung the moment the money gets there', () => {
+    expect(ladderState(50 * price, price).rungs.find((r) => r.id === 'mini')?.reached).toBe(true);
+    expect(ladderState(50 * price - 1, price).rungs.find((r) => r.id === 'mini')?.reached).toBe(false);
+  });
+  it('tops out', () => {
+    const s = ladderState(900 * price, price);
+    expect(s.next).toBeNull();
+    expect(s.progress).toBe(1);
+  });
+  it('follows the unit price', () => {
+    expect(ladderState(10 * 1500, 1500).rungs[0].reached).toBe(true);
+    expect(ladderState(10 * 1500, 1800).rungs[0].reached).toBe(false);
+  });
+  it('survives a zero price and negative money', () => {
+    expect(() => ladderState(-5, 0)).not.toThrow();
+  });
+});
+
+describe('bleedTotals', () => {
+  it('adds up every repeating charge', () => {
+    expect(bleedTotals([{ monthlyCents: 1699, yearlyCents: 20388 }, { monthlyCents: 5500, yearlyCents: 66000 }])).toEqual({ monthlyCents: 7199, yearlyCents: 86388 });
+    expect(bleedTotals([])).toEqual({ monthlyCents: 0, yearlyCents: 0 });
+  });
+});
+
+describe('goTarget', () => {
+  const base = { appStoreId: '', providerToken: '', testflightUrl: '', fallback: '../../index.html' };
+  it('lands on the site until something is set up', () => {
+    expect(goTarget('tiktok', base)).toBe('../../index.html');
+  });
+  it('uses a real TestFlight link and ignores anything else', () => {
+    expect(goTarget('tiktok', { ...base, testflightUrl: 'https://testflight.apple.com/join/AbC123' })).toBe('https://testflight.apple.com/join/AbC123');
+    expect(goTarget('tiktok', { ...base, testflightUrl: 'https://evil.example/join/AbC123' })).toBe('../../index.html');
+    expect(goTarget('tiktok', { ...base, testflightUrl: 'javascript:alert(1)' })).toBe('../../index.html');
+  });
+  it('tags the App Store link with the channel, and wins over TestFlight', () => {
+    const cfg = { ...base, appStoreId: '6741234567', providerToken: '123456', testflightUrl: 'https://testflight.apple.com/join/AbC123' };
+    expect(goTarget('poster', cfg)).toBe('https://apps.apple.com/app/id6741234567?pt=123456&ct=poster&mt=8');
+  });
+  it('works without a provider token yet', () => {
+    expect(goTarget('crew-1', { ...base, appStoreId: 'id6741234567' })).toBe('https://apps.apple.com/app/id6741234567?ct=crew-1&mt=8');
+  });
+  it('cleans the campaign token', () => {
+    expect(campaignToken('  Uni Melb / Club!! ')).toBe('uni-melb-club');
+    expect(campaignToken('x'.repeat(50))).toHaveLength(30);
   });
 });

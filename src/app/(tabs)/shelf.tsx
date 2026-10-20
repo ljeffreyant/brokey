@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Recurring, ShameItem, allStickers, categoryMeta, detectRecurring, unlockedStickerIds } from '../../core';
+import { Recurring, ShameItem, allStickers, bleedTotals, categoryMeta, detectRecurring, unlockedStickerIds } from '../../core';
 import { catLabel, useT } from '../../i18n';
 import { useStore } from '../../store';
 import { useTheme } from '../../theme';
@@ -78,7 +78,9 @@ export default function Shelf() {
     return out;
   }, [shame]);
 
-  const recurring = useMemo(() => detectRecurring(state.purchases, now).slice(0, 5), [state.purchases, now]);
+  const recurringAll = useMemo(() => detectRecurring(state.purchases, now), [state.purchases, now]);
+  const recurring = useMemo(() => recurringAll.slice(0, 5), [recurringAll]);
+  const bleed = useMemo(() => bleedTotals(recurringAll), [recurringAll]);
   const onShelf = (r: Recurring) => shame.some((x) => x.label.trim().toLowerCase() === r.label.toLowerCase());
   const everyKey = (r: Recurring) => (r.everyDays === 7 ? 'recurring.weekly' : r.everyDays === 14 ? 'recurring.fortnightly' : 'recurring.monthly');
 
@@ -121,6 +123,11 @@ export default function Shelf() {
             <Txt v="small" dim>
               {t('recurring.sub')}
             </Txt>
+            {recurringAll.length > 1 ? (
+              <Txt v="small" style={{ fontFamily: 'DMSans_700Bold', marginTop: 4 }}>
+                {t('recurring.bleed', { month: f.hsp(bleed.monthlyCents), year: f.hsp(bleed.yearlyCents) })}
+              </Txt>
+            ) : null}
           </View>
           {recurring.map((r) => {
             const shelved = onShelf(r);

@@ -30,7 +30,7 @@ import { DayBar, SauceBars } from '../../ui/charts/SauceBars';
 import { haptic } from '../../ui/haptics';
 import { Btn, Card, Row, SectionTitle } from '../../ui/kit';
 import { formatDate, formatDayName, useBudget, useFmt } from '../../ui/useFmt';
-import { weatherOf } from '../../ui/weather';
+import { useWeekModel } from '../../ui/useWeekModel';
 import { useStore } from '../../store';
 
 function Section({ i, children }: { i: number; children: React.ReactNode }) {
@@ -59,7 +59,7 @@ export default function Week() {
   const canPrev = weekStart > earliest;
   const canNext = offset < 0;
 
-  const recap = useMemo(() => buildRecap(purchases, weekStart, budget.budgetCents), [purchases, weekStart, budget.budgetCents]);
+  const { recap, wc, over, frac, mood, verdict } = useWeekModel(weekStart, budget.budgetCents, purchases);
   const daily = useMemo(() => dailySpend(purchases, weekStart), [purchases, weekStart]);
   const allowance = Math.floor(budget.budgetCents / 7);
   const today = startOfDay(now);
@@ -77,27 +77,6 @@ export default function Week() {
     const future = ts > today;
     return { key: String(ts), label: formatDayName(ts, f.lang, 'short'), value: future ? '·' : f.hspNum(cents), cents, future, today: ts === today };
   });
-
-  const weather = weatherOf(recap.leftCents, recap.budgetCents);
-  const wc = p.weather[weather];
-  const over = recap.budgetCents > 0 && recap.spentCents > recap.budgetCents;
-  const frac = recap.budgetCents > 0 ? Math.min(1, recap.spentCents / recap.budgetCents) : 0;
-  const mood: Mood =
-    recap.count === 0 ? 'ok' : over ? (recap.spentCents > recap.budgetCents * 1.25 ? 'broke' : 'sad') : frac < 0.7 ? 'proud' : 'happy';
-
-  const verdict = useMemo(() => {
-    const lv: RoastLevel = settings.roastLevel;
-    const seed = Math.floor(weekStart / 86400000);
-    const topMeta = recap.topCategory ? categoryMeta(recap.topCategory.category) : null;
-    const vars = {
-      over: f.hsp(Math.max(0, -recap.leftCents)),
-      left: f.hsp(Math.max(0, recap.leftCents)),
-      top: topMeta ? catLabel(t, topMeta).toLowerCase() : '',
-      topAmt: recap.topCategory ? f.sum(recap.topCategory.cents) : '',
-    };
-    const k = recap.count === 0 ? 'none' : over || !recap.underBudget ? 'over' : 'under';
-    return t.pick(`week.v.${k}.${lv}` as never, seed, vars);
-  }, [recap, settings.roastLevel, weekStart, t, f, over]);
 
   const label = offset === 0 ? t('week.thisWeek') : offset === -1 ? t('week.lastWeek') : t('week.range', { a: formatDate(weekStart, f.lang), b: formatDate(addDays(weekEnd, -1), f.lang) });
   const range = t('week.range', { a: formatDate(weekStart, f.lang), b: formatDate(addDays(weekEnd, -1), f.lang) });
@@ -196,6 +175,21 @@ export default function Week() {
           </View>
         </Card>
       </Section>
+
+      {recap.count > 0 ? (
+        <Section i={1}>
+          <Btn
+            label={t('recap.share')}
+            glyph="share"
+            tone="card"
+            size="sm"
+            onPress={() => {
+              haptic.tap();
+              router.push({ pathname: '/recap', params: { week: String(weekStart) } });
+            }}
+          />
+        </Section>
+      ) : null}
 
       {/* ---------------------------------------------------------- sauce bottles */}
       <Section i={1}>

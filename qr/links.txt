@@ -1,0 +1,10 @@
+tiktok     https://ljeffreyant.github.io/brokey/site/go/tiktok/
+instagram  https://ljeffreyant.github.io/brokey/site/go/instagram/
+linkedin   https://ljeffreyant.github.io/brokey/site/go/linkedin/
+poster     https://ljeffreyant.github.io/brokey/site/go/poster/
+sticker    https://ljeffreyant.github.io/brokey/site/go/sticker/
+friends    https://ljeffreyant.github.io/brokey/site/go/friends/
+clubs      https://ljeffreyant.github.io/brokey/site/go/clubs/
+crew-1     https://ljeffreyant.github.io/brokey/site/go/crew-1/
+crew-2     https://ljeffreyant.github.io/brokey/site/go/crew-2/
+crew-3     https://ljeffreyant.github.io/brokey/site/go/crew-3/

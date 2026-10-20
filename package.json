@@ -16,6 +16,7 @@
     "preflight": "tsx scripts/preflight.ts",
     "icons": "tsx scripts/render-icons.ts",
     "site": "tsx scripts/build-site.ts",
+    "qr": "tsx scripts/make-qr.ts",
     "build:web": "expo export --platform web && node scripts/web-postbuild.mjs"
   },
   "dependencies": {

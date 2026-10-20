@@ -48,6 +48,7 @@ function Shell() {
         <Stack.Screen name="purchase/[id]" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
         <Stack.Screen name="export" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
         <Stack.Screen name="receipt" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="recap" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
       </Stack>
       <LockGate />
     </View>

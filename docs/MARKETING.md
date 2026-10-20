@@ -78,6 +78,8 @@ Why it works: it is a joke people can repeat in one breath, it is Melbourne-spec
 1. **Shareable HSP receipt.** The monthly receipt is made for group chats. Next release: add the App Store link / QR in the footer so every share is an ad.
 2. **Roast screenshots.** The roast bubble is designed to be screenshotted. Next release: a share button that adds the Brokey wordmark.
 3. **Stickers and streaks.** Reward return visits and give people something to brag about.
+4. **Week card.** Week tab, "Share my week" makes a 1080 x 1920 story-size picture (big HSP number, mascot mood, roast). Made for Instagram Stories and TikTok photo posts.
+5. **Savings ladder.** Four rungs (Side of Chips, Mini Box, Standard Box, Family Banquet) with stickers. Each rung is a natural "I just hit..." post.
 
 ## 6. The money plan
 
@@ -132,6 +134,87 @@ The app has no analytics by design. Use App Store Connect (installs, retention, 
 - [ ] Post the first "building in public" clip
 - [ ] DM 20 creators, expect 5 yeses
 - [ ] Write the Black Friday plan in the calendar: release by Fri 20 Nov
+
+## 9. Launch plan v2: A$500 and 500 installs by 31 December
+
+Written 20 October 2026. Goal: **500 installs by 31 Dec 2026** on a budget of **about A$500**, with Instagram already running and TikTok starting now. This replaces the rougher numbers in sections 2 and 3 where they disagree. Anything marked *assumption* is a planning guess, not a forecast.
+
+### The budget
+
+| Item | Cost (A$) | Notes |
+| --- | --- | --- |
+| Apple Developer Program | about 150 | US$99 a year. Apple shows the AUD price in the enrolment flow, so confirm it there *(the AUD figure is an estimate)* |
+| Posters, 10 x A3 | about 40 | Get a quote from a campus or local print shop *(assumption)* |
+| Stickers, about 200 | about 100 | Online sticker printers list 100 small vinyl stickers at roughly A$58 and 500 at roughly A$108 for 30 mm; 5 to 6 cm costs more, so get a real quote first *(assumption)* |
+| Creator round 1, three seed creators at 2 HSPs each | 108 (cap 150) | Paid in HSPs by PayID, only after the app is live |
+| Boost the single best organic video | 50 | Only after a video has proved itself organically |
+| Reserve | about 50 | Reprints, a bad sticker proof, a surprise fee |
+| **Total** | **about 500** | No domain needed yet, GitHub Pages is free |
+
+**UGC decision.** Run a small round, not the 10 to 15 creator programme from section 3. Three seed creators, one link each (`crew-1`, `crew-2`, `crew-3`), judged on installs per creator. Scale up only if one of them clearly beats organic posting. Nobody is paid before the app is live; until then they get TestFlight.
+
+### Is 500 realistic?
+
+Honest answer: **possible, not guaranteed.** Without one video breaking out, the sum of friends, clubs, posters and small posts more likely lands around 150 to 250 *(assumption)*. 500 needs either one video that travels or two student communities adopting it. A target split to aim at:
+
+| Channel | Go-link | Target installs *(assumption)* |
+| --- | --- | --- |
+| Friends, family, Fishbowl, TestFlight crowd | `friends` | 60 |
+| Student clubs and group chats (Indonesian, Chinese, Latin American, finance clubs) | `clubs` | 100 |
+| Posters and stickers on campus | `poster`, `sticker` | 60 |
+| Instagram (stories, reels, bio) | `instagram` | 80 |
+| TikTok organic, about 3 posts a week for 10 weeks | `tiktok` | 120 |
+| Three seed creators | `crew-1`, `crew-2`, `crew-3` | 60 |
+| LinkedIn (the launch post) | `linkedin` | 20 |
+| **Total** | | **500** |
+
+**Checkpoints.** About 100 installs by 15 Nov, about 200 by Black Friday (27 Nov). If you are under half of a checkpoint, stop spreading thin: double down on the one channel with the most installs and drop the rest.
+
+### Campaign links: how they work
+
+Every channel has a short link page that forwards to the right place. Everything lives in `src/config.ts` and `site/go/`, built by `npm run site`.
+
+| Where you use it | Link |
+| --- | --- |
+| Instagram bio | `https://ljeffreyant.github.io/brokey/site/go/instagram/` |
+| TikTok bio | `https://ljeffreyant.github.io/brokey/site/go/tiktok/` |
+| LinkedIn post | `https://ljeffreyant.github.io/brokey/site/go/linkedin/` |
+| Poster QR | `https://ljeffreyant.github.io/brokey/site/go/poster/` |
+| Sticker QR | `https://ljeffreyant.github.io/brokey/site/go/sticker/` |
+| Group chats | `.../go/friends/` and `.../go/clubs/` |
+| Creators | `.../go/crew-1/`, `.../go/crew-2/`, `.../go/crew-3/` |
+
+- **Before launch** a link goes to the site home, or to your public TestFlight link once you paste it into `TESTFLIGHT_URL`.
+- **After launch** paste the App Store number into `APP_STORE_ID`, run `npm run site`, push. Every link now opens the App Store page tagged `ct=<channel>`, with no reprinting.
+- **Seeing the results.** App Store Connect, Analytics, Metrics, filter by Campaign. Apple says the Campaigns area only appears once the app has been live and has analytics data (give it about a day), a campaign only shows data after at least 5 first-time downloads, and a download counts for a campaign if it happens within 24 hours of the click. When the Campaigns area appears, create one campaign, copy the `pt=` number from its link into `APP_STORE_PROVIDER_TOKEN`, and rebuild.
+- **QR codes.** `npm run qr` writes a PNG and an SVG for every channel into `qr/`. The poster script uses the poster link by default: `npx tsx scripts/make-poster.ts --soon` before launch, then without `--soon` after.
+- **TikTok bio link.** A personal TikTok account usually needs 1,000 followers before the link field appears; a Business account can add it straight away *(third-party reports, check in the app)*. Switching to Business is free and fine for this.
+
+### Asset checklist
+
+- [x] App icon, splash, mascot art
+- [x] Poster A3 and A4 PDFs with working QR (`poster/`)
+- [x] QR PNGs for every channel (`npm run qr`)
+- [x] Privacy, terms and support pages (`site/`)
+- [ ] Real support email in `src/config.ts` (blocker for the pages and the review)
+- [ ] 6 App Store screenshots (`scripts/store-shots.py`)
+- [ ] 15 second screen recording for the App Store preview and TikTok
+- [ ] Public TestFlight link pasted into `TESTFLIGHT_URL`
+- [ ] Instagram bio and TikTok bio set to their go-links
+- [ ] Printed posters (ask the student union about noticeboard rules first) and stickers
+
+### Week by week
+
+| Week of | Do |
+| --- | --- |
+| 19 Oct | Deploy the site, enrol in the developer programme, TestFlight to friends, first "building an app that roasts my spending" clips |
+| 26 Oct | Submit to the App Store, DM the three seed creators (TestFlight only), post 3 clips |
+| 2 Nov | Posters up, club group-chat messages, order stickers |
+| 9 Nov | Release manually once approved. Click Frenzy is expected 10 to 12 Nov: post the fridge content |
+| 16 Nov | Check the 100 install checkpoint. Pay creators for videos that went live. Boost the best organic video with the A$50 |
+| 23 Nov | Black Friday week (27 Nov) and Cyber Monday (30 Nov): "put it in the fridge" content every day |
+| 7 Dec | Exam season posts: "study break, check your week" |
+| 21 Dec | Boxing Day and New Year budget posts. Count installs on 31 Dec |
 
 ## Later: an Indonesia edition (parked idea)
 

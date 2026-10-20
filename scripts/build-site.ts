@@ -8,7 +8,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { mascot } from '../src/art/mascot';
 import { sceneToSvg } from '../src/art/scene';
-import { SUPPORT_EMAIL } from '../src/config';
+import { APP_STORE_ID, APP_STORE_PROVIDER_TOKEN, GO_CHANNELS, SUPPORT_EMAIL, TESTFLIGHT_URL } from '../src/config';
+import { goTarget } from '../src/core/golink';
 import { LegalDoc, PRIVACY, TERMS } from '../src/legal';
 
 const out = path.join(__dirname, '..', 'site');
@@ -85,4 +86,19 @@ fs.writeFileSync(path.join(out, 'index.html'), home);
 fs.writeFileSync(path.join(out, 'privacy.html'), doc(PRIVACY));
 fs.writeFileSync(path.join(out, 'terms.html'), doc(TERMS));
 fs.writeFileSync(path.join(out, 'support.html'), support);
-console.log('site built:', fs.readdirSync(out).join(', '));
+
+// Short links: site/go/<channel>/index.html forwards to the App Store (tagged with the channel), TestFlight, or the site home.
+const goPage = (channel: string, target: string) => `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=${esc(target)}">
+<title>Brokey</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#FFF6E6;color:#2A1B14;font:18px/1.5 system-ui,sans-serif;text-align:center}a{color:#FF5A47;font-weight:700}</style>
+</head><body><p>Taking you to Brokey...<br><a href="${esc(target)}">Tap here if nothing happens</a></p>
+<script>location.replace(${JSON.stringify(target)})</script></body></html>`;
+const goCfg = { appStoreId: APP_STORE_ID, providerToken: APP_STORE_PROVIDER_TOKEN, testflightUrl: TESTFLIGHT_URL };
+for (const ch of GO_CHANNELS) {
+  const dir = path.join(out, 'go', ch);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'index.html'), goPage(ch, goTarget(ch, { ...goCfg, fallback: '../../index.html' })));
+}
+
+console.log('site built:', fs.readdirSync(out).join(', '), `+ ${GO_CHANNELS.length} go-links`);

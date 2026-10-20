@@ -25,7 +25,7 @@ def state(seed, theme, lang, mode='hsp'):
     ps = []
     wishes = []
     shame = []
-    if seed in ('mid', 'broke', 'over', 'subs', 'due'):
+    if seed in ('mid', 'broke', 'over', 'subs', 'due', 'saver'):
         ps = [
             purchase(1, 1.2, 650, 'coffee', 'Corner Cafe', 'tap', 'A flat white. Bold of you to call it a personality.'),
             purchase(2, 5, 1800, 'takeaway', 'Halal Bros', 'card', 'An actual HSP. Respect, and also: wow.', regret='worth'),
@@ -35,17 +35,19 @@ def state(seed, theme, lang, mode='hsp'):
         ]
     if seed == 'store':
         # a healthy, good-looking week for the App Store screenshots
-        wallet['manualWeeklyCents'] = 22000
+        wallet['manualWeeklyCents'] = 28000
         ps = [
             purchase(1, 1.3, 650, 'coffee', 'Corner Cafe', 'tap', 'A flat white. Bold of you to call it a personality.'),
-            purchase(2, 7, 1800, 'takeaway', 'Halal Bros', 'card', 'An actual HSP. Respect, and also: wow.', regret='worth'),
-            purchase(3, 16, 1450, 'dineout', 'Uni Canteen', 'tap', 'Lunch again. At least it was not delivery.'),
-            purchase(4, 27, 2200, 'transit', 'Myki top up', 'card', 'Public transport. Responsible, annoyingly.'),
+            purchase(2, 26, 1800, 'takeaway', 'Halal Bros', 'card', 'An actual HSP. Respect, and also: wow.', regret='worth'),
+            purchase(3, 30, 1450, 'dineout', 'Uni Canteen', 'tap', 'Lunch again. At least it was not delivery.'),
+            purchase(4, 36, 2200, 'transit', 'Myki top up', 'card', 'Public transport. Responsible, annoyingly.'),
         ]
         wishes = [dict(id='w1', walletId='main', label='Noise-cancelling headphones', amountCents=24900, category='headphones', createdTs=NOW - 10 * H, unlockTs=NOW + 38 * H, status='cooling'),
                   dict(id='w2', walletId='main', label='Sneakers', amountCents=17900, category='clothes', createdTs=NOW - 30 * H, unlockTs=NOW + 18 * H, status='cooling')]
+        wishes += [dict(id=f'd{i}', walletId='main', label=l, amountCents=c, category=cat, createdTs=NOW - (3 + i) * D, unlockTs=NOW - (2 + i) * D, status='ditched', decidedTs=NOW - (2 + i) * D)
+                   for i, (l, c, cat) in enumerate([('Smart watch', 24900, 'tech'), ('Leather jacket', 12900, 'clothes'), ('Gaming chair', 19900, 'homewares')])]
         shame = [dict(id='s1', ts=NOW - 3 * D, label='Air fryer', amountCents=12900, category='homewares', source='manual', story='Used it twice.')]
-    if seed == 'subs':
+    if seed in ('subs', 'saver'):
         ps += [purchase(10, 31 * 24 + 3, 1699, 'music', 'Tunebox', 'card'), purchase(11, 2, 1699, 'music', 'Tunebox', 'card'),
                purchase(12, 60 * 24, 5500, 'health', 'Fit Gym Co', 'card'), purchase(13, 30 * 24, 5500, 'health', 'Fit Gym Co', 'card'), purchase(14, 0.5 * 24, 5500, 'health', 'Fit Gym Co', 'card')]
     if seed == 'due':
@@ -54,9 +56,11 @@ def state(seed, theme, lang, mode='hsp'):
         ps.append(purchase(6, 2, 9000, 'tech', 'Gadget Hut', 'card', 'Tech. The spreadsheet is crying.'))
     if seed == 'over':
         ps.append(purchase(6, 2, 19000, 'tech', 'Gadget Hut', 'card', 'Tech.'))
-    if seed in ('mid', 'broke', 'subs', 'due'):
+    if seed in ('mid', 'broke', 'subs', 'due', 'saver'):
         wishes = [dict(id='w1', walletId='main', label='Noise-cancelling headphones', amountCents=24900, category='headphones', createdTs=NOW - 10 * H, unlockTs=NOW + 38 * H, status='cooling')]
-    if seed in ('mid', 'broke', 'subs', 'due'):
+    if seed == 'saver':
+        wishes += [dict(id=f'd{i}', walletId='main', label=l, amountCents=c, category='clothes', createdTs=NOW - (3 + i) * D, unlockTs=NOW - (2 + i) * D, status='ditched', decidedTs=NOW - (2 + i) * D) for i, (l, c) in enumerate([('Sneakers', 17900), ('Smart watch', 24900), ('Jacket', 12900), ('Game', 8900)])]
+    if seed in ('mid', 'broke', 'subs', 'due', 'saver'):
         shame = [dict(id='s1', ts=NOW - 3 * D, label='Air fryer', amountCents=12900, category='homewares', source='manual', story='Used it twice.')]
     return dict(state=dict(settings=settings, wallets=[wallet], purchases=ps, wishes=wishes, shame=shame, customCats=[], hiddenCats=[], recentRoasts=[], seenStickers=[]), version=1)
 

@@ -1,6 +1,6 @@
 import { GROUPS, categoryMeta, groupOf } from './categories';
 import { formatMoney, formatUnits } from './money';
-import { addDays } from './week';
+import { addDays, startOfDay } from './week';
 import type { CategoryId, GroupId, Purchase, RoastLevel, UnitDef } from './types';
 
 export interface CategoryTotal {
@@ -93,4 +93,10 @@ export function recapVerdict(rc: Recap, level: RoastLevel, unit: UnitDef): strin
     : level === 'medium'
       ? `Under budget with ${left} spare. Do not get cocky, ${top} was still ${topAmt}.`
       : `${left} left over. I am shocked. Do not spend it all on ${top}.`;
+}
+
+/** Days in the week that are already over (or today) and had nothing spent. Future days do not count. */
+export function noSpendDays(daily: number[], weekStart: number, now: number): number {
+  const today = startOfDay(now);
+  return daily.filter((cents, i) => cents === 0 && addDays(weekStart, i) <= today).length;
 }

@@ -10,6 +10,8 @@ export * from './recap';
 export * from './stickers';
 export * from './keypad';
 export * from './forecast';
+export * from './golink';
+export * from './ladder';
 export * from './nudge';
 export * from './recurring';
 export * from './backup'

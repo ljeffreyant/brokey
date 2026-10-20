@@ -21,7 +21,7 @@ Everything you need to get from this folder to "Waiting for Review". Run `npm ru
 1. **Join the Apple Developer Program** (US$99 per membership year, charged in local currency where available). Use the same Apple ID you want as the seller name.
 2. **Host the website**. Run `npm run site`, deploy the `site/` folder (Cloudflare Pages or GitHub Pages are free and allow commercial use), then put the three URLs and your support email into `src/config.ts`.
 3. **Pick a final bundle id** if `com.nel.brokey` is not what you want (it cannot change after the first upload).
-4. **Take screenshots** on a real build (6.9 inch iPhone is the one Apple requires; the rest are scaled). Suggested five: Home with Brokey, the log flow, Chill (cooling-off), Week with sauce bottles, HSP receipt.
+4. **Screenshots.** Six are ready in `store/raw/` (1320 x 2868, the 6.9 inch size Apple requires; the rest are scaled): Home, the roast, Chill, Week, HSP receipt, hours-of-work mode. Re-make them with `npx expo export --platform web && python3 scripts/serve.py 8099 &` then `python3 scripts/store-shots.py store/raw`. They come from the web build, so if you want true device shots, repeat them in the simulator on your Mac after the first TestFlight build.
 5. **Test on a real iPhone** through TestFlight for at least a couple of days. Apple rejects crashes first.
 
 ## 2. Build and submit (EAS)
@@ -50,7 +50,8 @@ Free EAS accounts use a slower queue (can be 90+ minutes at peak). That is fine 
 > - The cooling-off fridge: tap "I want this", wait 24 hours, see if you still do
 > - Regret check-ins and a shame shelf for your dumbest buys
 > - Sauce-bottle charts and an HSP pie for the week
-> - Wallets, currencies, four languages, three themes
+> - One-tap logging for subscriptions that are due, a savings ladder for the wants you walk away from, and a shareable week card
+> - Wallets, currencies, four languages, five themes, little sound effects you can switch off
 > - Export a month as a spreadsheet, PDF report or shareable HSP receipt
 > Your data stays on your phone. No bank login, no ads, no trackers.
 > Brokey is not a bank and does not give financial advice.
@@ -66,6 +67,21 @@ Free EAS accounts use a slower queue (can be 90+ minutes at peak). That is fine 
 No demo account is needed while `AUTH_ENABLED = false`.
 
 **Support URL / Privacy URL / Marketing URL**: the pages from `npm run site`.
+
+## 3b. Checked on 20 October 2026
+
+| Check | Result |
+| --- | --- |
+| `npx expo-doctor` | 19 of 21 pass. The 2 that fail need the internet (config schema and React Native Directory), which this environment blocks. Run it once on your own machine before building |
+| `npx expo prebuild --platform ios` (trial run) | Succeeds. No microphone permission, no `UIBackgroundModes`, Face ID text present, URL scheme `brokey`, privacy manifest present |
+| `npm run preflight` | Passes everything except the placeholder support email in `src/config.ts` |
+| Tests and types | 202 tests, `tsc` clean |
+
+Things that look odd in the native project but are expected:
+- **Push Notifications entitlement (`aps-environment`).** The `expo-notifications` package adds it. Brokey only uses local notifications, but the capability is harmless. EAS turns it on for the App ID for you. Nothing is sent from a server.
+- **Sounds.** They follow the silent switch and mix with other audio, and background audio is off.
+- **Rating prompt.** Uses Apple's own prompt (`expo-store-review`), at most 3 times a year, after a good moment. It never shows on TestFlight builds.
+- **Backup and restore.** Saves a file you choose and restores through the Files picker. Nothing is uploaded.
 
 ## 4. Likely rejection reasons and the fix
 
@@ -91,7 +107,7 @@ No demo account is needed while `AUTH_ENABLED = false`.
 | RevenueCat (only when you add paid features) | Later | Free until $2,500 monthly tracked revenue, then 1% |
 | Apple's cut on future in-app purchases | Later | **15%** under the Small Business Program (proceeds up to US$1m) |
 
-**Launch budget: about US$115 to $125** (Apple + domain). A comfortable cap is **US$300**: add one month of EAS Starter ($19), one month of Supabase Pro ($25) if you turn accounts on, printing the campus posters and stickers, and about $100 of creator payments.
+**Launch budget: about US$115 to $125** (Apple + domain; the domain is optional while the free GitHub Pages address works). A comfortable cap is **US$300**: add one month of EAS Starter ($19), one month of Supabase Pro ($25) if you turn accounts on, printing the campus posters and stickers, and about $100 of creator payments.
 
 ## 6. After approval
 

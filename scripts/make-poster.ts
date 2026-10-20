@@ -1,9 +1,12 @@
 /**
  * Campus poster: A3 and A4 print PDFs + a PNG preview, all from one HTML file.
  *
- *   npx tsx scripts/make-poster.ts                      -> placeholder QR box (do NOT print like this)
- *   npx tsx scripts/make-poster.ts https://apps.apple.com/...      -> real QR, "Free on iPhone"
- *   npx tsx scripts/make-poster.ts https://testflight.apple.com/join/XXXX --soon   -> "Coming soon", scan to test
+ *   npx tsx scripts/make-poster.ts                      -> QR is the poster go-link (SITE_BASE/go/poster/), "Free on iPhone"
+ *   npx tsx scripts/make-poster.ts --soon               -> same link, "Coming soon", scan to test first
+ *   npx tsx scripts/make-poster.ts https://...          -> any other address in the QR
+ *
+ * Print the go-link version: the link forwards to TestFlight or the App Store (set in src/config.ts), so the same
+ * printed poster keeps working after launch, and the App Store sees its scans as the "poster" campaign.
  *
  * Output goes to poster/ . Needs Python Playwright for the PDF step (scripts/html-to-pdf.py style).
  */
@@ -13,6 +16,7 @@ import path from 'node:path';
 import QRCode from 'qrcode';
 import { mascot } from '../src/art/mascot';
 import { sceneToSvg } from '../src/art/scene';
+import { SITE_BASE } from '../src/config';
 import { wordmark } from './render-logo';
 
 const root = path.join(__dirname, '..');
@@ -21,7 +25,7 @@ fs.mkdirSync(out, { recursive: true });
 
 const args = process.argv.slice(2);
 const soon = args.includes('--soon');
-const url = args.find((a) => a.startsWith('http'));
+const url = args.find((a) => a.startsWith('http')) ?? `${SITE_BASE}/go/poster/`;
 
 const font = (family: string, weight: number, file: string) =>
   `@font-face{font-family:"${family}";font-weight:${weight};src:url("file://${root}/node_modules/@expo-google-fonts/${file}.ttf")}`;
