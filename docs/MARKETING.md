@@ -132,3 +132,10 @@ The app has no analytics by design. Use App Store Connect (installs, retention, 
 - [ ] Post the first "building in public" clip
 - [ ] DM 20 creators, expect 5 yeses
 - [ ] Write the Black Friday plan in the calendar: release by Fri 20 Nov
+
+## Later: an Indonesia edition (parked idea)
+
+When we launch in Indonesia, make a full redesign for that market: the same app with its own character, a nasi Padang creature, instead of the HSP box.
+- Ship it as a separate app build from this codebase (own bundle id, name, icon, mascot), released only in the Indonesian App Store storefront. It is not an in-app option.
+- Draw the character from scratch as its own design. A reskin of Brokey (swapping the box, pile and fries) was tried and looked bad, so do not repeat that.
+- The art lives in `src/art`, so a second character pack should plug in without touching the rest of the app.

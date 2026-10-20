@@ -215,6 +215,7 @@ export function Segmented<T extends string>({ value, options, onChange }: { valu
           <Pressable
             key={o.id}
             accessibilityRole="button"
+            accessibilityLabel={o.label}
             accessibilityState={{ selected: on }}
             onPress={() => {
               haptic.tap();

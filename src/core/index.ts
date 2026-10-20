@@ -11,3 +11,5 @@ export * from './stickers';
 export * from './keypad';
 export * from './forecast';
 export * from './recurring';
+export * from './backup'
+export * from './cues';

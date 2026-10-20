@@ -5,6 +5,7 @@ import Animated, {
   interpolate,
   interpolateColor,
   useAnimatedStyle,
+  useReducedMotion,
   useSharedValue,
   withDelay,
   withSequence,
@@ -13,7 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { captureRef } from 'react-native-view-shot';
-import { BudgetState } from '../core';
+import { BudgetState, afterBuyCue } from '../core';
 import { ShareUnavailable, exportFileName, shareImage } from '../export/share';
 import { useT } from '../i18n';
 import { useTheme } from '../theme';
@@ -26,6 +27,7 @@ import { Btn, RoundBtn, Slab } from './kit';
 import { haptic } from './haptics';
 import { useFmt } from './useFmt';
 import { weatherOf } from './weather';
+import { sfx } from './sfx';
 
 export interface EatInput {
   iconId: string;
@@ -38,8 +40,14 @@ export interface EatInput {
 
 function useTypewriter(text: string, run: boolean, ms = 22) {
   const [n, setN] = useState(0);
+  const reduce = useReducedMotion();
   useEffect(() => {
     if (!run) return;
+    if (reduce) {
+      // Reduce Motion: show the whole roast at once
+      setN(text.length);
+      return;
+    }
     setN(0);
     const id = setInterval(() => {
       setN((v) => {
@@ -51,7 +59,7 @@ function useTypewriter(text: string, run: boolean, ms = 22) {
       });
     }, ms);
     return () => clearInterval(id);
-  }, [run, text, ms]);
+  }, [run, text, ms, reduce]);
   return { shown: text.slice(0, n), done: n >= text.length, skip: () => setN(text.length) };
 }
 
@@ -106,6 +114,7 @@ export function EatScene({ input, onDone, onUndo }: { input: EatInput; onDone: (
       setBurst((n) => n + 1);
       setMood('shock');
       haptic.heavy();
+      sfx.play('chomp');
     });
     at(1250, () => haptic.soft());
     at(1530, () => haptic.soft());
@@ -116,6 +125,7 @@ export function EatScene({ input, onDone, onUndo }: { input: EatInput; onDone: (
       chip.value = withSpring(1, { damping: 9, stiffness: 190 });
       bg.value = withTiming(1, { duration: 900 });
       haptic.tap();
+      sfx.play(afterBuyCue(input.after.mood));
     });
     at(2250, () => {
       setShowRoast(true);
@@ -218,7 +228,7 @@ export function EatScene({ input, onDone, onUndo }: { input: EatInput; onDone: (
                 {shareErr}
               </Txt>
             ) : null}
-            <Pressable onPress={onUndo} accessibilityRole="button" hitSlop={10} style={{ alignSelf: 'center', paddingVertical: 4 }}>
+            <Pressable onPress={onUndo} accessibilityRole="button" accessibilityLabel={t('eat.undo')} hitSlop={10} style={{ alignSelf: 'center', paddingVertical: 4 }}>
               <Txt v="small" color={wAfter.textDim} style={{ fontFamily: 'DMSans_700Bold', textDecorationLine: 'underline' }}>
                 {t('eat.undo')}
               </Txt>

@@ -7,6 +7,7 @@ import { Burst } from './Burst';
 import { Txt } from './Txt';
 import { Btn } from './kit';
 import { haptic } from './haptics';
+import { sfx } from './sfx';
 
 /** A full-screen "you did the good thing" moment. */
 export function Celebrate({ visible, title, body, cta, onClose }: { visible: boolean; title: string; body: string; cta: string; onClose: () => void }) {
@@ -16,6 +17,7 @@ export function Celebrate({ visible, title, body, cta, onClose }: { visible: boo
   useEffect(() => {
     if (!visible) return;
     haptic.good();
+    sfx.play('fanfare');
     const a = setTimeout(() => setN((x) => x + 1), 250);
     const b = setTimeout(() => setN((x) => x + 1), 700);
     return () => {

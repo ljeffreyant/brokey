@@ -19,6 +19,7 @@ import { Btn, Card, Chip, Field, RoundBtn, Segmented } from '../ui/kit';
 import { useLeave } from '../ui/nav';
 import { haptic } from '../ui/haptics';
 import { useFmt } from '../ui/useFmt';
+import { sfx } from '../ui/sfx';
 
 export default function Want() {
   const p = useTheme();
@@ -66,6 +67,7 @@ export default function Want() {
     if (settings.notifyWish) await ensurePermission();
     addWish(label.trim() || t('want.something'), cents, cat, hours);
     haptic.good();
+    sfx.play('fridge');
     setDone({ hours });
   };
 

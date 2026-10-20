@@ -153,7 +153,7 @@ export function roastFor(ctx: RoastCtx): string {
     const key = kind === 'over' ? 'OVER' : kind === 'big' ? 'BIG' : kind === 'repeat' ? 'REPEAT' : kind === 'late' ? 'LATE' : set;
     bank = [...bank, ...melbLines(ctx.lang ?? 'en', key, ctx.level)];
   }
-  if (ctx.unit.id === 'work') {
+  if (ctx.unit.id === 'work' || ctx.unit.id === 'shift') {
     const rest = bank.filter((l) => !HSP_ONLY.test(l));
     if (rest.length > 0) bank = rest;
   }

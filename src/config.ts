@@ -13,8 +13,8 @@ export const WIDGETS_AVAILABLE = false;
 
 /** Fill these in before submitting. The preflight script fails while they are placeholders. */
 export const SUPPORT_EMAIL = 'support@brokey.example';
-export const PRIVACY_URL = 'https://brokey.example/privacy';
-export const TERMS_URL = 'https://brokey.example/terms';
-export const SUPPORT_URL = 'https://brokey.example/support';
+export const PRIVACY_URL = 'https://ljeffreyant.github.io/brokey/site/privacy.html';
+export const TERMS_URL = 'https://ljeffreyant.github.io/brokey/site/terms.html';
+export const SUPPORT_URL = 'https://ljeffreyant.github.io/brokey/site/support.html';
 
 export const APP_VERSION = '1.0.0';

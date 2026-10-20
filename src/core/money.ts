@@ -46,16 +46,49 @@ export const UNIT_PRESETS: UnitDef[] = [
 export const DEFAULT_UNIT: UnitDef = UNIT_PRESETS[0];
 
 /** What prices are shown in: HSPs, or the time you had to work for them. */
-export type UnitMode = 'hsp' | 'work';
+export type UnitMode = 'hsp' | 'work' | 'shift';
+
+export const DEFAULT_SHIFT_HOURS = 6;
+export const SHIFT_HOURS_MIN = 1;
+export const SHIFT_HOURS_MAX = 14;
+
+/** Clamp a shift length to something sensible, in half hours. */
+export function cleanShiftHours(v: unknown): number {
+  const n = typeof v === 'number' && Number.isFinite(v) ? v : DEFAULT_SHIFT_HOURS;
+  return Math.min(SHIFT_HOURS_MAX, Math.max(SHIFT_HOURS_MIN, Math.round(n * 2) / 2));
+}
 
 /** "Work mode": one unit is one hour of your after-tax pay. */
 export function workUnit(hourlyCents: number): UnitDef {
   return { id: 'work', singular: 'hour of work', plural: 'hours of work', priceCents: hourlyCents };
 }
 
-/** The unit to show prices in. Work mode needs an hourly rate; without one it quietly stays on the normal unit. */
-export function displayUnit(unit: UnitDef, hourlyCents: number | null | undefined, mode: UnitMode | undefined): UnitDef {
-  return mode === 'work' && hourlyCents && hourlyCents > 0 ? workUnit(hourlyCents) : unit;
+/** "Shifts": one unit is a whole shift of your after-tax pay (hourly rate x shift length). */
+export function shiftUnit(hourlyCents: number, shiftHours: number = DEFAULT_SHIFT_HOURS): UnitDef {
+  return { id: 'shift', singular: 'shift', plural: 'shifts', priceCents: Math.max(1, Math.round(hourlyCents * cleanShiftHours(shiftHours))), hourlyCents };
+}
+
+/** Units that carry their own name inside the text ("35m", "0.4 shifts"), so there is no separate label. */
+export function isTimeUnit(unit: UnitDef): boolean {
+  return unit.id === 'work' || unit.id === 'shift';
+}
+
+/** Shifts are built and tested but shelved: too close to hours. Flip this to bring the third option back in the UI. */
+export const SHIFTS_ENABLED = false;
+
+/** What a tap on the big number does: HSPs, then hours (then shifts when enabled), then back. With no hourly rate there is nothing to switch to. */
+export function nextUnitMode(mode: UnitMode | undefined, hasRate: boolean, shifts: boolean = SHIFTS_ENABLED): UnitMode {
+  if (!hasRate) return 'hsp';
+  if (mode === 'work') return shifts ? 'shift' : 'hsp';
+  return mode === 'shift' ? 'hsp' : 'work';
+}
+
+/** The unit to show prices in. Work and shift modes need an hourly rate; without one it quietly stays on the normal unit. */
+export function displayUnit(unit: UnitDef, hourlyCents: number | null | undefined, mode: UnitMode | undefined, shiftHours?: number): UnitDef {
+  if (!hourlyCents || hourlyCents <= 0) return unit;
+  if (mode === 'work') return workUnit(hourlyCents);
+  if (mode === 'shift') return shiftUnit(hourlyCents, shiftHours);
+  return unit;
 }
 
 /** A unit's price scaled for a currency (HSP is 18 AUD, so ~75,000 IDR). */
@@ -148,8 +181,26 @@ function workText(cents: number, unit: UnitDef, locale: LangId): string {
   return `${sign}${friendlyNumber(a, locale)}${sfx.h}`;
 }
 
+const SHIFT_WORD: Record<LangId, { one: string; many: string; joiner: string }> = {
+  en: { one: 'shift', many: 'shifts', joiner: ' ' },
+  zh: { one: '个班', many: '个班', joiner: '' },
+  id: { one: 'shift', many: 'shift', joiner: ' ' },
+  es: { one: 'turno', many: 'turnos', joiner: ' ' },
+};
+
+/** Share of a shift as one string: "0.4 shifts". A sliver of a shift reads better as minutes, so under 0.1 it falls back to those. */
+function shiftText(cents: number, unit: UnitDef, locale: LangId): string {
+  const v = unitsOf(cents, unit);
+  if (unit.hourlyCents && Math.abs(v) < 0.1 && cents !== 0) return workText(cents, workUnit(unit.hourlyCents), locale);
+  const n = friendlyNumber(v, locale);
+  const w = SHIFT_WORD[locale] ?? SHIFT_WORD.en;
+  const one = Math.abs(parseFloat(n.replace(',', '.'))) === 1;
+  return `${n}${w.joiner}${one ? w.one : w.many}`;
+}
+
 export function formatUnits(cents: number, unit: UnitDef, locale: LangId = 'en'): string {
   if (unit.id === 'work') return workText(cents, unit, locale);
+  if (unit.id === 'shift') return shiftText(cents, unit, locale);
   const v = unitsOf(cents, unit);
   const n = friendlyNumber(v, locale);
   const one = Math.abs(parseFloat(n.replace(',', '.'))) === 1;
@@ -159,11 +210,12 @@ export function formatUnits(cents: number, unit: UnitDef, locale: LangId = 'en')
 /** Just the number part, for big display. */
 export function unitsNumber(cents: number, unit: UnitDef, locale: LangId = 'en'): string {
   if (unit.id === 'work') return workText(cents, unit, locale);
+  if (unit.id === 'shift') return shiftText(cents, unit, locale);
   return friendlyNumber(unitsOf(cents, unit), locale);
 }
 
 export function unitLabel(cents: number, unit: UnitDef): string {
-  if (unit.id === 'work') return '';
+  if (isTimeUnit(unit)) return '';
   const n = friendlyNumber(unitsOf(cents, unit));
   return Math.abs(parseFloat(n)) === 1 ? unit.singular : unit.plural;
 }

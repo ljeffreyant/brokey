@@ -4,7 +4,7 @@ import { ScrollView, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Mood } from '../../art/mascot';
-import { Regret, categoryMeta, currencyDef } from '../../core';
+import { Regret, categoryMeta, currencyDef, regretCue } from '../../core';
 import { catLabel, useT } from '../../i18n';
 import { useStore } from '../../store';
 import { useTheme } from '../../theme';
@@ -18,6 +18,7 @@ import { DayChips, dayTs, daysAgoOf } from '../../ui/DayChips';
 import { Btn, Card, Chip, Field, RoundBtn } from '../../ui/kit';
 import { haptic } from '../../ui/haptics';
 import { formatClock, formatDate, formatDayName, useFmt } from '../../ui/useFmt';
+import { sfx } from '../../ui/sfx';
 
 export default function PurchaseDetail() {
   const p = useTheme();
@@ -66,6 +67,7 @@ export default function PurchaseDetail() {
   const answerKey = (r: Regret) => (r === 'worth' ? 'regret.worth' : r === 'meh' ? 'regret.meh' : 'regret.nope');
   const choose = (r: Regret) => {
     r === 'worth' ? haptic.good() : r === 'meh' ? haptic.soft() : haptic.warn();
+    sfx.play(regretCue(r));
     answerRegret(purchase.id, r);
     if (r === 'nah' && !shame) {
       addShame({ label: title, amountCents: purchase.amountCents, category: purchase.category, source: 'regret', purchaseId: purchase.id });
@@ -154,7 +156,7 @@ export default function PurchaseDetail() {
                 <Btn label={t('detail.offShelf')} tone="card" glyph="shelf" full onPress={() => removeShame(shame.id)} />
               </View>
             ) : answer ? (
-              <Btn label={t('detail.addShelf')} tone="card" glyph="shelf" full onPress={() => { haptic.warn(); addShame({ label: title, amountCents: purchase.amountCents, category: purchase.category, source: 'regret', purchaseId: purchase.id }); }} />
+              <Btn label={t('detail.addShelf')} tone="card" glyph="shelf" full onPress={() => { haptic.warn(); sfx.play('nope'); addShame({ label: title, amountCents: purchase.amountCents, category: purchase.category, source: 'regret', purchaseId: purchase.id }); }} />
             ) : null}
           </Card>
         </Animated.View>

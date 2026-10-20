@@ -89,6 +89,7 @@ export default function Settings() {
       <SectionTitle>{t('settings.sec.yours')}</SectionTitle>
       <Group>
         <Row title={t('settings.export')} sub={t('settings.export.sub')} glyph="share" onPress={() => go('/export')} />
+        <Row title={t('settings.backup')} sub={t('settings.backup.sub')} glyph="download" onPress={() => go('/settings/backup')} />
         {Platform.OS !== 'web' ? (
           <Row title={t('settings.lock')} sub={t('settings.lock.sub')} glyph="shield" right={<Toggle value={settings.lockApp} onChange={setLock} label={t('settings.lock')} />} />
         ) : null}

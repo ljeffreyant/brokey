@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import {
+  BackupData,
   BudgetState,
   CategoryId,
   CategoryMeta,
@@ -28,6 +29,7 @@ import {
   unitForCurrency,
   unlockedStickerIds,
   displayUnit,
+  DEFAULT_SHIFT_HOURS,
 } from './core';
 import { cancelNotification, scheduleWishUnlock } from './notify';
 
@@ -37,6 +39,7 @@ export const defaultSettings = (): Settings => ({
   unit: DEFAULT_UNIT,
   hourlyCents: null,
   unitMode: 'hsp',
+  shiftHours: DEFAULT_SHIFT_HOURS,
   roastLevel: 'medium',
   bodyRoasts: false,
   weekStartsOn: 1,
@@ -52,7 +55,10 @@ export const defaultSettings = (): Settings => ({
   notifyPace: true,
   notifyRecurring: true,
   lockApp: false,
+  lastBackupTs: null,
   adultConfirmed: false,
+  sounds: true,
+  haptics: true,
 });
 
 export const WALLET_COLORS = ['#FFD23F', '#EE3B2B', '#7CC8FF', '#FF9E8F', '#B56D36', '#9BE3A5', '#C9A7FF', '#FFFDF3'];
@@ -133,6 +139,8 @@ interface State {
   decideWish: (id: string, outcome: 'bought' | 'ditched') => LogResult | null;
   markStickersSeen: (ids: string[]) => void;
   resetAll: () => void;
+  /** replace everything with a validated backup */
+  restoreBackup: (data: BackupData) => void;
 }
 
 /** The wallet a new purchase goes to: the one on screen, or the first live one when viewing everything. */
@@ -262,7 +270,7 @@ export const useStore = create<State>()(
           amountCents: input.amountCents,
           level: st.settings.roastLevel,
           bodyRoasts: st.settings.bodyRoasts,
-          unit: displayUnit(st.settings.unit, st.settings.hourlyCents, st.settings.unitMode),
+          unit: displayUnit(st.settings.unit, st.settings.hourlyCents, st.settings.unitMode, st.settings.shiftHours),
           bigAtCents: st.settings.unit.priceCents * 2,
           hourlyCents: st.settings.hourlyCents,
           countThisWeek,
@@ -338,6 +346,21 @@ export const useStore = create<State>()(
       },
 
       markStickersSeen: (ids) => set((s) => ({ seenStickers: Array.from(new Set([...s.seenStickers, ...ids])) })),
+
+      restoreBackup: (data) => {
+        registerCustomCategories(data.customCats);
+        set({
+          settings: data.settings,
+          wallets: data.wallets,
+          purchases: data.purchases,
+          wishes: data.wishes,
+          shame: data.shame,
+          customCats: data.customCats,
+          hiddenCats: data.hiddenCats,
+          recentRoasts: data.recentRoasts,
+          seenStickers: data.seenStickers,
+        });
+      },
 
       resetAll: () => {
         registerCustomCategories([]);

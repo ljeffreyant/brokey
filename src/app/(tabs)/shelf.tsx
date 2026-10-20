@@ -17,6 +17,7 @@ import { haptic } from '../../ui/haptics';
 import { formatDate, useFmt, useNow } from '../../ui/useFmt';
 import { formatTyped } from '../../core/keypad';
 import { currencyDef, parseAmountToCents } from '../../core';
+import { sfx } from '../../ui/sfx';
 
 function ShameCard({ item, w, tilt, onPress }: { item: ShameItem; w: number; tilt: number; onPress: () => void }) {
   const p = useTheme();
@@ -227,6 +228,7 @@ export default function Shelf() {
         onAdd={(label, cents, cat, story) => {
           addShame({ label, amountCents: cents, category: cat, story: story || undefined, source: 'manual' });
           haptic.good();
+          sfx.play('nope');
           setAdding(false);
         }}
       />

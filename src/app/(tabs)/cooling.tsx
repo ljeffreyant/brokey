@@ -9,9 +9,10 @@ import { useStore } from '../../store';
 import { useTheme } from '../../theme';
 import { Brokey } from '../../ui/Brokey';
 import { Celebrate } from '../../ui/Celebrate';
+import { Drawer, EmptyShelf, Fridge, Shelf } from '../../ui/Fridge';
 import { IconDisc } from '../../ui/CatIcon';
 import { Txt } from '../../ui/Txt';
-import { Btn, Card, Group, RoundBtn, SectionTitle } from '../../ui/kit';
+import { Btn, Card, Group, RoundBtn } from '../../ui/kit';
 import { haptic } from '../../ui/haptics';
 import { formatDate, useFmt, useNow } from '../../ui/useFmt';
 
@@ -24,7 +25,7 @@ function WishCard({ w, now, onDitch, onBuy }: { w: WishItem; now: number; onDitc
   const prog = coolingProgress(w, now);
   return (
     <Animated.View entering={FadeInDown} layout={LinearTransition}>
-      <Card inner={{ gap: 12 }}>
+      <Card r={20} inner={{ gap: 12 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <IconDisc id={meta.icon} size={52} color={p.groups[meta.group].bg} ring />
           <View style={{ flex: 1 }}>
@@ -56,7 +57,7 @@ function WishCard({ w, now, onDitch, onBuy }: { w: WishItem; now: number; onDitc
           </View>
         </View>
         <View style={{ flexDirection: 'row', gap: 10 }}>
-          <Btn label={t('cool.ditch')} tone="yellow" glyph="check" full style={{ flex: 1 }} onPress={onDitch} />
+          <Btn label={t('cool.ditch')} tone="yellow" full style={{ flex: 1 }} onPress={onDitch} />
           <Btn label={ready ? t('cool.stillWant') : t('cool.cave')} tone="card" full style={{ flex: 1 }} onPress={onBuy} />
         </View>
       </Card>
@@ -101,70 +102,74 @@ export default function Cooling() {
         <RoundBtn glyph="plus" label={t('want.title')} fill={p.accent2} color={p.onAccent2} onPress={() => router.push('/want')} />
       </View>
 
-      <Card weight="quiet" fill={p.info} inner={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 10 }}>
-        <Brokey mood={saved > 0 ? 'proud' : 'ok'} width={96} />
-        <View style={{ flex: 1 }}>
-          <Txt v="label" color={p.ink} style={{ opacity: 0.7 }}>
-            {t('cool.saved')}
-          </Txt>
-          <Txt v="display" color={p.ink} numberOfLines={1} adjustsFontSizeToFit>
-            {f.hsp(saved)}
-          </Txt>
-          <Txt v="small" color={p.ink} style={{ fontFamily: 'DMSans_700Bold' }}>
-            {f.sum(saved)} · {t.n('cool.ditchedN', ditchedN)}
-          </Txt>
-        </View>
-      </Card>
-
-      {active.length === 0 ? (
-        <Card inner={{ alignItems: 'center', gap: 10, paddingVertical: 26 }}>
-          <Txt v="heading" align="center">
-            {t('cool.emptyTitle')}
-          </Txt>
-          <Txt v="small" dim align="center">
-            {t('cool.emptyBody')}
-          </Txt>
-          <Btn label={t('want.title')} glyph="snow" tone="primary" onPress={() => router.push('/want')} />
-        </Card>
-      ) : (
-        <View style={{ gap: 14 }}>
-          {active.map((w) => (
-            <WishCard key={w.id} w={w} now={now} onDitch={() => ditch(w)} onBuy={() => buy(w)} />
-          ))}
-        </View>
-      )}
-
-      {past.length > 0 ? (
-        <View>
-          <SectionTitle>{t('cool.past')}</SectionTitle>
-          <Group>
-            {past.map((w) => {
-              const meta = categoryMeta(w.category);
-              return (
-                <View key={w.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12 }}>
-                  <IconDisc id={meta.icon} size={42} color={p.groups[meta.group].bg} ring />
-                  <View style={{ flex: 1 }}>
-                    <Txt v="bodyBold" numberOfLines={1}>
-                      {w.label}
-                    </Txt>
-                    <Txt v="small" dim>
-                      {formatDate(w.decidedTs ?? w.createdTs, f.lang)}
-                    </Txt>
-                  </View>
-                  <View style={{ alignItems: 'flex-end' }}>
-                    <Txt v="small" color={w.status === 'ditched' ? p.good : p.textDim} style={{ fontFamily: 'DMSans_700Bold' }}>
-                      {w.status === 'ditched' ? t('cool.ditched') : t('cool.bought')}
-                    </Txt>
-                    <Txt v="small" faint>
-                      {f.money(w.amountCents)}
-                    </Txt>
-                  </View>
-                </View>
-              );
-            })}
-          </Group>
-        </View>
-      ) : null}
+      <Fridge
+        freezer={
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Brokey mood={saved > 0 ? 'proud' : 'ok'} width={96} />
+            <View style={{ flex: 1 }}>
+              <Txt v="label" color={p.fridge.onDoor} style={{ opacity: 0.7 }}>
+                {t('cool.saved')}
+              </Txt>
+              <Txt v="display" color={p.fridge.onDoor} numberOfLines={1} adjustsFontSizeToFit>
+                {f.hsp(saved)}
+              </Txt>
+              <Txt v="small" color={p.fridge.onDoor} style={{ fontFamily: 'DMSans_700Bold' }}>
+                {f.sum(saved)} · {t.n('cool.ditchedN', ditchedN)}
+              </Txt>
+            </View>
+          </View>
+        }
+        drawer={
+          past.length > 0 ? (
+            <Drawer title={t('cool.past')}>
+              <Group>
+                {past.map((w) => {
+                  const meta = categoryMeta(w.category);
+                  return (
+                    <View key={w.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12 }}>
+                      <IconDisc id={meta.icon} size={42} color={p.groups[meta.group].bg} ring />
+                      <View style={{ flex: 1 }}>
+                        <Txt v="bodyBold" numberOfLines={1}>
+                          {w.label}
+                        </Txt>
+                        <Txt v="small" dim>
+                          {formatDate(w.decidedTs ?? w.createdTs, f.lang)}
+                        </Txt>
+                      </View>
+                      <View style={{ alignItems: 'flex-end' }}>
+                        <Txt v="small" color={w.status === 'ditched' ? p.good : p.textDim} style={{ fontFamily: 'DMSans_700Bold' }}>
+                          {w.status === 'ditched' ? t('cool.ditched') : t('cool.bought')}
+                        </Txt>
+                        <Txt v="small" faint>
+                          {f.money(w.amountCents)}
+                        </Txt>
+                      </View>
+                    </View>
+                  );
+                })}
+              </Group>
+            </Drawer>
+          ) : undefined
+        }
+      >
+        {active.length === 0 ? (
+          <EmptyShelf>
+            <Txt v="heading" align="center" color={p.onAccent2}>
+              {t('cool.emptyTitle')}
+            </Txt>
+            <Txt v="small" align="center" color={p.onAccent2} style={{ opacity: 0.8 }}>
+              {t('cool.emptyBody')}
+            </Txt>
+            <Btn label={t('want.title')} glyph="snow" tone="primary" style={{ alignSelf: 'center' }} onPress={() => router.push('/want')} />
+          </EmptyShelf>
+        ) : (
+          active.map((w) => (
+            <Shelf key={w.id}>
+              <WishCard w={w} now={now} onDitch={() => ditch(w)} onBuy={() => buy(w)} />
+            </Shelf>
+          ))
+        )}
+      </Fridge>
 
       <Celebrate
         visible={!!party}

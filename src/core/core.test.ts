@@ -73,6 +73,7 @@ const settings = (over: Partial<Combined> = {}): Combined => ({
   unit: DEFAULT_UNIT,
   hourlyCents: null,
   unitMode: 'hsp',
+  shiftHours: 6,
   roastLevel: 'medium',
   bodyRoasts: false,
   weekStartsOn: 1,
@@ -87,8 +88,10 @@ const settings = (over: Partial<Combined> = {}): Combined => ({
   notifyWeekly: false,
   notifyPace: true,
   notifyRecurring: true,
-  lockApp: false,
+  lockApp: false, lastBackupTs: null,
   adultConfirmed: false,
+  sounds: true,
+  haptics: true,
   ...over,
 });
 const walletOf = (c: Combined, id = 'w1'): Wallet => ({

@@ -3,7 +3,7 @@ import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown, FadeOutLeft, LinearTransition } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FRIES_TOTAL, Purchase, WishItem, categoryMeta, forecastRunOut, regretQueue, startOfDay, wishPhase } from '../../core';
+import { FRIES_TOTAL, Purchase, WishItem, categoryMeta, forecastRunOut, nextUnitMode, regretCue, regretQueue, startOfDay, wishPhase } from '../../core';
 import { catLabel, useT } from '../../i18n';
 import { useStore } from '../../store';
 import { Glyph } from '../../ui/Glyph';
@@ -18,6 +18,7 @@ import { haptic } from '../../ui/haptics';
 import { formatDate, formatDayName, useBudget, useFmt, useNow } from '../../ui/useFmt';
 import { useTheme } from '../../theme';
 import { weatherOf } from '../../ui/weather';
+import { sfx } from '../../ui/sfx';
 
 export default function Home() {
   const p = useTheme();
@@ -33,6 +34,9 @@ export default function Home() {
   const addShame = useStore((s) => s.addShame);
   const [pick, setPick] = useState(false);
   const roastLevel = useStore((s) => s.settings.roastLevel);
+  const unitMode = useStore((s) => s.settings.unitMode);
+  const hourlyCents = useStore((s) => s.settings.hourlyCents);
+  const updateSettings = useStore((s) => s.updateSettings);
   const [quipN, setQuipN] = useState(0);
   const [poke, setPoke] = useState(0);
   const [heroH, setHeroH] = useState(520);
@@ -77,11 +81,22 @@ export default function Home() {
 
   const onRegret = (x: Purchase, r: 'worth' | 'meh' | 'nah') => {
     r === 'worth' ? haptic.good() : r === 'meh' ? haptic.soft() : haptic.warn();
+    sfx.play(regretCue(r));
     answerRegret(x.id, r);
     if (r === 'nah') {
       const meta = categoryMeta(x.category);
       addShame({ label: x.merchant || catLabel(t, meta), amountCents: x.amountCents, category: x.category, source: 'regret', purchaseId: x.id });
     }
+  };
+
+  /** tap the big number to flip how prices are shown; without an hourly rate it takes you to set one */
+  const cycleUnit = () => {
+    haptic.tap();
+    if (!hourlyCents) {
+      router.push('/settings/money');
+      return;
+    }
+    updateSettings({ unitMode: nextUnitMode(unitMode, true) });
   };
 
   const heroTop = ins.top + 10;
@@ -108,7 +123,14 @@ export default function Home() {
           <Txt v="label" color={wc.textDim}>
             {budget.remainingCents <= 0 ? t('home.budgetGone') : safe < 0 ? t('home.overToday') : t('home.safeToday')}
           </Txt>
-          <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8, marginTop: 4 }}>
+          <Pressable
+            onPress={cycleUnit}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={`${f.hspNum(budget.remainingCents <= 0 ? budget.remainingCents : safe)} ${f.unitTag(0)}`.trim()}
+            accessibilityHint={t('home.switchUnit')}
+            style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8, marginTop: 4 }}
+          >
             <Txt v="hero" color={wc.text} adjustsFontSizeToFit numberOfLines={1}>
               {f.hspNum(budget.remainingCents <= 0 ? budget.remainingCents : safe)}
             </Txt>
@@ -117,7 +139,7 @@ export default function Home() {
                 {f.unitTag(0)}
               </Txt>
             ) : null}
-          </View>
+          </Pressable>
           <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
             <View style={{ backgroundColor: p.ink, borderRadius: 999, paddingHorizontal: 12, height: 30, justifyContent: 'center' }}>
               <Txt v="small" color="#FFF6E6" style={{ fontFamily: 'DMSans_700Bold' }}>
@@ -240,7 +262,7 @@ export default function Home() {
         <View>
           <SectionTitle
             right={
-              <Pressable onPress={() => router.push('/history')} hitSlop={10} accessibilityRole="button">
+              <Pressable onPress={() => router.push('/history')} hitSlop={10} accessibilityRole="button" accessibilityLabel={t('home.seeAll')}>
                 <Txt v="small" color={p.accent} style={{ fontFamily: 'DMSans_700Bold' }}>
                   {t('home.seeAll')}
                 </Txt>
@@ -316,7 +338,7 @@ function Stat({ label, value, sub, bad }: { label: string; value: string; sub: s
       <Txt v="label" dim size={10}>
         {label}
       </Txt>
-      <Txt v="num" size={26} color={bad ? p.bad : p.text} numberOfLines={1} adjustsFontSizeToFit style={{ marginTop: 3 }}>
+      <Txt v="num" size={value.length > 6 ? 18 : 26} color={bad ? p.bad : p.text} numberOfLines={1} adjustsFontSizeToFit style={{ marginTop: value.length > 6 ? 8 : 3 }}>
         {value}
       </Txt>
       <Txt v="small" faint size={12} numberOfLines={1}>

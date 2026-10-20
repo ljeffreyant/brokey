@@ -21,6 +21,7 @@ import { haptic } from '../ui/haptics';
 import { useLeave } from '../ui/nav';
 import { useBudget, useFmt } from '../ui/useFmt';
 import { Brokey } from '../ui/Brokey';
+import { sfx } from '../ui/sfx';
 
 const METHODS: { id: PayMethod; key: 'method.tap' | 'method.card' | 'method.cash' | 'method.bnpl' }[] = [
   { id: 'tap', key: 'method.tap' },
@@ -109,8 +110,10 @@ export default function Log() {
     if (!eat) return;
     const ids = eat.res.newStickers;
     markSeen(ids);
-    if (ids.length) setStickers(ids);
-    else leave();
+    if (ids.length) {
+      sfx.play('pop');
+      setStickers(ids);
+    } else leave();
   };
 
   const stickerDefs = useMemo(() => allStickers(), []);
@@ -150,7 +153,7 @@ export default function Log() {
       <Animated.View style={[{ position: 'absolute', left: 0, right: 0, top: ins.top, bottom: 0, backgroundColor: p.bg }, howStyle]} pointerEvents={phase === 'how' ? 'auto' : 'none'}>
         <View style={{ paddingHorizontal: 18, paddingTop: 8, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <RoundBtn glyph="back" label={t('common.back')} onPress={() => setPhase('what')} />
-          <Pressable onPress={() => setPhase('what')} accessibilityRole="button" style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <Pressable onPress={() => setPhase('what')} accessibilityRole="button" accessibilityLabel={meta ? `${catLabel(t, meta)}. ${t('log.tapToChange')}` : t('log.tapToChange')} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
             {meta ? <IconDisc id={meta.icon} size={44} color={p.groups[meta.group].bg} ring /> : null}
             <View style={{ flex: 1 }}>
               <Txt v="heading" numberOfLines={1}>

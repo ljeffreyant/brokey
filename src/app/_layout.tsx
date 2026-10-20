@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View } from 'react-native';
-import { Stack, usePathname, useRouter } from 'expo-router';
+import { ErrorBoundaryProps, Stack, usePathname, useRouter } from 'expo-router';
 import { useFonts } from 'expo-font';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -14,8 +14,10 @@ import { ThemeProvider, useTheme } from '../theme';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth, startAutoSync } from '../auth/store';
 import { initNotifications } from '../notify';
+import { CrashScreen } from '../ui/CrashScreen';
 import { LockGate } from '../ui/LockGate';
 import { useSmartAlerts } from '../ui/useSmartAlerts';
+import { sfx } from '../ui/sfx';
 
 function Shell() {
   const p = useTheme();
@@ -50,6 +52,9 @@ export default function RootLayout() {
   const [loaded] = useFonts({ BricolageGrotesque_700Bold, BricolageGrotesque_800ExtraBold, DMSans_400Regular, DMSans_500Medium, DMSans_700Bold });
   const hydrated = useStore((s) => s.hydrated);
   useEffect(() => {
+    if (hydrated) sfx.preload();
+  }, [hydrated]);
+  useEffect(() => {
     initNotifications();
     useAuth.getState().init();
     return startAutoSync();
@@ -63,5 +68,16 @@ export default function RootLayout() {
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
+  );
+}
+
+/** If any screen throws while drawing, show this instead of a white screen. */
+export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
+  return (
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <CrashScreen error={error} retry={retry} />
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }

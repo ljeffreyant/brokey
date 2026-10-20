@@ -82,6 +82,15 @@
       "expo-sharing",
       "expo-status-bar",
       [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundPlayback": false,
+          "enableBackgroundRecording": false
+        }
+      ],
+      [
         "expo-local-authentication",
         {
           "faceIDPermission": "Brokey uses Face ID to keep your spending private when you turn on the lock."

@@ -7,7 +7,7 @@ export type Regret = 'worth' | 'meh' | 'nah';
 export type Freq = 'weekly' | 'fortnightly' | 'monthly' | 'yearly';
 export type CurrencyCode = 'AUD' | 'USD' | 'EUR' | 'GBP' | 'NZD' | 'CAD' | 'SGD' | 'IDR' | 'MYR' | 'JPY' | 'CNY' | 'HKD' | 'INR' | 'KRW' | 'PHP' | 'THB' | 'VND' | 'MXN';
 export type LangId = 'en' | 'zh' | 'id' | 'es';
-export type ThemeId = 'system' | 'garlic' | 'bbq' | 'kebab';
+export type ThemeId = 'system' | 'garlic' | 'bbq' | 'kebab' | 'chilli' | 'mint';
 export type WalletKind = 'main' | 'savings' | 'trip' | 'fun' | 'shared' | 'custom';
 
 export interface Purchase {
@@ -45,6 +45,8 @@ export interface UnitDef {
   singular: string;
   plural: string;
   priceCents: number;
+  /** only on the derived "shift" unit: the hourly rate it was built from, so tiny prices can fall back to minutes */
+  hourlyCents?: number;
 }
 
 export interface Wallet {
@@ -69,8 +71,10 @@ export interface Settings {
   unit: UnitDef;
   /** after-tax hourly pay, used to show prices as hours of work */
   hourlyCents: number | null;
-  /** show prices in HSPs, or as hours of work (needs hourlyCents) */
-  unitMode: 'hsp' | 'work';
+  /** show prices in HSPs, as hours of work, or as shifts (the last two need hourlyCents) */
+  unitMode: 'hsp' | 'work' | 'shift';
+  /** how long one shift is, in hours (for the shifts view) */
+  shiftHours: number;
   roastLevel: RoastLevel;
   bodyRoasts: boolean;
   weekStartsOn: number;
@@ -92,8 +96,14 @@ export interface Settings {
   notifyRecurring: boolean;
   /** ask for Face ID (or the passcode) to open the app */
   lockApp: boolean;
+  /** when the user last saved a backup file (ms), or null if never */
+  lastBackupTs: number | null;
   /** user said they are 18+, needed for the unhinged roast level */
   adultConfirmed: boolean;
+  /** little sound effects (they follow the silent switch) */
+  sounds: boolean;
+  /** haptic taps and buzzes */
+  haptics: boolean;
 }
 
 export interface WishItem {

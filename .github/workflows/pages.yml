@@ -29,6 +29,10 @@ jobs:
         env:
           CI: "1"
           EXPO_NO_TELEMETRY: "1"
+      - name: Add the store pages (privacy, terms, support) under /site
+        run: |
+          npm run site
+          cp -r site dist/site
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

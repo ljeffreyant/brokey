@@ -76,8 +76,9 @@ describe('detectRecurring', () => {
   });
 });
 
-import { DEFAULT_UNIT, displayUnit, formatUnits, unitsNumber, unitLabel, workUnit } from './money';
+import { DEFAULT_UNIT, cleanShiftHours, displayUnit, formatUnits, isTimeUnit, nextUnitMode, shiftUnit, unitsNumber, unitLabel, workUnit } from './money';
 import { roastFor } from './roasts';
+import { SFX_NAMES, afterBuyCue, regretCue } from './cues';
 
 describe('work mode', () => {
   const unit = workUnit(2800); // $28 an hour
@@ -119,5 +120,89 @@ describe('work mode', () => {
       expect(line).not.toMatch(/snack pack/i);
       expect(line).not.toMatch(/\{[a-z]+\}/);
     }
+  });
+});
+
+describe('shifts', () => {
+  const unit = shiftUnit(2800, 6); // $28 an hour, 6 hour shift = $168 a shift
+  it('only switches on with an hourly rate', () => {
+    expect(displayUnit(DEFAULT_UNIT, 2800, 'shift', 6).id).toBe('shift');
+    expect(displayUnit(DEFAULT_UNIT, 2800, 'shift', 6).priceCents).toBe(16800);
+    expect(displayUnit(DEFAULT_UNIT, null, 'shift', 6)).toBe(DEFAULT_UNIT);
+    expect(isTimeUnit(unit)).toBe(true);
+    expect(isTimeUnit(workUnit(2800))).toBe(true);
+    expect(isTimeUnit(DEFAULT_UNIT)).toBe(false);
+  });
+  it('shows a share of a shift with its name inside the text', () => {
+    expect(formatUnits(6720, unit)).toBe('0.4 shifts');
+    expect(formatUnits(16800, unit)).toBe('1 shift');
+    expect(formatUnits(33600, unit)).toBe('2 shifts');
+    expect(formatUnits(0, unit)).toBe('0 shifts');
+    expect(unitsNumber(6720, unit)).toBe('0.4 shifts');
+    expect(unitLabel(6720, unit)).toBe('');
+  });
+  it('shows a sliver of a shift as minutes instead of 0 shifts', () => {
+    expect(formatUnits(1400, unit)).toBe('30m'); // 0.083 of a shift
+    expect(formatUnits(650, unit)).toBe('14m');
+  });
+  it('speaks the language', () => {
+    expect(formatUnits(6720, unit, 'zh')).toBe('0.4个班');
+    expect(formatUnits(6720, unit, 'id')).toBe('0,4 shift');
+    expect(formatUnits(33600, unit, 'es')).toBe('2 turnos');
+    expect(formatUnits(16800, unit, 'es')).toBe('1 turno');
+  });
+  it('keeps the shift length sensible', () => {
+    expect(cleanShiftHours(6)).toBe(6);
+    expect(cleanShiftHours(7.3)).toBe(7.5);
+    expect(cleanShiftHours(0)).toBe(1);
+    expect(cleanShiftHours(99)).toBe(14);
+    expect(cleanShiftHours('x')).toBe(6);
+    expect(cleanShiftHours(NaN)).toBe(6);
+  });
+  it('never uses the snack pack lines when prices are in shifts', () => {
+    for (let seed = 0; seed < 30; seed++) {
+      const line = roastFor({
+        category: 'coffee', amountCents: 9000, level: 'unhinged', bodyRoasts: false, unit, bigAtCents: 3600, hourlyCents: 2800,
+        countThisWeek: 1, overBudget: false, weeklyBudgetCents: 14000, method: 'tap', hour: 14, seed, lang: 'en',
+      });
+      expect(line).not.toMatch(/snack pack/i);
+      expect(line).not.toMatch(/\{[a-z]+\}/);
+    }
+  });
+});
+
+describe('tap to switch units', () => {
+  it('goes HSPs, hours, then back while shifts are shelved', () => {
+    expect(nextUnitMode('hsp', true)).toBe('work');
+    expect(nextUnitMode('work', true)).toBe('hsp');
+    expect(nextUnitMode(undefined, true)).toBe('work');
+    expect(nextUnitMode('shift', true)).toBe('hsp');
+  });
+  it('includes shifts when they are switched on', () => {
+    expect(nextUnitMode('hsp', true, true)).toBe('work');
+    expect(nextUnitMode('work', true, true)).toBe('shift');
+    expect(nextUnitMode('shift', true, true)).toBe('hsp');
+  });
+  it('stays on HSPs without an hourly rate', () => {
+    expect(nextUnitMode('hsp', false)).toBe('hsp');
+    expect(nextUnitMode('work', false)).toBe('hsp');
+  });
+});
+
+describe('sound cues', () => {
+  it('rewards a good call and groans at a bad one', () => {
+    expect(regretCue('worth')).toBe('coin');
+    expect(regretCue('nah')).toBe('nope');
+    expect(regretCue('meh')).toBeNull();
+  });
+  it('only adds a sound after the bite when it lands badly', () => {
+    expect(afterBuyCue('broke')).toBe('nope');
+    expect(afterBuyCue('sad')).toBe('nope');
+    expect(afterBuyCue('happy')).toBeNull();
+    expect(afterBuyCue('shock')).toBeNull();
+  });
+  it('has a file for every cue', () => {
+    expect(new Set(SFX_NAMES).size).toBe(SFX_NAMES.length);
+    for (const n of SFX_NAMES) expect(require('node:fs').existsSync(`assets/sfx/${n}.wav`), n).toBe(true);
   });
 });

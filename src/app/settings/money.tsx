@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { CURRENCIES, UNIT_PRESETS, currencyDef, formatMoney } from '../../core';
+import { CURRENCIES, SHIFTS_ENABLED, UNIT_PRESETS, cleanShiftHours, currencyDef, formatMoney, friendlyNumber } from '../../core';
 import { useT } from '../../i18n';
 import { moneyFmt, useStore } from '../../store';
 import { useTheme } from '../../theme';
@@ -23,7 +23,8 @@ export default function MoneySettings() {
   const update = useStore((s) => s.updateSettings);
   const hasBuys = useStore((s) => s.purchases.length > 0);
   const cur = currencyDef(settings.currency);
-  const mode = settings.unitMode ?? 'hsp';
+  const mode = settings.unitMode === 'shift' && !SHIFTS_ENABLED ? 'work' : settings.unitMode ?? 'hsp';
+  const shiftHours = cleanShiftHours(settings.shiftHours);
   const major = Math.round(settings.unit.priceCents / 100);
   const setPrice = (v: number) => update({ unit: { ...settings.unit, priceCents: Math.max(1, v) * 100 } });
   const sample = 123450 * (cur.zeroDecimal ? 1 : 1);
@@ -48,13 +49,34 @@ export default function MoneySettings() {
         options={[
           { id: 'hsp', label: t('money.mode.hsp') },
           { id: 'work', label: t('money.mode.work') },
+          ...(SHIFTS_ENABLED ? [{ id: 'shift' as const, label: t('money.mode.shift') }] : []),
         ]}
         onChange={(v) => update({ unitMode: v })}
       />
-      {mode === 'work' ? (
+      {mode !== 'hsp' ? (
         <Txt v="small" dim style={{ marginTop: 8 }} color={settings.hourlyCents ? undefined : p.bad}>
-          {settings.hourlyCents ? t('money.workOn', { rate: f.money(settings.hourlyCents) }) : t('money.workHint')}
+          {settings.hourlyCents
+            ? mode === 'shift'
+              ? t('money.shiftOn', { h: friendlyNumber(shiftHours), rate: f.money(settings.hourlyCents) })
+              : t('money.workOn', { rate: f.money(settings.hourlyCents) })
+            : t('money.workHint')}
         </Txt>
+      ) : null}
+      {mode === 'shift' ? (
+        <View style={{ marginTop: 10 }}>
+        <Card weight="quiet" inner={{ alignItems: 'center', gap: 8, paddingVertical: 16 }}>
+          <Txt v="label" dim>
+            {t('money.shiftLen')}
+          </Txt>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <RoundBtn glyph="minus" label="-" onPress={() => update({ shiftHours: cleanShiftHours(shiftHours - 0.5) })} />
+            <Txt v="hero" size={44} adjustsFontSizeToFit numberOfLines={1} style={{ minWidth: 120, textAlign: 'center' }}>
+              {friendlyNumber(shiftHours)}h
+            </Txt>
+            <RoundBtn glyph="plus" label="+" onPress={() => update({ shiftHours: cleanShiftHours(shiftHours + 0.5) })} />
+          </View>
+        </Card>
+        </View>
       ) : null}
 
       {mode === 'hsp' ? (

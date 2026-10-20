@@ -2,7 +2,7 @@ import React from 'react';
 import { Pressable, View, useWindowDimensions } from 'react-native';
 import { useT } from '../i18n';
 import { useStore } from '../store';
-import { PALETTES, PaletteId, Palette, useTheme } from '../theme';
+import { PALETTES, PALETTE_IDS, PaletteId, Palette, useTheme } from '../theme';
 import { Glyph } from './Glyph';
 import { Txt } from './Txt';
 import { haptic } from './haptics';
@@ -25,7 +25,7 @@ function Mini({ pal }: { pal: Palette }) {
   );
 }
 
-/** Garlic, BBQ, 3AM Kebab Shop, or follow the phone. Changing it re-themes the whole app on the spot. */
+/** Every sauce theme, or follow the phone. Changing it re-themes the whole app on the spot. */
 export function ThemePicker() {
   const p = useTheme();
   const t = useT();
@@ -34,9 +34,7 @@ export function ThemePicker() {
   const update = useStore((s) => s.updateSettings);
   const w = Math.floor((width - 36 - 12) / 2);
   const items: { id: Choice; name: string; tag: string; pal: Palette | null }[] = [
-    { id: 'garlic', name: t('theme.garlic'), tag: t('theme.garlic.tag'), pal: PALETTES.garlic },
-    { id: 'bbq', name: t('theme.bbq'), tag: t('theme.bbq.tag'), pal: PALETTES.bbq },
-    { id: 'kebab', name: t('theme.kebab'), tag: t('theme.kebab.tag'), pal: PALETTES.kebab },
+    ...PALETTE_IDS.map((id) => ({ id: id as Choice, name: t(`theme.${id}` as never), tag: t(`theme.${id}.tag` as never), pal: PALETTES[id] as Palette | null })),
     { id: 'system', name: t('theme.system'), tag: t('theme.system.tag'), pal: null },
   ];
   return (
@@ -56,7 +54,7 @@ export function ThemePicker() {
             style={{ width: w }}
           >
             <View style={{ position: 'absolute', left: 0, right: 0, top: 4, bottom: -4, borderRadius: 22, backgroundColor: p.ink }} />
-            <View style={{ backgroundColor: p.card, borderRadius: 22, borderWidth: on ? 3.5 : 2.5, borderColor: on ? p.accent : p.ink, padding: 8, gap: 8 }}>
+            <View style={{ flex: 1, backgroundColor: p.card, borderRadius: 22, borderWidth: on ? 3.5 : 2.5, borderColor: on ? p.accent : p.ink, padding: 8, gap: 8 }}>
               {it.pal ? (
                 <Mini pal={it.pal} />
               ) : (
