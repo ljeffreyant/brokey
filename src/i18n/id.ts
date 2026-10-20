@@ -60,6 +60,8 @@ export const id: Partial<Record<Key, string | readonly string[]>> = {
   'log.today': 'Hari ini',
   'log.yesterday': 'Kemarin',
   'log.twoDays': '2 hari lalu',
+  'log.pickDay': 'Pilih hari',
+  'log.pickDayTitle': 'Hari apa?',
   'log.typeIt': 'Ketik harganya',
   'log.feed': 'Kasih makan Brokey',
   'method.tap': 'Tap',

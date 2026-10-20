@@ -78,6 +78,8 @@ export const en = {
   'log.today': 'Today',
   'log.yesterday': 'Yesterday',
   'log.twoDays': '2 days ago',
+  'log.pickDay': 'Pick a day',
+  'log.pickDayTitle': 'Which day was it?',
   'log.typeIt': 'Type what it cost',
   'log.feed': 'Feed Brokey',
   'method.tap': 'Tap',

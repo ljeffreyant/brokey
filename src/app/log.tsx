@@ -16,9 +16,10 @@ import { Keypad } from '../ui/Keypad';
 import { StickerArt } from '../ui/StickerArt';
 import { Txt } from '../ui/Txt';
 import { Btn, Chip, Field, PressSlab, RoundBtn, Slab } from '../ui/kit';
+import { Sheet } from '../ui/Sheet';
 import { haptic } from '../ui/haptics';
 import { useLeave } from '../ui/nav';
-import { useBudget, useFmt } from '../ui/useFmt';
+import { formatDate, formatDayName, useBudget, useFmt } from '../ui/useFmt';
 import { Brokey } from '../ui/Brokey';
 
 const METHODS: { id: PayMethod; key: 'method.tap' | 'method.card' | 'method.cash' | 'method.bnpl' }[] = [
@@ -57,6 +58,7 @@ export default function Log() {
   const [merchant, setMerchant] = useState(params.merchant ?? '');
   const [method, setMethod] = useState<PayMethod>((['tap', 'card', 'cash', 'bnpl'] as string[]).includes(params.method ?? '') ? (params.method as PayMethod) : 'tap');
   const [daysAgo, setDaysAgo] = useState(0);
+  const [dayOpen, setDayOpen] = useState(false);
   const [walletId, setWalletId] = useState(startWallet);
   const [phase, setPhase] = useState<'what' | 'how'>(guessed && params.amount ? 'how' : 'what');
   const [eat, setEat] = useState<null | { res: LogResult; iconId: string }>(null);
@@ -86,7 +88,7 @@ export default function Log() {
 
   const feed = () => {
     if (!cat || cents <= 0) return;
-    const ts = Date.now() - daysAgo * 86400000;
+    const ts = dayTs(daysAgo);
     const res = logPurchase({ amountCents: cents, category: cat, merchant, method, ts, source: fromLink ? 'shortcut' : 'manual', walletId });
     setEat({ res, iconId: categoryMeta(cat).icon });
   };
@@ -100,7 +102,7 @@ export default function Log() {
   };
 
   const stickerDefs = useMemo(() => allStickers(), []);
-  const dayLabel = daysAgo === 0 ? t('log.today') : daysAgo === 1 ? t('log.yesterday') : t('log.twoDays');
+  const customLabel = `${formatDayName(dayTs(daysAgo), f.lang, 'short')} ${formatDate(dayTs(daysAgo), f.lang)}`;
   const shown = formatTyped(amount, settings.language);
   const sym = currencyDef(settings.currency).symbol;
   const workLine = cents > 0 ? f.work(cents) : null;
@@ -143,11 +145,15 @@ export default function Log() {
               </Txt>
             </View>
           </Pressable>
-          <Chip small label={dayLabel} glyph="calendar" onPress={() => setDaysAgo((d) => (d + 1) % 3)} />
         </View>
 
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 18, paddingTop: 12, paddingBottom: 12, gap: 12 }} showsVerticalScrollIndicator={false} style={{ flexGrow: 0 }}>
           <Field value={merchant} onChangeText={setMerchant} placeholder={t('log.where')} glyph="edit" maxLength={40} returnKeyType="done" />
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            <Chip small label={t('log.today')} on={daysAgo === 0} onPress={() => setDaysAgo(0)} />
+            <Chip small label={t('log.yesterday')} on={daysAgo === 1} onPress={() => setDaysAgo(1)} />
+            <Chip small glyph="calendar" label={daysAgo > 1 ? customLabel : t('log.pickDay')} on={daysAgo > 1} onPress={() => setDayOpen(true)} />
+          </View>
           {live.length > 1 ? (
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
               {live.map((w) => (
@@ -219,6 +225,24 @@ export default function Log() {
         </View>
       ) : null}
 
+      <Sheet visible={dayOpen} onClose={() => setDayOpen(false)} title={t('log.pickDayTitle')}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingBottom: 8 }}>
+          {Array.from({ length: PAST_DAYS }, (_, n) => (
+            <Chip
+              key={n}
+              small
+              on={daysAgo === n}
+              label={n === 0 ? t('log.today') : n === 1 ? t('log.yesterday') : `${formatDayName(dayTs(n), f.lang, 'short')} ${formatDate(dayTs(n), f.lang)}`}
+              onPress={() => {
+                haptic.soft();
+                setDaysAgo(n);
+                setDayOpen(false);
+              }}
+            />
+          ))}
+        </View>
+      </Sheet>
+
       {stickers.length > 0 ? (
         <View style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, backgroundColor: 'rgba(8,4,2,0.72)', alignItems: 'center', justifyContent: 'center', padding: 28 }}>
           <Animated.View>
@@ -247,6 +271,16 @@ export default function Log() {
       ) : null}
     </View>
   );
+}
+
+/** How far back a buy can be logged. */
+const PAST_DAYS = 30;
+
+/** The moment `n` calendar days ago at the current time of day (calendar maths, so clock changes do not shift the day). */
+function dayTs(n: number): number {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.getTime();
 }
 
 export const _g = [Glyph, PressSlab];

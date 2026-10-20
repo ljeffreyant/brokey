@@ -60,6 +60,8 @@ export const zh: Partial<Record<Key, string | readonly string[]>> = {
   'log.today': '今天',
   'log.yesterday': '昨天',
   'log.twoDays': '前天',
+  'log.pickDay': '选日期',
+  'log.pickDayTitle': '是哪一天？',
   'log.typeIt': '输入花了多少',
   'log.feed': '喂 Brokey',
   'method.tap': '闪付',
