@@ -58,7 +58,7 @@ export interface CategoryPickerProps {
   bottomPad?: number;
 }
 
-/** Ingredient tabs (Chips / Meat / Garlic / Chilli / BBQ) over a grid of cartoon category icons. */
+/** Group tabs (Treats / Food / Going out / Shopping / Basics) over a grid of cartoon category icons. */
 export function CategoryPicker({ value, onPick, bottomPad = 20 }: CategoryPickerProps) {
   const p = useTheme();
   const t = useT();
@@ -104,7 +104,7 @@ export function CategoryPicker({ value, onPick, bottomPad = 20 }: CategoryPicker
               inner={{ paddingVertical: 8, alignItems: 'center', gap: 2 }}
             >
               <CatIcon id={GROUP_ICON[gr.id]} size={30} />
-              <Txt v="label" size={10} color={on ? c.fg : p.textDim} numberOfLines={1} style={{ letterSpacing: 0.3 }}>
+              <Txt v="label" size={10} color={on ? c.fg : p.textDim} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75} style={{ letterSpacing: 0.3 }}>
                 {groupLabel(t, gr.id)}
               </Txt>
             </PressSlab>

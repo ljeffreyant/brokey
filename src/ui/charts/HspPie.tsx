@@ -47,7 +47,7 @@ export function wedges(groups: Pick<GroupTotal, 'group' | 'share'>[]): Wedge[] {
   return out;
 }
 
-/** The week as an HSP tray: one wedge per ingredient group. Tap a wedge to look closer. */
+/** The week as an HSP tray: one wedge per group. Tap a wedge to look closer. */
 export function HspPie({
   groups,
   size,

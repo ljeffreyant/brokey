@@ -54,7 +54,10 @@ export default function ReceiptScreen() {
   const shownH = paperH * scale;
 
   const reveal = useSharedValue(reduce ? 1 : 0);
+  const shownSv = useSharedValue(0);
   const tick = useRef<ReturnType<typeof setInterval> | null>(null);
+  const printTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const safeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stageRef = useRef<View>(null);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -67,10 +70,15 @@ export default function ReceiptScreen() {
   const print = useCallback(() => {
     stopTicks();
     cancelAnimation(reveal);
+    if (safeTimer.current) clearTimeout(safeTimer.current);
     if (reduce) {
       reveal.value = 1;
       return;
     }
+    // safety net: whatever happens to the animation, the paper is never left hidden
+    safeTimer.current = setTimeout(() => {
+      reveal.value = 1;
+    }, PRINT_MS + 1200);
     reveal.value = 0;
     reveal.value = withTiming(1, { duration: PRINT_MS, easing: Easing.steps(LINES, true) });
     let n = 0;
@@ -84,16 +92,31 @@ export default function ReceiptScreen() {
     }, PRINT_MS / LINES);
   }, [reduce, reveal]);
 
+  // Start printing once, the first time the paper has been measured. Later re-measures (fonts, wrapping)
+  // must not cancel it, which is what made the receipt stay blank on a real phone.
   const started = useRef(false);
   useEffect(() => {
     if (!paperH || started.current) return;
     started.current = true;
-    const id = setTimeout(print, 350);
-    return () => clearTimeout(id);
+    printTimer.current = setTimeout(() => print(), 350);
   }, [paperH, print]);
-  useEffect(() => stopTicks, []);
+  useEffect(
+    () => () => {
+      started.current = false;
+      stopTicks();
+      if (printTimer.current) clearTimeout(printTimer.current);
+      if (safeTimer.current) clearTimeout(safeTimer.current);
+    },
+    [],
+  );
+  useEffect(() => {
+    shownSv.value = shownH;
+  }, [shownH, shownSv]);
 
-  const growStyle = useAnimatedStyle(() => ({ height: reveal.value * shownH }));
+  // Printing is a curtain the colour of the stage that slides off the paper, top first.
+  // Only a transform is animated (no layout props), so it behaves the same on web and on device.
+  const coverStyle = useAnimatedStyle(() => ({ transform: [{ translateY: reveal.value * shownSv.value }] }));
+  const ready = stage.w > 0 && paperH > 0;
 
   const share = async () => {
     if (saving) return;
@@ -132,14 +155,19 @@ export default function ReceiptScreen() {
           <View style={{ width: '92%', height: 7, borderRadius: 4, backgroundColor: '#000', marginBottom: 5, opacity: 0.85 }} />
         </View>
         {/* paper grows out of the slot */}
-        <Animated.View style={[{ width: RECEIPT_W * scale, overflow: 'hidden', marginTop: -6, zIndex: 1 }, growStyle]}>
+        <View style={{ width: RECEIPT_W * scale, height: paperH ? shownH : undefined, overflow: 'hidden', marginTop: -6, zIndex: 1, opacity: ready ? 1 : 0 }}>
           <View
-            style={{ width: RECEIPT_W, transform: [{ scale }], transformOrigin: 'top left' }}
+            style={{
+              width: RECEIPT_W,
+              // scale about the top-left corner, written as translate pairs so no transformOrigin is needed
+              transform: [{ translateX: -RECEIPT_W / 2 }, { translateY: -paperH / 2 }, { scale }, { translateX: RECEIPT_W / 2 }, { translateY: paperH / 2 }],
+            }}
             onLayout={(e) => setPaperH(Math.round(e.nativeEvent.layout.height))}
           >
             <Receipt model={model} mood={verdict.mood} friesLeft={fries} />
           </View>
-        </Animated.View>
+          <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: 0, right: 0, top: 0, height: shownH + 2, backgroundColor: stageFill }, coverStyle]} />
+        </View>
         <View style={{ position: 'absolute', bottom: 10, alignSelf: 'center' }}>
           <Txt v="small" color={onStage} style={{ opacity: 0.7, fontFamily: 'DMSans_700Bold' }}>
             brokey

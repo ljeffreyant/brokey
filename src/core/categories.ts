@@ -1,11 +1,11 @@
 import { CategoryId, CategoryMeta, GroupId, GroupMeta } from './types';
 
 export const GROUPS: GroupMeta[] = [
-  { id: 'chips', label: 'Chips', blurb: 'little treats', color: '#FFD23F' },
-  { id: 'meat', label: 'Meat', blurb: 'proper food', color: '#B56D36' },
-  { id: 'garlic', label: 'Garlic', blurb: 'going out', color: '#FFF6E6' },
-  { id: 'chilli', label: 'Chilli', blurb: 'spicy buys', color: '#EE3B2B' },
-  { id: 'bbq', label: 'BBQ', blurb: 'the boring stuff', color: '#8A4B24' },
+  { id: 'chips', label: 'Treats', blurb: 'coffee, sweets, snacks', color: '#FFD23F' },
+  { id: 'meat', label: 'Food', blurb: 'meals and groceries', color: '#B56D36' },
+  { id: 'garlic', label: 'Going out', blurb: 'drinks, nights, rides', color: '#FFF6E6' },
+  { id: 'chilli', label: 'Shopping', blurb: 'things you want', color: '#EE3B2B' },
+  { id: 'bbq', label: 'Basics', blurb: 'bills, health, uni, travel', color: '#8A4B24' },
 ];
 
 type Row = [id: string, label: string, group: GroupId, icon: string, roastAs?: string, noun?: string, headline?: string];
@@ -17,7 +17,7 @@ const BASE_IDS = [
 ] as const;
 
 const ROWS: Row[] = [
-  // ---- chips: little treats
+  // ---- chips group (Treats)
   ['coffee', 'Coffee', 'chips', 'coffee', undefined, 'coffees', 'coffee'],
   ['matcha', 'Matcha', 'chips', 'matcha', undefined, 'matchas', 'matcha'],
   ['bubbletea', 'Bubble tea', 'chips', 'boba', undefined, 'bubble teas', 'bubble tea'],
@@ -26,7 +26,7 @@ const ROWS: Row[] = [
   ['dessert', 'Dessert', 'chips', 'cake', 'snacks'],
   ['bakery', 'Bakery', 'chips', 'bread', 'snacks'],
   ['softdrink', 'Juice & soft drink', 'chips', 'juice', 'snacks'],
-  // ---- meat: proper food
+  // ---- meat group (Food)
   ['fastfood', 'Fast food', 'meat', 'burger', undefined, 'fast food runs', 'fast food'],
   ['takeaway', 'HSP', 'meat', 'hsp', 'fastfood', 'HSPs', 'HSPs'],
   ['pizza', 'Pizza', 'meat', 'pizza', 'fastfood'],
@@ -40,7 +40,7 @@ const ROWS: Row[] = [
   ['breakfast', 'Brunch', 'meat', 'eggs', 'dineout'],
   ['salad', 'Salad & bowls', 'meat', 'salad', 'dineout'],
   ['groceries', 'Groceries', 'meat', 'groceries', undefined, 'grocery shops', 'groceries'],
-  // ---- garlic: going out
+  // ---- garlic group (Going out)
   ['drinks', 'Drinks', 'garlic', 'cocktail', undefined, 'rounds of drinks', 'drinks'],
   ['pub', 'Pub & beer', 'garlic', 'beer', 'drinks'],
   ['wine', 'Wine', 'garlic', 'wine', 'drinks'],
@@ -52,7 +52,7 @@ const ROWS: Row[] = [
   ['party', 'Parties', 'garlic', 'balloon', 'nightout'],
   ['date', 'Date night', 'garlic', 'candle', 'dineout'],
   ['arcade', 'Games out', 'garlic', 'dice', 'random'],
-  // ---- chilli: wants
+  // ---- chilli group (Shopping)
   ['clothes', 'Clothes', 'chilli', 'tee', undefined, 'clothes hauls', 'clothes'],
   ['shoes', 'Shoes', 'chilli', 'sneaker', 'clothes'],
   ['bags', 'Bags', 'chilli', 'bag', 'clothes'],
@@ -72,7 +72,7 @@ const ROWS: Row[] = [
   ['pets', 'Pets', 'chilli', 'paw', 'other'],
   ['online', 'Online orders', 'chilli', 'parcel', 'random'],
   ['random', 'Random', 'chilli', 'questionbox', undefined, 'random buys', 'random stuff'],
-  // ---- bbq: the boring stuff
+  // ---- bbq group (Basics)
   ['rent', 'Rent', 'bbq', 'house', 'other'],
   ['electricity', 'Electricity', 'bbq', 'bolt', 'other'],
   ['water', 'Water', 'bbq', 'drop', 'other'],
