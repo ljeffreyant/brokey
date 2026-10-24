@@ -40,3 +40,8 @@ yarn-error.*
 /ios
 /android
 shots/
+
+# launch video render output (keep the mp4 and the source page, not the frames)
+video/frames/
+video/sheetframes/
+video/sheet.png

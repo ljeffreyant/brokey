@@ -1,0 +1,181 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Brokey launch video</title><style>
+@font-face{font-family:"Bricolage";font-weight:800;src:url("file://__ROOT__/node_modules/@expo-google-fonts/bricolage-grotesque/800ExtraBold/BricolageGrotesque_800ExtraBold.ttf")}
+@font-face{font-family:"DM";font-weight:700;src:url("file://__ROOT__/node_modules/@expo-google-fonts/dm-sans/700Bold/DMSans_700Bold.ttf")}
+@font-face{font-family:"DM";font-weight:500;src:url("file://__ROOT__/node_modules/@expo-google-fonts/dm-sans/500Medium/DMSans_500Medium.ttf")}
+:root{--ink:#2A1B14;--cream:#FFF6E6;--card:#FFFDF6;--yellow:#FFD23F;--red:#FF5A47;--blue:#3FC1F0}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;background:#000;overflow:hidden}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:"DM",system-ui,sans-serif;color:var(--ink)}
+.sc{position:absolute;inset:0;overflow:hidden;will-change:transform}
+.dots{position:absolute;inset:0;background-image:radial-gradient(var(--dot,#C93A2A) 8px,transparent 8.5px);background-size:68px 68px;opacity:.2}
+.abs{position:absolute}
+.big{font:800 150px/.95 "Bricolage";letter-spacing:-.045em;color:var(--cream);
+ text-shadow:-6px -6px 0 var(--ink),6px -6px 0 var(--ink),-6px 6px 0 var(--ink),6px 6px 0 var(--ink),0 -6px 0 var(--ink),0 6px 0 var(--ink),-6px 0 0 var(--ink),6px 0 0 var(--ink),12px 16px 0 var(--ink)}
+.big .y{color:var(--yellow)}
+.head{font:800 124px/.95 "Bricolage";letter-spacing:-.045em;color:var(--ink)}
+.w{display:inline-block;transform-origin:50% 80%;will-change:transform,opacity}
+.pill{display:inline-block;background:var(--yellow);border:8px solid var(--ink);border-radius:999px;padding:16px 40px;font:800 50px/1 "Bricolage";letter-spacing:-.01em;box-shadow:8px 8px 0 var(--ink)}
+.pill.w2{background:var(--card)}
+.mas svg{width:100%;height:auto;display:block;filter:drop-shadow(0 14px 0 rgba(42,27,20,.16))}
+.card{position:absolute;left:110px;top:310px;width:860px;height:600px;border:10px solid var(--ink);border-radius:56px;box-shadow:18px 18px 0 var(--ink);overflow:hidden}
+.card .f,.card .b{position:absolute;inset:0;padding:44px 52px}
+.card .f{background:var(--card)}
+.card .b{background:var(--red);color:var(--cream)}
+.lab{font:700 42px/1 "DM";letter-spacing:.14em;text-transform:uppercase;opacity:.7}
+.price{font:800 300px/1 "Bricolage";letter-spacing:-.05em;margin-top:34px}
+.num{font:800 300px/1 "Bricolage";letter-spacing:-.05em;margin-top:34px;display:flex;align-items:baseline;gap:22px}
+.num small{font:800 96px/1 "Bricolage";letter-spacing:-.02em}
+.sub{font:700 44px/1.15 "DM";margin-top:10px}
+.bubble{position:absolute;background:var(--card);border:8px solid var(--ink);border-radius:46px 46px 46px 10px;padding:28px 38px;font:800 56px/1.05 "Bricolage";letter-spacing:-.02em;box-shadow:10px 10px 0 var(--ink)}
+.phone{position:absolute;border:16px solid var(--ink);border-radius:92px;overflow:hidden;background:#000;box-shadow:22px 26px 0 rgba(42,27,20,.28)}
+.phone img{position:absolute;left:0;top:0;width:100%;display:block}
+.ripple{position:absolute;width:150px;height:150px;border-radius:50%;border:10px solid var(--cream);background:rgba(255,255,255,.35);transform:translate(-50%,-50%)}
+.sticker{position:absolute;display:flex;align-items:center;justify-content:center;font:800 70px/1 "Bricolage";letter-spacing:-.02em;border:8px solid var(--ink);box-shadow:8px 8px 0 var(--ink)}
+.band{position:absolute;left:0;right:0;top:1010px;bottom:0;background:var(--ink)}
+</style></head><body><div id="stage">
+
+<!-- S1 hook -->
+<div class="sc" id="s1" style="background:var(--red)"><div class="dots"></div>
+ <div class="abs" id="s1t" style="left:64px;top:240px;transform:rotate(-2deg);transform-origin:0 0">
+  <div class="big"><span class="w">How</span> <span class="w">many</span><br><span class="w">halal</span> <span class="w">snack</span><br><span class="w">packs</span> <span class="w">is</span><br><span class="w y">your</span> <span class="w y">rent?</span></div>
+ </div>
+ <div class="abs mas" id="s1m" style="left:190px;top:930px;width:700px"><!--M:tempted9--></div>
+</div>
+
+<!-- S2 maths -->
+<div class="sc" id="s2" style="background:var(--cream);--dot:#E8C79A"><div class="dots"></div>
+ <div class="abs" id="s2p" style="left:0;right:0;top:170px;text-align:center"><span class="pill">1 HSP = $18</span></div>
+ <div id="s2cards"></div>
+ <div class="abs mas" id="s2m" style="left:90px;top:1040px;width:520px">
+  <div class="abs" style="left:0;top:0;width:100%" data-m="0"><!--M:ok9--></div>
+  <div class="abs" style="left:0;top:0;width:100%" data-m="1"><!--M:ok8--></div>
+  <div class="abs" style="left:0;top:0;width:100%" data-m="2"><!--M:sideeye6--></div>
+  <div class="abs" style="left:0;top:0;width:100%" data-m="3"><!--M:shock4--></div>
+  <div class="abs" style="left:0;top:0;width:100%" data-m="4"><!--M:broke2--></div>
+ </div>
+ <div class="bubble" id="s2b" style="left:610px;top:1090px;width:400px;font-size:54px">Oh. That is why I'm broke.</div>
+</div>
+
+<!-- S3 log and roast -->
+<div class="sc" id="s3" style="background:var(--yellow);--dot:#E0A800"><div class="dots"></div>
+ <div class="abs head" id="s3t" style="left:70px;top:180px"><span class="w">Log a buy.</span><br><span class="w">Get roasted.</span></div>
+ <div class="phone" id="s3p" style="left:301px;top:520px;width:478px;height:1040px"><img src="shots/1-home.png" id="s3a"><img src="shots/2-roast.png" id="s3b" style="opacity:0"><div class="ripple" id="s3r" style="opacity:0"></div></div>
+ <div class="sticker" id="s3s" style="left:690px;top:470px;width:300px;height:130px;background:var(--red);color:var(--cream);border-radius:26px">ROASTED</div>
+</div>
+
+<!-- S4 fridge -->
+<div class="sc" id="s4" style="background:var(--blue);--dot:#1E9BC9"><div class="dots"></div>
+ <div class="abs head" id="s4t" style="left:70px;top:180px"><span class="w">Want it?</span><br><span class="w">Wait 24 hours.</span></div>
+ <div class="phone" id="s4p" style="left:301px;top:520px;width:478px;height:1040px"><img src="shots/3-chill.png"></div>
+ <div class="sticker" id="s4s" style="left:60px;top:600px;width:230px;height:230px;border-radius:50%;background:var(--yellow);font-size:92px">24h</div>
+ <div class="abs" id="s4q" style="left:40px;top:1380px;transform-origin:0 50%"><span class="pill w2">Either answer is a win.</span></div>
+</div>
+
+<!-- S5 week card -->
+<div class="sc" id="s5" style="background:var(--red)"><div class="dots"></div>
+ <div class="abs big" id="s5t" style="left:64px;top:190px;font-size:128px;transform:rotate(-2deg);transform-origin:0 0"><span class="w">Your week,</span><br><span class="w y">in one picture.</span></div>
+ <div class="abs" id="s5c" style="left:250px;top:610px;width:580px;height:1031px;border:14px solid var(--ink);border-radius:56px;overflow:hidden;box-shadow:20px 24px 0 var(--ink);background:#000"><img src="shots/recap.png" style="width:100%;display:block"></div>
+</div>
+
+<!-- S6 end card -->
+<div class="sc" id="s6" style="background:var(--red)"><div class="dots"></div><div class="band"></div>
+ <div class="abs mas" id="s6m" style="left:250px;top:150px;width:580px"><!--M:happy9--></div>
+ <div class="abs" id="s6w" style="left:250px;top:760px;width:580px"><!--WORDMARK--></div>
+ <div class="abs" id="s6a" style="left:0;right:0;top:1060px;text-align:center;font:800 66px/1.05 'Bricolage';letter-spacing:-.02em;color:var(--cream)">Roasts your spending.</div>
+ <div class="abs" id="s6b" style="left:0;right:0;top:1200px;text-align:center"><span class="pill">__CTA__</span></div>
+ <div class="abs" id="s6c" style="left:0;right:0;top:1340px;text-align:center;font:700 54px/1 'DM';color:var(--yellow)">Link in bio</div>
+ <div class="abs" id="s6d" style="left:0;right:0;top:1430px;text-align:center;font:500 28px/1.3 'DM';color:var(--cream);opacity:.7">For Melbourne's broke. Not a bank, not financial advice.</div>
+</div>
+
+</div><script>
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const prog=(t,a,d)=>clamp((t-a)/d);
+const E={out:t=>1-Math.pow(1-t,3),in:t=>t*t*t,back:t=>{const s=1.9;return 1+(s+1)*Math.pow(t-1,3)+s*Math.pow(t-1,2)},io:t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2};
+const $=id=>document.getElementById(id);
+window.DURATION=25;
+const S={s1:0,s2:3.0,s3:10.2,s4:14.8,s5:18.4,s6:21.4};
+// sound cues: [time, file, volume]
+window.CUES=[
+ ...[0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6].map(t=>[t,'pop',0.45]),
+ [S.s2+0.3+0.95,'pop',0.9],[S.s2+0.3+1.5+0.95,'pop',0.9],[S.s2+0.3+3+0.95,'pop',0.9],[S.s2+0.3+4.5+0.95,'nope',0.8],
+ [S.s3+1.75,'pop',0.9],[S.s3+2.0,'nope',0.8],[S.s3+2.35,'pop',0.7],
+ [S.s4+0.7,'fridge',0.9],[S.s4+1.0,'pop',0.8],[S.s4+2.1,'coin',0.9],
+ [S.s5+0.5,'pop',0.8],
+ [S.s6+0.2,'fanfare',0.9],[S.s6+1.1,'pop',0.8],
+ ...['s2','s3','s4','s5','s6'].map(k=>[S[k]-0.05,'whoosh',0.9])
+];
+// build s2 cards
+const ITEMS=[["Bubble tea","$7","0.4","HSP","under half a snack pack"],["Phone case","$45","2.5","HSPs","two and a half snack packs"],["Concert ticket","$140","7.8","HSPs","nearly eight snack packs"],["Rent, one week","$450","25","HSPs","twenty five snack packs"]];
+const cardsEl=$('s2cards');
+ITEMS.forEach((it,i)=>{const c=document.createElement('div');c.className='card';c.id='c'+i;
+ c.innerHTML='<div class="f"><div class="lab">'+it[0]+'</div><div class="price">'+it[1]+'</div></div><div class="b"><div class="lab">'+it[0]+'</div><div class="num">'+it[2]+'<small>'+it[3]+'</small></div><div class="sub">'+it[4]+'</div></div>';
+ cardsEl.appendChild(c)});
+function wordPop(sel,t,start,gap,dur){document.querySelectorAll(sel).forEach((el,i)=>{const p=prog(t,start+gap*i,dur);const e=E.back(p);el.style.opacity=p>0?1:0;el.style.transform='translateY('+((1-e)*50)+'px) scale('+(0.5+0.5*e)+')'})}
+function enter(el,t,start){const p=E.out(prog(t,start,0.45));el.style.transform='translateY('+((1-p)*1920)+'px)'}
+function bob(t,amp,hz,ph=0){return Math.sin((t*hz+ph)*Math.PI*2)*amp}
+function seek(t){
+ // scenes visible once started; later scenes slide up over earlier ones
+ for(const id of ['s1','s2','s3','s4','s5','s6']){const el=$(id);const st=S[id];
+  if(t<st){el.style.display='none';continue}el.style.display='block';
+  if(id==='s1')el.style.transform='none';else enter(el,t,st)}
+ // S1
+ {wordPop('#s1t .w',t,0.15,0.2,0.3);
+  const p=E.back(prog(t,0.55,0.55));$('s1m').style.transform='translateY('+((1-p)*700+bob(t,10,0.7))+'px) rotate('+(2+bob(t,1.2,0.5))+'deg)'}
+ // S2
+ {const r=t-S.s2;
+  $('s2p').style.opacity=prog(r,0.15,0.2);$('s2p').style.transform='translateY('+((1-E.back(prog(r,0.15,0.4)))*-80)+'px)';
+  let idx=0;
+  ITEMS.forEach((it,i)=>{const c=$('c'+i);const t0=0.3+1.5*i;const rr=r-t0;
+   if(rr<0||(i<3&&rr>1.5)){c.style.display='none';return}
+   c.style.display='block';
+   const inP=E.back(prog(rr,0,0.4));const outP=i<3?E.in(prog(rr,1.25,0.25)):0;
+   const x=(1-inP)*1200-outP*1300;
+   const rot=(1-inP)*10-2+outP*-8;
+   const fl=prog(rr,0.85,0.3);let sx=1;let back=false;
+   if(fl<0.4){sx=1-E.in(fl/0.4)}else{sx=E.back((fl-0.4)/0.6);back=true}
+   if(rr<0.85){sx=1;back=false}
+   c.querySelector('.f').style.display=back?'none':'block';c.querySelector('.b').style.display=back?'block':'none';
+   c.style.transform='translateX('+x+'px) rotate('+rot+'deg) scaleX('+(sx<0.02?0.02:sx)+')';
+   if(rr>=0.85+0.12)idx=i+1;
+  });
+  // mascot state follows flips: 0 ok9, then ok8, sideeye6, shock4, broke2
+  const flipAt=[0,1,2,3].map(i=>S.s2-S.s2+0.3+1.5*i+0.85+0.12);
+  let st=0;flipAt.forEach((f,i)=>{if(r>=f)st=i+1});
+  document.querySelectorAll('#s2m [data-m]').forEach(el=>el.style.display=(+el.dataset.m===st)?'block':'none');
+  const since=st>0?r-flipAt[st-1]:99;const hop=since<0.5?-Math.sin(prog(since,0,0.5)*Math.PI)*70:0;
+  const m=E.back(prog(r,0.1,0.5));
+  $('s2m').style.transform='translateY('+((1-m)*500+hop+bob(t,6,0.8))+'px)';
+  const bp=prog(r,6.1,0.35);$('s2b').style.opacity=bp>0?1:0;$('s2b').style.transform='scale('+(0.6+0.4*E.back(bp))+')';$('s2b').style.transformOrigin='0% 100%';
+ }
+ // S3
+ {const r=t-S.s3;
+  wordPop('#s3t .w',t,S.s3+0.15,0.3,0.35);
+  const p=E.out(prog(r,0.3,0.6));const ph=$('s3p');
+  ph.style.transform='translateY('+((1-p)*1000)+'px) rotate('+(-2.5)+'deg)';
+  const tap=prog(r,1.55,0.45);const rp=$('s3r');rp.style.left='50%';rp.style.top='92.5%';
+  rp.style.opacity=tap>0&&tap<1?1-tap:0;rp.style.transform='translate(-50%,-50%) scale('+(0.4+tap*1.1)+')';
+  const sw=prog(r,1.95,0.18);$('s3b').style.opacity=sw;
+  const pulse=r>1.95?Math.max(0,1-(r-1.95)/0.5)*0.05:0;ph.style.transform+=' scale('+(1+pulse)+')';
+  const sp=E.back(prog(r,2.3,0.4));$('s3s').style.opacity=sp>0?1:0;$('s3s').style.transform='rotate(8deg) scale('+(0.2+0.8*sp)+')';
+ }
+ // S4
+ {const r=t-S.s4;
+  wordPop('#s4t .w',t,S.s4+0.15,0.3,0.35);
+  const p=E.out(prog(r,0.3,0.6));$('s4p').style.transform='translateY('+((1-p)*1000)+'px) rotate(2.5deg)';
+  const sp=E.back(prog(r,1.0,0.45));$('s4s').style.opacity=sp>0?1:0;$('s4s').style.transform='rotate('+(-12+bob(t,3,0.6))+'deg) scale('+(0.2+0.8*sp)+')';
+  const qp=E.back(prog(r,2.0,0.4));$('s4q').style.opacity=qp>0?1:0;$('s4q').style.transform='rotate(-4deg) scale('+(0.6+0.4*qp)+')';
+ }
+ // S5
+ {const r=t-S.s5;
+  wordPop('#s5t .w',t,S.s5+0.15,0.3,0.35);
+  const p=E.back(prog(r,0.45,0.6));$('s5c').style.transform='translateY('+((1-p)*900+bob(t,8,0.7))+'px) rotate('+(3+bob(t,1,0.5))+'deg)';
+ }
+ // S6
+ {const r=t-S.s6;
+  const m=E.back(prog(r,0.15,0.6));$('s6m').style.transform='translateY('+((1-m)*500+bob(t,9,0.7))+'px) rotate(2deg)';
+  const w=E.back(prog(r,0.5,0.5));$('s6w').style.opacity=w>0?1:0;$('s6w').style.transform='scale('+(0.5+0.5*w)+')';
+  for(const [id,a] of [['s6a',0.9],['s6b',1.15],['s6c',1.45],['s6d',1.65]]){const q=E.out(prog(r,a,0.4));$(id).style.opacity=q;$(id).style.transform='translateY('+((1-q)*40)+'px)'}
+ }
+}
+window.seek=seek;seek(0);
+</script></body></html>

@@ -222,3 +222,12 @@ When we launch in Indonesia, make a full redesign for that market: the same app 
 - Ship it as a separate app build from this codebase (own bundle id, name, icon, mascot), released only in the Indonesian App Store storefront. It is not an in-app option.
 - Draw the character from scratch as its own design. A reskin of Brokey (swapping the box, pile and fries) was tried and looked bad, so do not repeat that.
 - The art lives in `src/art`, so a second character pack should plug in without touching the rest of the app.
+
+## 10. Launch video (25s, 1080x1920)
+
+Source: `scripts/make-launch-video.ts` builds `video/index.html` from the real mascot art + app screenshots in `video/shots/`; `scripts/render-launch-video.py` renders 750 frames with Playwright and mixes the app's own sounds (`assets/sfx`) plus a synthesized whoosh into `video/brokey-launch.mp4`.
+
+- Before the app is live the end card says "Coming soon to iPhone". After approval: `LIVE=1 npx tsx scripts/make-launch-video.ts && python3 scripts/render-launch-video.py`.
+- Refresh screenshots first (`scripts/store-shots.py`, `scripts/video-recap-shot.py`) if the UI changed.
+- Only sound effects are baked in. For TikTok, add a trending sound on top and turn the original down to about 20 percent.
+- Keep key content between y 150 and 1500 (TikTok caption and buttons cover the bottom and right edges).
