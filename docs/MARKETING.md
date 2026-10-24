@@ -231,3 +231,33 @@ Source: `scripts/make-launch-video.ts` builds `video/index.html` from the real m
 - Refresh screenshots first (`scripts/store-shots.py`, `scripts/video-recap-shot.py`) if the UI changed.
 - Only sound effects are baked in. For TikTok, add a trending sound on top and turn the original down to about 20 percent.
 - Keep key content between y 150 and 1500 (TikTok caption and buttons cover the bottom and right edges).
+
+## 11. The Broke Apocalypse: serialized story reels (Gen Z campaign)
+
+**Idea.** Instead of ads, three narrated cliffhanger reels in the look of the "AI zombie apocalypse" story videos: the zombies are the subscriptions and impulse buys that follow you home (the free trial that bills you, the gym you never visit). Brokey, the halal snack pack mascot, is the main character from the first frame, not a logo at the end. The only pitch is the end card: "Coming soon to iPhone. Link in bio."
+
+**Why this and not an ad.** The two best-known examples in this space both turn the brand into a character in an ongoing story:
+- Duolingo killed its owl in the app on 11 Feb 2025, then ran a whodunnit for days (a TikTok of Duo hit by a Cybertruck with the driver left unnamed) until users earned enough lessons to revive him ([Daily Tar Heel](https://1893.dailytarheel.com/the-day-duo-died-and-gen-z-went-crazy/)). I could not verify an impressions figure, so do not quote one. The lesson is the format: an event people follow, with something to do.
+- Cleo, a money app aimed at Gen Z and millennials living paycheck to paycheck, built its voice on casual, meme-filled language and a "roast mode" that playfully criticises wasteful spending ([Sacra](https://sacra.com/c/cleo)). Brokey's roasts and the 24 hour fridge are the same family of idea with a Melbourne face.
+
+**What is original here.**
+- The villains are specific and real: free trials, gym memberships, forgotten cloud storage, meal kits, and in the last second, "Pay in 4".
+- The 24 hour fridge (the app's Chill feature) is the in-story rule that saves the hero, so the product is how the plot works, not a sticker on it.
+- Prices in halal snack packs (A$18 each) are the in-joke only Melbourne gets: "that's ten and a half halal snack packs".
+- Cliffhangers: Part 1 ends on the fridge knocking back, Part 2 on an A$189.99 annual-plan monster, Part 3 on Pay in 4. Season 2 is built in.
+
+**What it is not.** It is a hand-built motion comic in the AI-zombie look (SVG scenes, halftone and grain post-processing, synthesized score and effects, Kokoro text-to-speech narrator), not real AI video generation. Do not label it "AI generated" in captions. If a viewer asks, say it is hand-animated with code.
+
+**Files.**
+- Story scripts: `scripts/story-parts.ts` (Part 1 to 3 beats, narration, cues). Build: `npx tsx scripts/make-story.ts p1`. Narrator: `python3 scripts/make-story-vo.py p1 --sid 5 --speed 0.85`. Render: `python3 scripts/render-story.py video p1 --workers 2 --chunk 6`. Sound and final mp4: `python3 scripts/make-story-audio.py p1 --mux`.
+- Covers: `python3 scripts/make-story-covers.py` (title block sits inside the 3:4 profile grid crop; Instagram changed the grid from 1:1 to 3:4 in January 2025 and crops 240 px from the top and bottom of a 1080x1920 cover).
+- Post kit with captions, pinned comments, hashtags, TikTok variants and the first-hour routine: `social/story/CAPTIONS.md`.
+
+**Schedule.** One part a day at the evening peak, Sun 25 Oct, Mon 26 Oct, Tue 27 Oct, then pin all three in order. Cross-post to TikTok the same day. If Part 1 gets traction (saves and shares, not likes), make Season 2 about "Pay in 4" and Buy Now Pay Later, and brief the Crew creators (section 3) to make their own zombie.
+
+**Measure** (Instagram Insights, 10 minutes after each part): watch-through rate and shares per reach, follows from the reel, link-in-bio taps, and how many people watch Part 2 and 3 after Part 1. Share and save counts matter more than views for deciding whether to make Season 2.
+
+**Open risks.**
+- Audio was verified only by level and spectrum checks, not by ear. Listen before posting.
+- Burned-in captions sit around y 1290 to 1520 of 1920, inside Meta's conservative bottom 35 percent zone but above the usual username and caption block. Check on a phone.
+- Brand names on screen (Streamin+, Cloud 50GB) are invented to avoid using real company marks.

@@ -45,3 +45,9 @@ shots/
 video/frames/
 video/sheetframes/
 video/sheet.png
+
+# story reels: renders are large (mp4, wav, segments); keep the sources and covers
+social/story/out/
+social/story/p[0-9].html
+social/story/vo/*/*.wav
+__pycache__/
