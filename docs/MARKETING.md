@@ -253,7 +253,7 @@ Source: `scripts/make-launch-video.ts` builds `video/index.html` from the real m
 - Covers: `python3 scripts/make-story-covers.py` (title block sits inside the 3:4 profile grid crop; Instagram changed the grid from 1:1 to 3:4 in January 2025 and crops 240 px from the top and bottom of a 1080x1920 cover).
 - Post kit with captions, pinned comments, hashtags, TikTok variants and the first-hour routine: `social/story/CAPTIONS.md`.
 
-**Schedule.** One part a day at the evening peak, Sun 25 Oct, Mon 26 Oct, Tue 27 Oct, then pin all three in order. Cross-post to TikTok the same day. If Part 1 gets traction (saves and shares, not likes), make Season 2 about "Pay in 4" and Buy Now Pay Later, and brief the Crew creators (section 3) to make their own zombie.
+**Schedule.** One part a day in the evening, Sun 1 Nov, Mon 2 Nov, Tue 3 Nov (after the app teasers in section 12), then pin all three in order. Cross-post to TikTok the same day. If Part 1 gets traction (saves and shares, not likes), make Season 2 about "Pay in 4" and Buy Now Pay Later, and brief the Crew creators (section 3) to make their own zombie.
 
 **Measure** (Instagram Insights, 10 minutes after each part): watch-through rate and shares per reach, follows from the reel, link-in-bio taps, and how many people watch Part 2 and 3 after Part 1. Share and save counts matter more than views for deciding whether to make Season 2.
 
@@ -261,3 +261,22 @@ Source: `scripts/make-launch-video.ts` builds `video/index.html` from the real m
 - Audio was verified only by level and spectrum checks, not by ear. Listen before posting.
 - Burned-in captions sit around y 1290 to 1520 of 1920, inside Meta's conservative bottom 35 percent zone but above the usual username and caption block. Check on a phone.
 - Brand names on screen (Streamin+, Cloud 50GB) are invented to avoid using real company marks.
+
+## 12. "Coming soon" teaser posts (the app itself)
+
+Seven static posts at 1080x1440 (3:4, the profile-grid shape), one a day from Sun 25 Oct to Sat 31 Oct, then the story reels on 1 to 3 Nov, then release (week of 9 Nov, see section 9).
+
+| # | Post | Shows |
+| --- | --- | --- |
+| 1 | Introducing Brokey | The mascot, the line "a halal snack pack with opinions about your money" (from the App Store description), "Free. No bank login. No ads." |
+| 2 | Everything costs snack packs | A kebab-shop price list: $179 sneakers = 9.9 HSP (1 HSP = $18) |
+| 3 | Log a buy. Get roasted. | Three real roast lines in app-style bubbles with the HSP chips |
+| 4 | Put it in the fridge. | The 24 hour cooling-off fridge, with the app's Ditch it / Cave in buttons |
+| 5 | 9 fries a week. | Brokey at 9, 6, 3 and 0 fries with the real mood quips |
+| 6 | Your month, on a receipt. | The shareable HSP receipt with the ON BUDGET stamp |
+| 7 | Coming soon to iPhone. | Real app screens (home, roast, Chill) |
+
+- Every line of copy and every number is from the app: `docs/APP_STORE.md`, `src/core/roasts-*.ts`, `src/i18n/en.ts`, `store/raw/` screenshots.
+- Build: `npx tsx scripts/make-teasers.ts && python3 scripts/render-teasers.py all` (output in `social/teasers/`, preview with `python3 scripts/render-teasers.py sheet`). Source: `scripts/make-teasers.ts`, `scripts/teasers-common.ts`.
+- Captions, first comments, alt text and hashtags: `social/teasers/CAPTIONS.md`.
+- If the real screens change, re-run `scripts/store-shots.py` and then the build, since post 7 uses `store/raw/*.png`.

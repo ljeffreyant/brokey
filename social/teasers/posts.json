@@ -1,0 +1,30 @@
+[
+ {
+  "id": "t1-announce",
+  "cel": {}
+ },
+ {
+  "id": "t2-pricelist",
+  "cel": {}
+ },
+ {
+  "id": "t3-roast",
+  "cel": {}
+ },
+ {
+  "id": "t4-fridge",
+  "cel": {}
+ },
+ {
+  "id": "t5-fries",
+  "cel": {}
+ },
+ {
+  "id": "t6-receipt",
+  "cel": {}
+ },
+ {
+  "id": "t7-app",
+  "cel": {}
+ }
+]
