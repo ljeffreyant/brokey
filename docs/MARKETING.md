@@ -264,20 +264,21 @@ Source: `scripts/make-launch-video.ts` builds `video/index.html` from the real m
 
 ## 12. "Coming soon" teaser posts (the app itself)
 
-Six static posts at 1080x1440 (3:4, the profile-grid shape), one a day from Sun 25 Oct to Fri 30 Oct, then the story reels on Sat 31 Oct (Halloween), Sun 1 Nov and Mon 2 Nov, then release (week of 9 Nov, see section 9).
+Six illustrated posts at 1080x1440 (3:4, the profile-grid shape), one a day from Sun 25 Oct to Fri 30 Oct, then the story reels on Sat 31 Oct (Halloween), Sun 1 Nov and Mon 2 Nov, then release (week of 9 Nov, see section 9).
 
-**The system (one page: `social/teasers/SYSTEM.png`).** One question, "how many snack packs is that?", answered with the app's own numbers. Two colours only (yellow and ink, alternating tile to tile so the profile grid is a checkerboard), one template with every element at a fixed coordinate, two full-bleed rules that run into the neighbouring tiles so the grid reads as one ledger, and a unit chart (one pack per HSP, one fry per fry) as the signature graphic. Bricolage 800 for facts, Fraunces italic only for Brokey's voice, DM Sans for tiny captions.
+**The idea.** Not template cards. One continuous night painting of the Brokey kebab shop in Melbourne, drawn in the same cel and halftone style as the reels, cut into six tiles so the profile grid reads as a single scene. Bottom row is outside (neon shopfront, price board window, tram shelter ad), top row is inside (the fridge, the counter with 3 fries left, the phone with the real app). Instagram shows the newest post top left, so posting 1 to 6 builds the street first and the inside on top. All type lives in the scene (neon, menu board, ad, sticky note, whiteboard), nothing is overlaid.
 
-| # | Post | Hero | Brokey says |
+| # | File | Scene | Copy in the scene (from the app) |
 | --- | --- | --- | --- |
-| 1 | Meet Brokey | 1 (1 HSP = $18) | "A halal snack pack with opinions about your money." |
-| 2 | Ride across town, $38 | 2.1 | "There is a tram. It goes there. It costs $2." |
-| 3 | Sneakers, $179 | 9.9 | "The cart sat there for a week and then you caved. Classic." |
-| 4 | Headphones, $249 | 14 | "Hands off the card. Big wants cool off for 24 hours first." |
-| 5 | This week, 9 fries | 3 fries left | "Fries are getting scarce, bestie." |
-| 6 | Coming soon | Real screens + app icon | Free. No bank login. No ads. |
+| 1 | `t1-shop` | Neon BROKEY shopfront, Brokey at the door | "HALAL SNACK PACKS", "1 HSP = $18", "we have opinions", "COMING SOON TO iPHONE" |
+| 2 | `t2-board` | Price board window, sneakers circled | Sneakers 9.9, ride 2.1, headphones 14 HSP |
+| 3 | `t3-tram` | Tram shelter ad with a tram behind | "There is a tram. It goes there. It costs $2." ($38 = 2.1 HSP) |
+| 4 | `t4-fridge` | Glass fridge, headphones, 24h timer | "HANDS OFF THE CARD.", $249 = 14 HSP, "24H. THEN ASK AGAIN." |
+| 5 | `t5-fries` | Counter, doner, 3 fries on a tray, whiteboard | "THURSDAY, 3 FRIES LEFT", "resets monday" |
+| 6 | `t6-app` | Neon COMING SOON, real app on a propped phone | "FOR iPHONE", "Free. No bank login. No ads." |
 
-- Every line of copy and every number is from the app: `docs/APP_STORE.md`, `src/core/roasts-*.ts`, `src/i18n/en.ts`, `store/raw/` screenshots (9.9 and 14 are what the Chill screen shows; the app rounds 10 and over to whole packs).
-- Build: `npx tsx scripts/make-teasers.ts && python3 scripts/render-teasers.py all` (output in `social/teasers/`, preview with `python3 scripts/render-teasers.py sheet`, system sheet with `python3 scripts/make-teaser-system.py`). Source: `scripts/make-teasers.ts`, `scripts/teasers-common.ts`.
+- Every number and line is from the app: `docs/APP_STORE.md`, `src/core/roasts-*.ts`, `src/i18n/en.ts`, `store/raw/` screenshots (9.9 and 14 are what the Chill screen shows; the app rounds 10 and over to whole packs). The tram livery is approximate and the shop is a stylised conceit ("the Brokey shop is the app").
+- Build: `npx tsx scripts/make-mural.ts all && python3 scripts/render-mural.py all` then `python3 scripts/preview-mural.py` for the grid preview and the posting-order sheet. Each panorama is drawn as one 3240x1440 SVG, screenshotted, given the cel finish over the whole width (so grain and halftone run across the seams), then cut into three 1080x1440 tiles. Output in `social/teasers/` (tiles are committed, panoramas and previews are regenerated).
+- Source: `scripts/teasers-scene.ts` (helpers: neon, glow, reflections, rain), `scripts/teasers-outside.ts`, `scripts/teasers-inside.ts`. Fonts (Tilt Neon, Anton, Permanent Marker, OFL) are in `social/fonts/`.
 - Captions, first comments, alt text and hashtags: `social/teasers/CAPTIONS.md`.
-- If the real screens change, re-run `scripts/store-shots.py` and then the build, since post 6 uses `store/raw/*.png` and `assets/icon.png`.
+- If the real screens change, re-run `scripts/store-shots.py` and then the build, since post 6 uses `store/raw/1-home.png` and `assets/icon.png`.

@@ -51,6 +51,7 @@ social/story/out/
 social/story/p[0-9].html
 social/story/vo/*/*.wav
 __pycache__/
-social/teasers/posts.html
+social/teasers/mural-*.html
+social/teasers/mural-*.png
 social/teasers/sheet.png
-social/teasers/system.html
+social/teasers/grid-preview.png
