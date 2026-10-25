@@ -16,7 +16,7 @@ W, H = 1080, 1440
 
 def finish(png: bytes, seed: int) -> Image.Image:
     a = np.asarray(Image.open(io.BytesIO(png)).convert('RGB')).astype(np.float32) / 255.0
-    g = np.random.default_rng(seed).normal(0, 0.012, (a.shape[0], a.shape[1], 1)).astype(np.float32)  # faint print grain, hides gradient banding
+    g = np.random.default_rng(seed).normal(0, 0.0, (a.shape[0], a.shape[1], 1)).astype(np.float32)  # flat vector look, no grain
     return Image.fromarray((np.clip(a + g, 0, 1) * 255).astype(np.uint8))
 
 async def render(ids=None):

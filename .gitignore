@@ -53,3 +53,4 @@ social/story/vo/*/*.wav
 __pycache__/
 social/teasers/posts.html
 social/teasers/sheet.png
+social/teasers/system.html

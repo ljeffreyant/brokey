@@ -1,12 +1,12 @@
 # The Broke Apocalypse: post kit (copy and paste)
 
-Three reels, one a day, evenings Melbourne time, posted after the seven app teasers (`social/teasers/CAPTIONS.md`). Each file is 1080x1920, narrated, with score and sfx baked in.
+Three reels, one a day, evenings Melbourne time, posted after the six app teasers (`social/teasers/CAPTIONS.md`). Each file is 1080x1920, narrated, with score and sfx baked in.
 
 | Day | Reel | File | Cover |
 | --- | --- | --- | --- |
-| Sun 1 Nov | Part 1: The Free Trial (89s) | `out/brokey-p1.mp4` | `covers/cover-p1.png` |
-| Mon 2 Nov | Part 2: The Fridge (78s) | `out/brokey-p2.mp4` | `covers/cover-p2.png` |
-| Tue 3 Nov | Part 3: The Roast (93s) | `out/brokey-p3.mp4` | `covers/cover-p3.png` |
+| Sat 31 Oct (Halloween) | Part 1: The Free Trial (89s) | `out/brokey-p1.mp4` | `covers/cover-p1.png` |
+| Sun 1 Nov | Part 2: The Fridge (78s) | `out/brokey-p2.mp4` | `covers/cover-p2.png` |
+| Mon 2 Nov | Part 3: The Roast (93s) | `out/brokey-p3.mp4` | `covers/cover-p3.png` |
 
 Rules baked into the copy: five hashtags max per caption (Instagram's limit since late 2025), the hook sits in the first line because only the start of a caption shows before "more", no link in captions (they do not click), the link lives in bio.
 
