@@ -1,46 +1,53 @@
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import React, { memo, useEffect, useRef, useState } from 'react';
+import { Image, Pressable, View } from 'react-native';
 import Animated, {
   Easing,
+  FadeIn,
+  FadeOut,
   interpolate,
   useAnimatedStyle,
+  useReducedMotion,
   useSharedValue,
   withDelay,
   withRepeat,
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import { FRY_COUNT, MASCOT_TILT, Mood, fryBase, fryPresent, mascot } from '../art/mascot';
-import { viewBoxOf } from '../art/scene';
-import { SceneView } from '../art/SceneView';
-import Svg, { Ellipse, Path } from 'react-native-svg';
+import Svg, { Defs, Ellipse, RadialGradient, Stop } from 'react-native-svg';
+import { FRY_COUNT, Mood } from '../art/mascot';
+import { poseFor } from '../art/moodPoses';
+import { POSE_SIZE, POSE_SRC, PoseId } from '../art/poses';
+import { useTheme } from '../theme';
 import { Burst } from './Burst';
 import { haptic } from './haptics';
 
 export interface BrokeyProps {
   mood: Mood;
   width: number;
+  /** a specific 3D pose, for moments that are not one of the eight moods */
+  pose?: PoseId;
+  /** how many of the nine fries are left; when it drops, a few crumbs fly off his head */
   friesLeft?: number;
-  /** bump to make him hop */
+  /** bump to make him hop (and flip to his next pose for the mood) */
   poke?: number;
   /** bump to make him get chomped (shake) */
   chomp?: number;
   /** bump to open wide and chew three times */
   munch?: number;
-  /** no idle animation, for thumbnails */
+  /** no idle animation, for thumbnails and share cards */
   still?: boolean;
   onPress?: () => void;
   seed?: number;
 }
 
-const SEED = 7;
+/** the drawing area is a bit taller than wide so his shadow fits under his feet */
+export const BROKEY_ASPECT = 1.04;
+/** poses are exported at 2x of the sticker sheet, none is wider than this */
+const POSE_REF = 600;
+/** Where his mouth is, as a fraction of the width, for things that need to fly into it. */
+export const MOUTH = { x: 0.56, y: 0.67 };
 
-/**
- * Pivot offsets for rotating or scaling around a point (px from the top-left of a w x h layer).
- * Done with translate pairs instead of `transformOrigin`: Reanimated 4.5 on RN 0.86 throws
- * "Transform origin must have exactly 3 values" for animated views that carry it.
- * Usage: [...around(p).enter, { rotate }, ...around(p).leave]
- */
+/** Rotating or scaling about a point without `transformOrigin` (Reanimated 4.5 on RN 0.86 rejects it on animated views). */
 function around(origin: [number, number], w: number, h: number) {
   const dx = origin[0] - w / 2;
   const dy = origin[1] - h / 2;
@@ -50,290 +57,164 @@ function around(origin: [number, number], w: number, h: number) {
   };
 }
 
-function useLoop(from: number, to: number, ms: number, delay = 0) {
+function useLoop(from: number, to: number, ms: number, run: boolean, delay = 0) {
   const v = useSharedValue(from);
   useEffect(() => {
     v.value = from;
+    if (!run) return;
     v.value = withDelay(
       delay,
-      withRepeat(
-        withSequence(
-          withTiming(to, { duration: ms, easing: Easing.inOut(Easing.sin) }),
-          withTiming(from, { duration: ms, easing: Easing.inOut(Easing.sin) }),
-        ),
-        -1,
-      ),
+      withRepeat(withSequence(withTiming(to, { duration: ms, easing: Easing.inOut(Easing.sin) }), withTiming(from, { duration: ms, easing: Easing.inOut(Easing.sin) })), -1),
     );
-  }, []);
+  }, [run]);
   return v;
 }
 
-function SwayFry({
-  scene,
-  group,
-  width,
-  height,
-  origin,
-  amp,
-  ms,
-  delay,
-  still,
-}: {
-  scene: ReturnType<typeof mascot>;
-  group: string;
-  width: number;
-  height: number;
-  origin: [number, number];
-  amp: number;
-  ms: number;
-  delay: number;
-  still?: boolean;
-}) {
-  const a = useSharedValue(0);
-  useEffect(() => {
-    if (still) return;
-    a.value = withDelay(
-      delay,
-      withRepeat(
-        withSequence(
-          withTiming(amp, { duration: ms, easing: Easing.inOut(Easing.sin) }),
-          withTiming(-amp, { duration: ms, easing: Easing.inOut(Easing.sin) }),
-        ),
-        -1,
-        true,
-      ),
-    );
-  }, [still]);
-  const pv = around(origin, width, height);
-  const style = useAnimatedStyle(() => ({ transform: [...pv.enter, { rotate: `${a.value}deg` }, ...pv.leave] }));
+function Sprite({ pose, width, fade }: { pose: PoseId; width: number; fade: boolean }) {
+  const [pw, ph] = POSE_SIZE[pose];
+  const k = width / POSE_REF;
+  const iw = pw * k;
+  const ih = ph * k;
+  const img = <Image source={POSE_SRC[pose]} style={{ width: iw, height: ih }} resizeMode="contain" accessibilityIgnoresInvertColors />;
+  const pos = { position: 'absolute', bottom: 0, left: (width - iw) / 2, width: iw, height: ih } as const;
+  if (!fade) return <View style={pos}>{img}</View>;
   return (
-    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, style]}>
-      <SceneView scene={scene} width={width} groups={[group]} />
+    <Animated.View entering={FadeIn.duration(150)} exiting={FadeOut.duration(150)} style={pos}>
+      {img}
     </Animated.View>
   );
 }
 
-function Blinker({ scene, width, height, originY, still }: { scene: ReturnType<typeof mascot>; width: number; height: number; originY: number; still?: boolean }) {
-  const sy = useSharedValue(1);
+function BrokeyBase({ mood, width, pose, friesLeft = FRY_COUNT, poke = 0, chomp = 0, munch = 0, still, onPress }: BrokeyProps) {
+  const p = useTheme();
+  const reduce = useReducedMotion();
+  const live = !still && !reduce;
+  const H = width * BROKEY_ASPECT;
+  const spriteBox = width; // the sprite area, sitting on the bottom of the frame
+  const bottomPad = H - spriteBox;
+
+  // ---- which pose ----
+  // the variant belongs to a mood, so a new mood always starts on its first pose
+  const [vs, setVs] = useState({ m: mood, n: 0 });
+  const variant = vs.m === mood ? vs.n : 0;
+  const [chewing, setChewing] = useState<PoseId | null>(null);
+  const firstPoke = useRef(true);
   useEffect(() => {
-    if (still) return;
-    let alive = true;
-    let t: ReturnType<typeof setTimeout>;
-    const loop = () => {
-      t = setTimeout(() => {
-        if (!alive) return;
-        sy.value = withSequence(withTiming(0.08, { duration: 70 }), withTiming(1, { duration: 120 }));
-        // sometimes a double blink
-        if (Math.random() < 0.25) sy.value = withSequence(withTiming(0.08, { duration: 70 }), withTiming(1, { duration: 100 }), withDelay(120, withSequence(withTiming(0.08, { duration: 70 }), withTiming(1, { duration: 120 }))));
-        loop();
-      }, 2200 + Math.random() * 3200);
-    };
-    loop();
-    return () => {
-      alive = false;
-      clearTimeout(t);
-    };
-  }, [still]);
-  const pv = around([width / 2, originY], width, height);
-  const style = useAnimatedStyle(() => ({ transform: [...pv.enter, { scaleY: sy.value }, ...pv.leave] }));
-  return (
-    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, style]}>
-      <SceneView scene={scene} width={width} groups={['eyes']} />
-    </Animated.View>
-  );
-}
+    if (firstPoke.current) {
+      firstPoke.current = false;
+      return;
+    }
+    setVs((s) => ({ m: mood, n: (s.m === mood ? s.n : 0) + 1 }));
+  }, [poke]);
+  const shown: PoseId = chewing ?? pose ?? poseFor(mood, variant);
 
+  // ---- idle: bob, breathe, sway (all about his feet) ----
+  const bob = useLoop(0, -width * 0.014, 1150, live);
+  const breathe = useLoop(1, 1.022, 1150, live, 120);
+  const sway = useLoop(-0.9, 0.9, 2300, live);
 
-/** Where his mouth is, as a fraction of the drawing's width, for things that need to fly into it. */
-export const MOUTH = { x: 136 / 268, y: 200 / 268 };
-
-function Munch({ trigger, x, y, w }: { trigger: number; x: number; y: number; w: number }) {
-  const o = useSharedValue(0);
-  useEffect(() => {
-    if (trigger <= 0) return;
-    o.value = withSequence(
-      withTiming(1, { duration: 170, easing: Easing.out(Easing.quad) }),
-      withDelay(280, withTiming(0.3, { duration: 140 })),
-      withTiming(1, { duration: 140 }),
-      withTiming(0.3, { duration: 140 }),
-      withTiming(1, { duration: 140 }),
-      withTiming(0.3, { duration: 140 }),
-      withTiming(0, { duration: 180 }),
-    );
-  }, [trigger]);
-  const h = w * 0.78;
-  const style = useAnimatedStyle(() => ({ opacity: o.value > 0.02 ? 1 : 0, transform: [{ scaleY: Math.max(o.value, 0.01) }, { scaleX: 0.72 + 0.28 * o.value }] }));
-  return (
-    <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: x - w / 2, top: y - h / 2, width: w, height: h }, style]}>
-      <Svg width={w} height={h} viewBox="0 0 100 78">
-        <Ellipse cx={50} cy={39} rx={44} ry={34} fill="#24120A" />
-        <Ellipse cx={50} cy={39} rx={38} ry={28} fill="#4A1710" />
-        <Path d="M22 56 Q50 34 78 56 Q66 70 50 70 Q34 70 22 56Z" fill="#FF6B7A" />
-        <Path d="M30 14 Q50 24 70 14" stroke="#FFF6E6" strokeWidth={5} strokeLinecap="round" fill="none" />
-      </Svg>
-    </Animated.View>
-  );
-}
-
-function GhostFry({ scene, group, width, height, origin, onDone }: { scene: ReturnType<typeof mascot>; group: string; width: number; height: number; origin: [number, number]; onDone: () => void }) {
-  const t = useSharedValue(0);
-  const dir = useMemo(() => (origin[0] < width / 2 ? -1 : 1), [origin, width]);
-  useEffect(() => {
-    t.value = withTiming(1, { duration: 700, easing: Easing.out(Easing.quad) });
-    const id = setTimeout(onDone, 720);
-    return () => clearTimeout(id);
-  }, []);
-  const pv = around(origin, width, height);
-  const style = useAnimatedStyle(() => ({
-    opacity: interpolate(t.value, [0, 0.7, 1], [1, 1, 0]),
-    transform: [
-      { translateX: dir * width * 0.28 * t.value },
-      { translateY: -width * 0.32 * t.value + width * 0.5 * t.value * t.value },
-      ...pv.enter,
-      { rotate: `${dir * 260 * t.value}deg` },
-      ...pv.leave,
-    ],
-  }));
-  return (
-    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, style]}>
-      <SceneView scene={scene} width={width} groups={[group]} />
-    </Animated.View>
-  );
-}
-
-function BrokeyBase({ mood, width, friesLeft = FRY_COUNT, poke = 0, chomp = 0, munch = 0, still, onPress, seed = SEED }: BrokeyProps) {
-  const scene = useMemo(() => mascot(mood, seed, friesLeft), [mood, seed, friesLeft]);
-  const [vx, vy, vw, vh] = viewBoxOf(scene);
-  const k = width / vw;
-  const height = vh * k;
-
-  // scene point -> pixel, including the little lean the drawing has
-  const toPx = (x: number, y: number): [number, number] => {
-    const a = (MASCOT_TILT[mood] * Math.PI) / 180;
-    const dx = x - 120;
-    const dy = y - 230;
-    const rx = 120 + dx * Math.cos(a) - dy * Math.sin(a);
-    const ry = 230 + dx * Math.sin(a) + dy * Math.cos(a);
-    return [(rx - vx) * k, (ry - vy) * k];
-  };
-
-  // ---- idle: bob + breathe ----
-  const bob = useLoop(0, -4, 1150);
-  const breathe = useLoop(1, 1.02, 1150, 120);
-  const lean = useLoop(-0.8, 0.8, 2300);
-
-  // ---- poke (hop) and chomp (shake) ----
+  // ---- poke (hop), chomp (shake), mood change (pop), munch (chew squash) ----
   const hop = useSharedValue(0);
   const shk = useSharedValue(0);
   const pop = useSharedValue(0);
-  const first = useRef(true);
+  const chew = useSharedValue(0);
+  const mounted = useRef(false);
   useEffect(() => {
-    if (first.current) return;
+    if (!mounted.current) return;
     hop.value = 0;
     hop.value = withTiming(1, { duration: 620, easing: Easing.out(Easing.quad) });
   }, [poke]);
   useEffect(() => {
-    if (first.current) return;
+    if (!mounted.current) return;
     shk.value = 0;
     shk.value = withTiming(1, { duration: 520, easing: Easing.out(Easing.quad) });
   }, [chomp]);
   useEffect(() => {
-    if (first.current) {
-      first.current = false;
-      return;
-    }
+    if (!mounted.current) return;
     pop.value = 0;
     pop.value = withTiming(1, { duration: 380, easing: Easing.out(Easing.quad) });
-  }, [mood]);
+  }, [mood, pose]);
+  useEffect(() => {
+    if (!mounted.current || munch <= 0) return;
+    setChewing('hungry-fork');
+    const t1 = setTimeout(() => setChewing('content'), 330);
+    const t2 = setTimeout(() => setChewing(null), 1500);
+    chew.value = 0;
+    chew.value = withDelay(330, withTiming(1, { duration: 1000, easing: Easing.linear }));
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [munch]);
+  useEffect(() => {
+    mounted.current = true;
+  }, []);
 
+  const feet: [number, number] = [width / 2, spriteBox];
+  const pv = around(feet, width, spriteBox);
   const root = useAnimatedStyle(() => {
     const h = hop.value;
-    const hy = interpolate(h, [0, 0.4, 0.78, 1], [0, -width * 0.14, 0, 0]);
+    const hy = interpolate(h, [0, 0.4, 0.78, 1], [0, -width * 0.16, 0, 0]);
     const hsy = interpolate(h, [0, 0.12, 0.4, 0.78, 0.88, 1], [1, 0.9, 1.07, 0.88, 1.03, 1]);
     const hsx = interpolate(h, [0, 0.12, 0.4, 0.78, 0.88, 1], [1, 1.07, 0.95, 1.1, 0.98, 1]);
     const s = shk.value;
     const wob = Math.sin(s * Math.PI * 6) * (1 - s);
-    const pp = interpolate(pop.value, [0, 0.3, 1], [1, 1.06, 1]);
+    const pp = interpolate(pop.value, [0, 0.3, 1], [1, 1.05, 1]);
+    const c = chew.value > 0 && chew.value < 1 ? Math.sin(chew.value * Math.PI * 6) : 0;
     return {
       transform: [
         { translateY: bob.value + hy },
         { translateX: wob * width * 0.025 },
-        { rotate: `${lean.value + wob * 6}deg` },
-        { scaleX: hsx * (1 - 0.1 * Math.sin(s * Math.PI)) * pp },
-        { scaleY: hsy * breathe.value * (1 + 0.04 * Math.sin(s * Math.PI)) * pp },
+        ...pv.enter,
+        { rotate: `${sway.value + wob * 6}deg` },
+        { scaleX: hsx * (1 - 0.1 * Math.sin(s * Math.PI)) * pp * (1 + 0.025 * c) },
+        { scaleY: hsy * breathe.value * (1 + 0.04 * Math.sin(s * Math.PI)) * pp * (1 - 0.045 * Math.abs(c)) },
+        ...pv.leave,
       ],
     };
   });
+  // the shadow shrinks and fades as he rises
+  const shadow = useAnimatedStyle(() => {
+    const up = -(bob.value + interpolate(hop.value, [0, 0.4, 0.78, 1], [0, -width * 0.16, 0, 0])) / (width * 0.16);
+    return { opacity: 1 - Math.min(up, 1) * 0.5, transform: [{ scaleX: 1 - Math.min(up, 1) * 0.28 }] };
+  });
 
-  // ---- fries that just got eaten fly off ----
+  // ---- fries that just got eaten: a few fly off his head ----
   const prevFries = useRef(friesLeft);
-  const prevScene = useRef(scene);
-  const [ghosts, setGhosts] = useState<{ key: string; idx: number; scene: ReturnType<typeof mascot> }[]>([]);
-  const [crumbs, setCrumbs] = useState<{ n: number; x: number; y: number }>({ n: 0, x: 0, y: 0 });
+  const [crumbs, setCrumbs] = useState(0);
+  const [flung, setFlung] = useState<number[]>([]);
   useEffect(() => {
-    const before = prevFries.current;
-    if (friesLeft < before) {
-      const old = prevScene.current;
-      const gone: number[] = [];
-      for (let i = 0; i < FRY_COUNT; i++) if (fryPresent(i, before) && !fryPresent(i, friesLeft)) gone.push(i);
-      setGhosts((g) => [...g, ...gone.map((idx) => ({ key: `${idx}-${Date.now()}`, idx, scene: old }))]);
-      if (gone.length) {
-        const [bx, by] = fryBase(gone[0]);
-        const [px, py] = toPx(bx, by - 60);
-        setCrumbs((c) => ({ n: c.n + 1, x: px, y: py }));
-      }
+    if (friesLeft < prevFries.current && mounted.current) {
+      setCrumbs((n) => n + 1);
+      const id = Date.now();
+      setFlung((f) => [...f, id]);
+      setTimeout(() => setFlung((f) => f.filter((x) => x !== id)), 800);
     }
     prevFries.current = friesLeft;
-    prevScene.current = scene;
-  }, [friesLeft, scene]);
+  }, [friesLeft]);
 
-  const eyeY = (167 - vy) * k;
-  const layers = scene.groups;
   const body = (
-    <Animated.View style={[{ width, height }, root]}>
-      <View style={{ width, height }}>
-        {layers.map((g) => {
-          if (g.startsWith('fry')) {
-            const idx = parseInt(g.slice(3), 10);
-            const [bx, by] = fryBase(idx);
-            const origin = toPx(bx, by);
-            return (
-              <SwayFry
-                key={g}
-                scene={scene}
-                group={g}
-                width={width}
-                height={height}
-                origin={origin}
-                amp={1.6 + (idx % 3) * 0.7}
-                ms={1500 + idx * 130}
-                delay={idx * 90}
-                still={still}
-              />
-            );
-          }
-          if (g === 'eyes') return <Blinker key={g} scene={scene} width={width} height={height} originY={eyeY} still={still} />;
-          return (
-            <View key={g} pointerEvents="none" style={StyleSheet.absoluteFill}>
-              <SceneView scene={scene} width={width} groups={[g]} />
-            </View>
-          );
-        })}
-        {ghosts.map((gh) => (
-          <GhostFry
-            key={gh.key}
-            scene={gh.scene}
-            group={`fry${gh.idx}`}
-            width={width}
-            height={height}
-            origin={toPx(...fryBase(gh.idx))}
-            onDone={() => setGhosts((g) => g.filter((x) => x.key !== gh.key))}
-          />
+    <View style={{ width, height: H }}>
+      <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: width * 0.14, bottom: -width * 0.015, width: width * 0.72, height: width * 0.13 }, shadow]}>
+        <Svg width="100%" height="100%" viewBox="0 0 100 18" preserveAspectRatio="none">
+          <Defs>
+            <RadialGradient id="g" cx="50%" cy="50%" rx="50%" ry="50%">
+              <Stop offset="0" stopColor={p.dark ? '#000' : '#5A2A00'} stopOpacity={p.dark ? 0.55 : 0.34} />
+              <Stop offset="0.6" stopColor={p.dark ? '#000' : '#5A2A00'} stopOpacity={p.dark ? 0.25 : 0.14} />
+              <Stop offset="1" stopColor={p.dark ? '#000' : '#5A2A00'} stopOpacity={0} />
+            </RadialGradient>
+          </Defs>
+          <Ellipse cx={50} cy={9} rx={50} ry={9} fill="url(#g)" />
+        </Svg>
+      </Animated.View>
+      <Animated.View style={[{ position: 'absolute', left: 0, bottom: bottomPad, width, height: spriteBox }, root]}>
+        <Sprite key={shown} pose={shown} width={width} fade={live} />
+        {flung.map((id) => (
+          <FlungFry key={id} w={width} />
         ))}
-        <Munch trigger={munch} x={toPx(122, 192)[0]} y={toPx(122, 192)[1]} w={width * 0.2} />
-        <Burst x={crumbs.x} y={crumbs.y} trigger={crumbs.n} count={10} radius={width * 0.28} size={width * 0.035} />
-      </View>
-    </Animated.View>
+        <Burst x={width * 0.5} y={width * 0.2} trigger={crumbs} count={9} radius={width * 0.3} size={width * 0.035} colors={['#FFD23F', '#FFB02E', '#7A3517', '#FFF6C9']} />
+      </Animated.View>
+    </View>
   );
 
   const handle = () => {
@@ -346,6 +227,24 @@ function BrokeyBase({ mood, width, friesLeft = FRY_COUNT, poke = 0, chomp = 0, m
     </Pressable>
   ) : (
     body
+  );
+}
+
+/** a single chip flicked off the top of the pile */
+function FlungFry({ w }: { w: number }) {
+  const t = useSharedValue(0);
+  useEffect(() => {
+    t.value = withTiming(1, { duration: 700, easing: Easing.out(Easing.quad) });
+  }, []);
+  const style = useAnimatedStyle(() => ({
+    opacity: interpolate(t.value, [0, 0.7, 1], [1, 1, 0]),
+    transform: [{ translateX: w * 0.3 * t.value }, { translateY: -w * 0.34 * t.value + w * 0.55 * t.value * t.value }, { rotate: `${240 * t.value}deg` }],
+  }));
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[{ position: 'absolute', left: w * 0.5, top: w * 0.16, width: w * 0.04, height: w * 0.17, borderRadius: w * 0.02, backgroundColor: '#FFC83D', borderBottomWidth: 0 }, style]}
+    />
   );
 }
 

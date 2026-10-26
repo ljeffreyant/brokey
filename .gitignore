@@ -55,3 +55,11 @@ social/teasers/mural-*.html
 social/teasers/mural-*.png
 social/teasers/sheet.png
 social/teasers/grid-preview.png
+
+# per-screen mockup renders are regenerable (python3 scripts/mockups/render.py); keep the sheets and overviews
+social/mockups/png/*.png
+!social/mockups/png/*-sheet.png
+!social/mockups/png/overview-*.png
+# mockup helpers: img/ is the mood PNGs upscaled 2x (from social/mascot3d/moods), fonts/ are copies of the @expo-google-fonts files
+social/mockups/img/
+social/mockups/fonts/

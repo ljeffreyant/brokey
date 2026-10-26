@@ -4,6 +4,7 @@ import { Mood } from '../art/mascot';
 import { useTheme } from '../theme';
 import { Brokey } from './Brokey';
 import { Txt } from './Txt';
+import { puff } from './clay';
 
 export interface WeekCardModel {
   kicker: string;
@@ -46,7 +47,7 @@ export function WeekCard({ model, width }: { model: WeekCardModel; width: number
         <Txt v="heading" color={model.text} size={s(20)} style={{ letterSpacing: s(1.5) }} {...fixed}>
           BROKEY
         </Txt>
-        <View style={{ borderWidth: s(2.5), borderColor: p.ink, borderRadius: 999, backgroundColor: p.card, paddingHorizontal: s(12), height: s(28), justifyContent: 'center' }}>
+        <View style={{ borderRadius: 999, backgroundColor: p.card, paddingHorizontal: s(12), height: s(28), justifyContent: 'center', ...puff(p, p.card, 3) }}>
           <Txt v="small" size={s(12)} color={p.text} style={{ fontFamily: 'DMSans_700Bold' }} {...fixed}>
             {model.range}
           </Txt>
@@ -72,7 +73,7 @@ export function WeekCard({ model, width }: { model: WeekCardModel; width: number
         <Txt v="small" size={s(14)} color={model.textDim} style={{ fontFamily: 'DMSans_700Bold', marginTop: s(2) }} {...fixed}>
           {model.money}
         </Txt>
-        <View style={{ marginTop: s(10), backgroundColor: chipBg, borderRadius: 999, borderWidth: s(2.5), borderColor: p.ink, paddingHorizontal: s(14), height: s(30), justifyContent: 'center' }}>
+        <View style={{ marginTop: s(10), backgroundColor: chipBg, borderRadius: 999, paddingHorizontal: s(14), height: s(30), justifyContent: 'center', ...puff(p, chipBg, 3) }}>
           <Txt v="small" size={s(14)} color={chipFg} style={{ fontFamily: 'DMSans_700Bold' }} {...fixed}>
             {model.chip}
           </Txt>
@@ -81,7 +82,7 @@ export function WeekCard({ model, width }: { model: WeekCardModel; width: number
 
       <View style={{ flex: 1 }} />
 
-      <View style={{ backgroundColor: p.card, borderRadius: s(18), borderWidth: s(2.5), borderColor: p.ink, padding: s(14) }}>
+      <View style={{ backgroundColor: p.card, borderRadius: s(18), padding: s(14), ...puff(p, p.card, 3) }}>
         <Txt v="bodyBold" size={s(15)} color={p.text} numberOfLines={3} {...fixed}>
           {model.verdict}
         </Txt>
@@ -89,7 +90,7 @@ export function WeekCard({ model, width }: { model: WeekCardModel; width: number
 
       <View style={{ flexDirection: 'row', gap: s(8), marginTop: s(10) }}>
         {model.stats.map((st) => (
-          <View key={st.label} style={{ flex: 1, backgroundColor: p.card2, borderRadius: s(14), borderWidth: s(2.5), borderColor: p.ink, paddingVertical: s(9), paddingHorizontal: s(8) }}>
+          <View key={st.label} style={{ flex: 1, backgroundColor: p.card2, borderRadius: s(14), paddingVertical: s(9), paddingHorizontal: s(8), ...puff(p, p.card2, 3) }}>
             <Txt v="label" size={s(9)} color={p.textDim} numberOfLines={1} style={{ letterSpacing: s(0.3) }} {...fixed}>
               {st.label}
             </Txt>

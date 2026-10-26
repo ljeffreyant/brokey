@@ -19,6 +19,26 @@ import { formatDate, formatDayName, useBudget, useFmt, useNow } from '../../ui/u
 import { useTheme } from '../../theme';
 import { weatherOf } from '../../ui/weather';
 import { sfx } from '../../ui/sfx';
+import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
+import { CountText } from '../../ui/CountText';
+import { FryMeter } from '../../ui/FryMeter';
+import { groundShadow, lipOf, parseColor, puff, sheen } from '../../ui/clay';
+
+/** a soft pool of light behind the mascot */
+function Spot({ size }: { size: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 100 100">
+      <Defs>
+        <RadialGradient id="spot" cx="50%" cy="50%" rx="50%" ry="50%">
+          <Stop offset="0" stopColor="#FFFFFF" stopOpacity="0.7" />
+          <Stop offset="0.55" stopColor="#FFFFFF" stopOpacity="0.22" />
+          <Stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
+        </RadialGradient>
+      </Defs>
+      <Circle cx="50" cy="50" r="50" fill="url(#spot)" />
+    </Svg>
+  );
+}
 
 export default function Home() {
   const p = useTheme();
@@ -49,6 +69,8 @@ export default function Home() {
   const bw = Math.min(width * (purchases.length === 0 ? 0.5 : 0.6), purchases.length === 0 ? 190 : 232);
 
   const safe = budget.safeTodayCents;
+  const shownCents = budget.remainingCents <= 0 ? budget.remainingCents : safe;
+  const darkText = (parseColor(wc.text)?.[0] ?? 0) < 128;
   const quip = t.pick(`quip.${mood}` as never, quipN + (budget.dayIndex * 3 + purchases.length));
 
   const week = useMemo(() => purchases.filter((x) => x.ts >= budget.weekStart && x.ts < budget.weekEnd).sort((a, b) => b.ts - a.ts), [purchases, budget.weekStart, budget.weekEnd]);
@@ -106,13 +128,15 @@ export default function Home() {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: p.bg }} contentContainerStyle={{ paddingBottom: 150 }} showsVerticalScrollIndicator={false}>
       {/* ------------------------------------------------ hero */}
+      <View style={{ paddingBottom: 10 }}>
+      <View style={{ position: 'absolute', left: 0, right: 0, top: 10, bottom: 0, borderBottomLeftRadius: 46, borderBottomRightRadius: 46, backgroundColor: lipOf(p, wc.field), boxShadow: groundShadow(p, 10) }} />
       <View
         onLayout={(e) => setHeroH(e.nativeEvent.layout.height)}
-        style={{ backgroundColor: wc.field, borderBottomLeftRadius: 44, borderBottomRightRadius: 44, borderBottomWidth: 3, borderColor: p.ink, paddingTop: heroTop, paddingBottom: 26, overflow: 'hidden' }}
+        style={{ backgroundColor: wc.field, borderBottomLeftRadius: 46, borderBottomRightRadius: 46, paddingTop: heroTop, paddingBottom: 30, overflow: 'hidden' }}
       >
-        <WeatherArt weather={weather} c={wc} ink={p.ink} w={width} h={heroH} />
+        <WeatherArt weather={weather} c={wc} w={width} h={heroH} />
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 18 }}>
-          <PressSlab fill={p.card} r={24} depth={3} border={2.5} onPress={() => setPick(true)} label={t('wallet.switch')} inner={{ height: 46, paddingLeft: 6, paddingRight: 14, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <PressSlab fill={p.card} r={24} depth={3} onPress={() => setPick(true)} label={t('wallet.switch')} inner={{ height: 46, paddingLeft: 6, paddingRight: 14, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <IconDisc id={isAll ? 'wallet' : wallet?.icon ?? 'hsp'} size={34} color={isAll ? p.accent2 : wallet?.color} ring />
             <Txt v="bodyBold" numberOfLines={1} style={{ maxWidth: width * 0.4 }}>
               {isAll ? t('wallet.all') : wallet?.name}
@@ -134,30 +158,33 @@ export default function Home() {
             accessibilityHint={t('home.switchUnit')}
             style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8, marginTop: 4 }}
           >
-            <Txt v="hero" color={wc.text} adjustsFontSizeToFit numberOfLines={1}>
-              {f.hspNum(budget.remainingCents <= 0 ? budget.remainingCents : safe)}
-            </Txt>
+            <CountText cents={shownCents}>
+              {(v) => (
+                <Txt v="hero" color={wc.text} adjustsFontSizeToFit numberOfLines={1} style={{ textShadowColor: darkText ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.3)', textShadowOffset: { width: 0, height: 3 }, textShadowRadius: 0 }}>
+                  {f.hspNum(v)}
+                </Txt>
+              )}
+            </CountText>
             {f.unitTag(0) ? (
               <Txt v="title" color={wc.text}>
                 {f.unitTag(0)}
               </Txt>
             ) : null}
           </Pressable>
-          <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
-            <View style={{ backgroundColor: p.ink, borderRadius: 999, paddingHorizontal: 12, height: 30, justifyContent: 'center' }}>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: 8, marginTop: 10 }}>
+            <View style={{ backgroundColor: p.ink, borderRadius: 999, paddingHorizontal: 14, height: 32, justifyContent: 'center', ...puff(p, p.ink, 3) }}>
               <Txt v="small" color="#FFF6E6" style={{ fontFamily: 'DMSans_700Bold' }}>
-                ≈ {f.sum(budget.remainingCents <= 0 ? budget.remainingCents : safe)}
+                ≈ {f.sum(shownCents)}
               </Txt>
             </View>
-            <View style={{ backgroundColor: p.ink, borderRadius: 999, paddingHorizontal: 12, height: 30, justifyContent: 'center' }}>
-              <Txt v="small" color="#FFF6E6" style={{ fontFamily: 'DMSans_700Bold' }}>
-                {t('home.fries', { n: budget.friesLeft, total: FRIES_TOTAL })}
-              </Txt>
-            </View>
+            <FryMeter left={budget.friesLeft} total={FRIES_TOTAL} />
           </View>
         </View>
 
-        <View style={{ alignItems: 'center', marginTop: 10 }}>
+        <View style={{ alignItems: 'center', marginTop: 6 }}>
+          <View pointerEvents="none" style={{ position: 'absolute', top: -bw * 0.12 }}>
+            <Spot size={bw * 1.75} />
+          </View>
           <Brokey
             mood={mood}
             width={bw}
@@ -171,7 +198,7 @@ export default function Home() {
         </View>
 
         <View style={{ alignItems: 'center', marginTop: 14, paddingHorizontal: 28 }}>
-          <View style={{ width: 0, height: 0, borderLeftWidth: 10, borderRightWidth: 10, borderBottomWidth: 12, borderLeftColor: 'transparent', borderRightColor: 'transparent', borderBottomColor: p.ink, marginBottom: -3 }} />
+          <View style={{ width: 16, height: 16, borderRadius: 4, backgroundColor: p.card, transform: [{ rotate: '45deg' }], marginBottom: -9 }} />
           <Slab weight="quiet" r={20} fill={p.card} inner={{ paddingHorizontal: 16, paddingVertical: 11 }}>
             <Txt v="small" align="center" numberOfLines={3} style={{ fontFamily: 'DMSans_700Bold' }}>
               {quip}
@@ -184,6 +211,8 @@ export default function Home() {
             <Btn label={t('home.emptyCta')} glyph="plus" tone="dark" onPress={() => router.push('/log')} />
           </View>
         ) : null}
+        <View pointerEvents="none" style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, borderBottomLeftRadius: 46, borderBottomRightRadius: 46, boxShadow: sheen(p, wc.field, 7) }} />
+      </View>
       </View>
 
       <View style={{ paddingHorizontal: 18, paddingTop: 18, gap: 14 }}>
@@ -198,7 +227,7 @@ export default function Home() {
         {forecastLine ? (
           <Animated.View entering={FadeInDown.springify().damping(16)} layout={LinearTransition}>
             <Slab weight="quiet" r={20} fill={p.card} inner={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 11, paddingHorizontal: 14 }}>
-              <View style={{ width: 34, height: 34, borderRadius: 11, backgroundColor: wc.field, borderWidth: 2, borderColor: p.ink, alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ width: 34, height: 34, borderRadius: 11, backgroundColor: wc.field, alignItems: 'center', justifyContent: 'center', ...puff(p, wc.field, 2) }}>
                 <Glyph name="chart" size={18} color={wc.text} />
               </View>
               <View style={{ flex: 1 }}>
@@ -272,7 +301,7 @@ export default function Home() {
         {cooling.length > 0 ? (
           <Animated.View entering={FadeInDown.delay(60)} layout={LinearTransition}>
             <PressSlab fill={p.card} r={24} onPress={() => router.navigate('/cooling')} label={t('tab.cool')} inner={{ padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <View style={{ width: 46, height: 46, borderRadius: 23, backgroundColor: p.info, borderWidth: 2, borderColor: p.ink, alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ width: 46, height: 46, borderRadius: 23, backgroundColor: p.info, alignItems: 'center', justifyContent: 'center', ...puff(p, p.info, 2) }}>
                 <Glyph name="snow" size={24} color={p.ink} />
               </View>
               <View style={{ flex: 1 }}>
@@ -385,7 +414,7 @@ function Stat({ label, value, sub, bad }: { label: string; value: string; sub: s
 function MiniBtn({ label, onPress, fill, fg }: { label: string; onPress: () => void; fill: string; fg?: string }) {
   const p = useTheme();
   return (
-    <PressSlab fill={fill} r={16} depth={3} border={2.2} onPress={onPress} label={label} style={{ flex: 1 }} inner={{ height: 42, alignItems: 'center', justifyContent: 'center' }}>
+    <PressSlab fill={fill} r={16} depth={3} onPress={onPress} label={label} style={{ flex: 1 }} inner={{ height: 42, alignItems: 'center', justifyContent: 'center' }}>
       <Txt v="small" color={fg ?? p.text} style={{ fontFamily: 'DMSans_700Bold' }}>
         {label}
       </Txt>

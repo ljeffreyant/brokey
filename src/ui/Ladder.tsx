@@ -6,8 +6,9 @@ import { useStore } from '../store';
 import { useTheme } from '../theme';
 import { Glyph } from './Glyph';
 import { Txt } from './Txt';
-import { Card } from './kit';
+import { Card, Meter } from './kit';
 import { useFmt } from './useFmt';
+import { puff } from './clay';
 
 /** The four rungs, with how far you are to the next one. Fed by what you walked away from in the fridge. */
 export function Ladder({ savedCents }: { savedCents: number }) {
@@ -28,9 +29,7 @@ export function Ladder({ savedCents }: { savedCents: number }) {
         ) : null}
       </View>
       <View>
-        <View accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: 100, now: Math.round(st.progress * 100) }} style={{ height: 16, borderRadius: 8, borderWidth: 2.5, borderColor: p.ink, backgroundColor: p.card2, overflow: 'hidden' }}>
-          <View style={{ width: `${Math.max(st.progress > 0 ? 4 : 0, st.progress * 100)}%`, height: '100%', backgroundColor: p.accent2, borderRightWidth: st.progress > 0 && st.progress < 1 ? 2.5 : 0, borderColor: p.ink }} />
-        </View>
+        <Meter frac={st.progress} fill={p.accent2} h={18} label={t('ladder.next', { name: st.next ? name(st.next.id) : '' })} />
         <Txt v="small" dim style={{ marginTop: 6 }}>
           {st.next ? `${t('ladder.next', { name: name(st.next.id) })} · ${t('ladder.of', { saved: f.sum(Math.min(savedCents, st.next.cents)), target: f.sum(st.next.cents) })}` : t('ladder.top')}
         </Txt>
@@ -43,13 +42,10 @@ export function Ladder({ savedCents }: { savedCents: number }) {
                 width: 30,
                 height: 30,
                 borderRadius: 15,
-                borderWidth: 2.5,
-                borderColor: p.ink,
                 backgroundColor: r.reached ? p.accent2 : p.card2,
                 alignItems: 'center',
                 justifyContent: 'center',
-                opacity: r.reached ? 1 : 0.6,
-              }}
+                opacity: r.reached ? 1 : 0.6, ...puff(p, r.reached ? p.accent2 : p.card2, 3) }}
             >
               {r.reached ? <Glyph name="check" size={15} color={p.onAccent2} /> : null}
             </View>

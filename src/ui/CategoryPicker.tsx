@@ -11,6 +11,7 @@ import { Sheet } from './Sheet';
 import { Txt } from './Txt';
 import { Btn, Chip, Field, PressSlab } from './kit';
 import { haptic } from './haptics';
+import { puff } from './clay';
 
 const GROUP_ICON: Record<GroupId, string> = { chips: 'chips', meat: 'hsp', garlic: 'cocktail', chilli: 'tee', bbq: 'house' };
 
@@ -35,12 +36,9 @@ function Cell({ meta, on, w, onPress }: { meta: CategoryMeta; on: boolean; w: nu
           height: w - 14,
           borderRadius: 24,
           backgroundColor: on ? g.bg : p.card,
-          borderWidth: 2.5,
-          borderColor: p.ink,
           alignItems: 'center',
           justifyContent: 'center',
-          transform: [{ scale: on ? 1.06 : 1 }, { rotate: on ? '-3deg' : '0deg' }],
-        }}
+          transform: [{ scale: on ? 1.06 : 1 }, { rotate: on ? '-3deg' : '0deg' }], ...puff(p, on ? g.bg : p.card, 3) }}
       >
         <CatIcon id={meta.icon} size={(w - 14) * 0.72} />
       </View>
@@ -96,7 +94,7 @@ export function CategoryPicker({ value, onPick, bottomPad = 20 }: CategoryPicker
               fill={on ? c.bg : p.card}
               r={20}
               depth={on ? 1 : 3}
-              border={2.5}
+             
               tone="tap"
               label={groupLabel(t, gr.id)}
               onPress={() => setGroup(gr.id)}
@@ -180,7 +178,7 @@ export function NewCategorySheet({ visible, group, onClose, onCreated }: { visib
     <Sheet visible={visible} onClose={onClose} title={t('pick.newTitle')}>
       <View style={{ gap: 14, paddingBottom: 6 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <View style={{ width: 68, height: 68, borderRadius: 24, backgroundColor: p.groups[g].bg, borderWidth: 2.5, borderColor: p.ink, alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ width: 68, height: 68, borderRadius: 24, backgroundColor: p.groups[g].bg, alignItems: 'center', justifyContent: 'center', ...puff(p, p.groups[g].bg, 3) }}>
             <CatIcon id={icon} size={50} />
           </View>
           <Field value={name} onChangeText={setName} placeholder={t('pick.namePh')} maxLength={22} style={{ flex: 1 }} autoCapitalize="sentences" />
@@ -210,7 +208,7 @@ export function NewCategorySheet({ visible, group, onClose, onCreated }: { visib
                 haptic.tap();
                 setIcon(d.id);
               }}
-              style={{ width: 58, height: 58, borderRadius: 18, backgroundColor: icon === d.id ? p.accent2 : p.card, borderWidth: 2.2, borderColor: p.ink, alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: 58, height: 58, borderRadius: 18, backgroundColor: icon === d.id ? p.accent2 : p.card, alignItems: 'center', justifyContent: 'center', ...puff(p, icon === d.id ? p.accent2 : p.card, 3) }}
             >
               <CatIcon id={d.id} size={42} />
             </Pressable>

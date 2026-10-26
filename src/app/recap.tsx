@@ -16,6 +16,7 @@ import { haptic } from '../ui/haptics';
 import { useLeave } from '../ui/nav';
 import { formatDate, useBudget, useFmt } from '../ui/useFmt';
 import { useWeekModel } from '../ui/useWeekModel';
+import { groundShadow } from '../ui/clay';
 
 const EXPORT_W = 1080;
 
@@ -87,9 +88,9 @@ export default function RecapScreen() {
       <Header title={t('recap.title')} onBack={leave} />
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 18, paddingVertical: 8 }} onLayout={(e: LayoutChangeEvent) => setStage({ w: e.nativeEvent.layout.width - 36, h: e.nativeEvent.layout.height - 16 })}>
         {cardW > 0 ? (
-          <View style={{ borderRadius: 22, borderWidth: 2.5, borderColor: p.ink, overflow: 'hidden' }}>
+          <View style={{ borderRadius: 24, overflow: 'hidden', boxShadow: groundShadow(p, 8) }}>
             <View ref={cardRef} collapsable={false}>
-              <WeekCard model={model} width={cardW - 5} />
+              <WeekCard model={model} width={cardW} />
             </View>
           </View>
         ) : null}

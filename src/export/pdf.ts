@@ -1,6 +1,5 @@
-import { FRY_COUNT, mascot } from '../art/mascot';
+import { POSE_THUMB } from '../art/poseThumbs';
 import { CurrencyCode, GROUPS, GroupId, categoryMeta, formatMoney, formatUnits } from '../core';
-import { sceneToSvg } from '../art/scene';
 import { en } from '../i18n/en';
 import type { Key } from '../i18n/en';
 import type { T } from '../i18n/translate';
@@ -92,8 +91,7 @@ export function buildReportHtml(rep: Report, opt: PdfOptions): string {
   const walletName = esc(rep.walletName ?? t('wallet.all'));
   const v = reportVerdict(rep);
   const left = rep.budgetCents - rep.spentCents;
-  const fries = Math.max(0, Math.min(FRY_COUNT, Math.round(FRY_COUNT * (1 - Math.min(1, v.ratio)))));
-  const face = sceneToSvg(mascot(v.mood, 7, rep.count === 0 ? FRY_COUNT : fries), { size: 150 });
+  const face = `<img alt="" src="${POSE_THUMB[v.mood]}" />`;
 
   const css = `
     @page { size: ${PAGE_W}px ${PAGE_H}px; margin: 0; }
@@ -109,7 +107,7 @@ export function buildReportHtml(rep: Report, opt: PdfOptions): string {
     .sub { color: ${K.dim}; font-size: 11px; margin-top: 4px; }
     h2 { font-family: "Arial Rounded MT Bold", "Avenir Next", "Helvetica Neue", Arial, sans-serif; font-weight: 900; font-size: 12px; text-transform: uppercase; letter-spacing: 1.2px; border-bottom: 2.5px solid ${K.ink}; padding-bottom: 5px; margin: 20px 0 10px; }
     .hero { display: flex; align-items: center; gap: 14px; margin-top: 14px; background: ${K.cream}; border: 2.5px solid ${K.ink}; border-radius: 20px; padding: 10px 18px 10px 10px; box-shadow: 4px 4px 0 ${K.ink}; }
-    .hero svg { flex: none; width: 118px; height: auto; }
+    .hero img { flex: none; width: 112px; height: auto; }
     .say { font-family: "Arial Rounded MT Bold", "Avenir Next", "Helvetica Neue", Arial, sans-serif; font-size: 17px; font-weight: 900; line-height: 1.2; }
     .say small { display: block; margin-top: 6px; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; font-weight: 500; font-size: 10.5px; color: ${K.dim}; }
     .tiles { display: flex; gap: 8px; margin-top: 16px; }

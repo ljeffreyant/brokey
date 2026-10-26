@@ -3,6 +3,7 @@ import { StyleProp, TextInput, View, ViewStyle } from 'react-native';
 import { parseAmountToCents } from '../core';
 import { fonts, useTheme } from '../theme';
 import { Txt } from './Txt';
+import { puff } from './clay';
 
 /** A money input. Shows what you type, hands back cents. */
 export function AmountField({
@@ -31,7 +32,7 @@ export function AmountField({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cents]);
   return (
-    <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: p.card, borderRadius: 18, borderWidth: 2.5, borderColor: p.ink, paddingHorizontal: 14, minHeight: 50 }, style]}>
+    <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: p.card, borderRadius: 18, paddingHorizontal: 14, minHeight: 50, ...puff(p, p.card, 3) }, style]}>
       {symbol ? (
         <Txt v="bodyBold" dim>
           {symbol}

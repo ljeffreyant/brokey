@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { StickerDef } from '../core';
 import { useTheme } from '../theme';
 import { CatIcon } from './CatIcon';
+import { puff } from './clay';
 
 const ART_ICON: Record<StickerDef['art'], string> = {
   fries: 'hsp',
@@ -30,13 +31,10 @@ export function StickerArt({ art, size = 84, index = 0, locked }: { art: Sticker
         height: size,
         borderRadius: size * 0.3,
         backgroundColor: locked ? p.card2 : TINTS[index % TINTS.length],
-        borderWidth: 3,
-        borderColor: p.ink,
         alignItems: 'center',
         justifyContent: 'center',
         transform: [{ rotate: `${tilt}deg` }],
-        opacity: locked ? 0.55 : 1,
-      }}
+        opacity: locked ? 0.55 : 1, ...puff(p, locked ? p.card2 : TINTS[index % TINTS.length], 3) }}
     >
       <View style={{ opacity: locked ? 0.35 : 1 }}>
         <CatIcon id={ART_ICON[art]} size={size * 0.7} />

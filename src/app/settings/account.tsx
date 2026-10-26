@@ -28,7 +28,7 @@ export default function Account() {
     return (
       <Page title={t('account.title')}>
         <Card weight="quiet" inner={{ alignItems: 'center', gap: 10, paddingVertical: 22 }}>
-          <Brokey mood="ok" width={150} still />
+          <Brokey mood="ok" pose="piggy-hug" width={150} still />
           <Txt v="heading" align="center">
             {t('account.localTitle')}
           </Txt>

@@ -31,7 +31,7 @@ export function Celebrate({ visible, title, body, cta, onClose }: { visible: boo
     <Modal transparent animationType="fade" visible onRequestClose={onClose} statusBarTranslucent>
       <View style={{ flex: 1, backgroundColor: c.field, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16 }}>
         <Animated.View entering={FadeIn.delay(80)} style={{ alignItems: 'center' }}>
-          <Brokey mood="proud" width={Math.min(W * 0.7, 280)} />
+          <Brokey mood="proud" pose="party" width={Math.min(W * 0.7, 280)} />
           <Burst x={W * 0.5 - 24} y={90} trigger={n} count={22} radius={W * 0.46} size={9} gravity={0.7} colors={['#FFF6E6', p.accent, '#7CC8FF', '#24120A', '#FF9E8F']} />
         </Animated.View>
         <Animated.View entering={FadeInDown.delay(350)} style={{ alignItems: 'center', gap: 8 }}>

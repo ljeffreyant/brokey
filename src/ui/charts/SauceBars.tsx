@@ -5,6 +5,7 @@ import Svg, { ClipPath, Circle, Defs, Ellipse, G, Path, Rect } from 'react-nativ
 import { useTheme } from '../../theme';
 import { Txt } from '../Txt';
 import { haptic } from '../haptics';
+import { mix, puff } from '../clay';
 
 const AnimatedRect = Animated.createAnimatedComponent(Rect);
 
@@ -26,7 +27,7 @@ export interface DayBar {
   today: boolean;
 }
 
-function Bottle({ i, frac, over, future, selected, cid, colors, glass, ink }: {
+function Bottle({ i, frac, over, future, selected, cid, colors, glass, ink, dark }: {
   i: number;
   frac: number;
   over: boolean;
@@ -36,6 +37,7 @@ function Bottle({ i, frac, over, future, selected, cid, colors, glass, ink }: {
   colors: { ok: string; over: string };
   glass: string;
   ink: string;
+  dark: boolean;
 }) {
   const level = useSharedValue(0);
   const lift = useSharedValue(0);
@@ -47,6 +49,9 @@ function Bottle({ i, frac, over, future, selected, cid, colors, glass, ink }: {
   }, [selected, lift]);
 
   const sauce = over ? colors.over : colors.ok;
+  // soft tone-on-tone edges instead of a black outline
+  const sauceDeep = mix(sauce, '#2A0F00', 0.38);
+  const edge = dark ? mix(glass, '#FFFFFF', 0.22) : mix(glass, '#8A4A12', 0.34);
   const props = useAnimatedProps(() => {
     const h = BODY_H * Math.max(0, level.value);
     return { y: BODY_BOTTOM - h, height: h + 2 };
@@ -64,24 +69,24 @@ function Bottle({ i, frac, over, future, selected, cid, colors, glass, ink }: {
         {/* squirt when you went over */}
         {over ? (
           <G>
-            <Path d="M22 3 Q22 -6 17 -9" stroke={ink} strokeWidth={5.4} strokeLinecap="round" fill="none" />
+            <Path d="M22 3 Q22 -6 17 -9" stroke={sauceDeep} strokeWidth={5} strokeLinecap="round" fill="none" />
             <Path d="M22 3 Q22 -6 17 -9" stroke={sauce} strokeWidth={3} strokeLinecap="round" fill="none" />
-            <Circle cx={12} cy={-11} r={2.4} fill={sauce} stroke={ink} strokeWidth={1.5} />
-            <Circle cx={29} cy={-6} r={1.9} fill={sauce} stroke={ink} strokeWidth={1.5} />
+            <Circle cx={12} cy={-11} r={2.4} fill={sauce} stroke={sauceDeep} strokeWidth={1} />
+            <Circle cx={29} cy={-6} r={1.9} fill={sauce} stroke={sauceDeep} strokeWidth={1} />
           </G>
         ) : null}
         {/* nozzle + cap */}
-        <Path d="M19 4 L25 4 L26 14 L18 14 Z" fill={sauce} stroke={ink} strokeWidth={2.4} strokeLinejoin="round" />
-        <Path d="M15.5 13 L28.5 13 L31 24 L13 24 Z" fill={sauce} stroke={ink} strokeWidth={2.4} strokeLinejoin="round" />
+        <Path d="M19 4 L25 4 L26 14 L18 14 Z" fill={sauce} stroke={sauceDeep} strokeWidth={1.5} strokeLinejoin="round" />
+        <Path d="M15.5 13 L28.5 13 L31 24 L13 24 Z" fill={sauce} stroke={sauceDeep} strokeWidth={1.5} strokeLinejoin="round" />
         {/* glass */}
         <Path d={BODY} fill={glass} />
         <G clipPath={`url(#${cid})`}>
           <AnimatedRect x={0} width={44} fill={sauce} animatedProps={props} />
         </G>
-        <Path d={BODY} fill="none" stroke={ink} strokeWidth={2.6} strokeLinejoin="round" />
+        <Path d={BODY} fill="none" stroke={edge} strokeWidth={1.8} strokeLinejoin="round" />
         <Path d="M13.5 38 L14.5 78" stroke="#FFFFFF" strokeWidth={2.4} strokeLinecap="round" opacity={0.55} />
         {/* label with a face */}
-        <Rect x={12} y={47} width={20} height={25} rx={7} fill="#FFF6E6" stroke={ink} strokeWidth={1.7} />
+        <Rect x={12} y={47} width={20} height={25} rx={7} fill="#FFF6E6" stroke={edge} strokeWidth={1} />
         {future ? (
           <G stroke={ink} strokeWidth={1.5} strokeLinecap="round" fill="none">
             <Path d="M15.6 56.4 Q17.8 58.4 20 56.4" />
@@ -160,6 +165,7 @@ export function SauceBars({
                   colors={{ ok: p.groups.chips.bg, over: p.groups.chilli.bg }}
                   glass={p.card}
                   ink={p.ink}
+                  dark={p.dark}
                 />
               </View>
             </Pressable>
@@ -174,7 +180,7 @@ export function SauceBars({
           const on = i === selected;
           return (
             <View key={d.key} style={{ width: cw, alignItems: 'center', gap: 3 }}>
-              <View style={{ minWidth: cw - 8, height: 22, borderRadius: 11, paddingHorizontal: 6, alignItems: 'center', justifyContent: 'center', backgroundColor: on ? p.accent2 : 'transparent', borderWidth: on ? 2 : 0, borderColor: p.ink }}>
+              <View style={{ minWidth: cw - 8, height: 22, borderRadius: 11, paddingHorizontal: 6, alignItems: 'center', justifyContent: 'center', backgroundColor: on ? p.accent2 : 'transparent', ...puff(p, on ? p.accent2 : 'transparent', 3) }}>
                 <Txt v="label" size={10.5} color={on ? p.onAccent2 : d.today ? p.text : p.textDim} style={{ letterSpacing: 0.4 }}>
                   {d.label}
                 </Txt>

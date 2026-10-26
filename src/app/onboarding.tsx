@@ -17,6 +17,7 @@ import { Txt } from '../ui/Txt';
 import { Btn, Card, Chip, RoundBtn } from '../ui/kit';
 import { haptic } from '../ui/haptics';
 import { useFmt } from '../ui/useFmt';
+import { puff } from '../ui/clay';
 
 /** Four quick steps. Theme lives in Settings, and the notification prompt waits until the first time you lock a want. */
 const STEPS = ['welcome', 'money', 'budget', 'roast'] as const;
@@ -99,7 +100,7 @@ export default function Onboarding() {
         {idx > 0 ? <RoundBtn glyph="back" label={t('common.back')} onPress={() => go(-1)} size={42} /> : <View style={{ width: 42 }} />}
         <View style={{ flex: 1, flexDirection: 'row', gap: 6, justifyContent: 'center' }}>
           {STEPS.map((s, i) => (
-            <View key={s} style={{ width: i === idx ? 26 : 9, height: 9, borderRadius: 5, backgroundColor: i === idx ? p.accent2 : i < idx ? p.ink : p.line, borderWidth: i === idx ? 2 : 0, borderColor: p.ink }} />
+            <View key={s} style={{ width: i === idx ? 26 : 9, height: 9, borderRadius: 5, backgroundColor: i === idx ? p.accent2 : i < idx ? p.ink : p.line, ...puff(p, i === idx ? p.accent2 : i < idx ? p.ink : p.line, 3) }} />
           ))}
         </View>
         <View style={{ width: 42 }} />

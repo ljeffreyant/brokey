@@ -53,8 +53,7 @@ function Piece({ p, trigger, gravity, duration, x, y }: { p: P; trigger: number;
           height: p.size,
           borderRadius: p.round ? p.size / 2 : 2,
           backgroundColor: p.color,
-          borderWidth: 1.5,
-          borderColor: '#24120A',
+          boxShadow: 'inset 0 1.5px 0 rgba(255,255,255,0.6), 0 2px 0 rgba(60,25,0,0.25)',
         },
         style,
       ]}

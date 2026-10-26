@@ -7,6 +7,7 @@ import { Page } from '../../ui/Page';
 import { Txt } from '../../ui/Txt';
 import { Btn, Card } from '../../ui/kit';
 import { haptic } from '../../ui/haptics';
+import { puff } from '../../ui/clay';
 
 export const SHORTCUT_LINK = 'brokey://log?amount=AMOUNT&merchant=MERCHANT&method=tap';
 /** Just opens the log screen, for the Action Button, Back Tap or Siri. */
@@ -26,7 +27,7 @@ export default function Shortcut() {
       <Card weight="quiet" inner={{ gap: 16, padding: 16 }}>
         {steps.map((k, i) => (
           <View key={k} style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
-            <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: p.accent2, borderWidth: 2.5, borderColor: p.ink, alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: p.accent2, alignItems: 'center', justifyContent: 'center', ...puff(p, p.accent2, 3) }}>
               <Txt v="num" size={15} color={p.onAccent2}>
                 {i + 1}
               </Txt>
@@ -35,7 +36,7 @@ export default function Shortcut() {
               <Txt v="body">{t(k)}</Txt>
               {k === 'sc.step5' ? (
                 <View style={{ gap: 8 }}>
-                  <View style={{ backgroundColor: p.card2, borderRadius: 12, borderWidth: 2, borderColor: p.ink, padding: 10 }}>
+                  <View style={{ backgroundColor: p.card2, borderRadius: 12, padding: 10, ...puff(p, p.card2, 2) }}>
                     <Txt v="small" selectable style={{ fontFamily: 'DMSans_700Bold' }}>
                       {SHORTCUT_LINK.replace(/&/g, '&\u200b')}
                     </Txt>
@@ -71,7 +72,7 @@ export default function Shortcut() {
       <Card weight="quiet" inner={{ gap: 14, padding: 16 }}>
         {(['fast.s1', 'fast.s2', 'fast.s3', 'fast.s4'] as const).map((k, i) => (
           <View key={k} style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
-            <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: p.accent2, borderWidth: 2.5, borderColor: p.ink, alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: p.accent2, alignItems: 'center', justifyContent: 'center', ...puff(p, p.accent2, 3) }}>
               <Txt v="num" size={15} color={p.onAccent2}>
                 {i + 1}
               </Txt>
@@ -80,7 +81,7 @@ export default function Shortcut() {
               <Txt v="body">{t(k)}</Txt>
               {k === 'fast.s1' ? (
                 <View style={{ gap: 8 }}>
-                  <View style={{ backgroundColor: p.card2, borderRadius: 12, borderWidth: 2, borderColor: p.ink, padding: 10 }}>
+                  <View style={{ backgroundColor: p.card2, borderRadius: 12, padding: 10, ...puff(p, p.card2, 2) }}>
                     <Txt v="small" selectable style={{ fontFamily: 'DMSans_700Bold' }}>
                       {QUICK_LINK}
                     </Txt>

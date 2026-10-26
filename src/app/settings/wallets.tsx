@@ -14,6 +14,7 @@ import { Btn, Card, Chip, Field, RoundBtn, SectionTitle, Segmented } from '../..
 import { haptic } from '../../ui/haptics';
 import { useFmt, useNow } from '../../ui/useFmt';
 import { currencyDef } from '../../core';
+import { puff } from '../../ui/clay';
 
 const ICONS = ['hsp', 'wallet', 'piggy', 'coin', 'bank', 'plane', 'palm', 'suitcase', 'gift', 'tee', 'phone', 'coffee', 'groceries', 'dice'];
 const FREQS: Freq[] = ['weekly', 'fortnightly', 'monthly', 'yearly'];
@@ -109,7 +110,7 @@ export default function WalletsScreen() {
             {w.name}
           </Txt>
           {settings.activeWalletId === w.id ? (
-            <View style={{ backgroundColor: p.accent2, borderRadius: 8, borderWidth: 1.5, borderColor: p.ink, paddingHorizontal: 6, paddingVertical: 1 }}>
+            <View style={{ backgroundColor: p.accent2, borderRadius: 8, paddingHorizontal: 6, paddingVertical: 1, ...puff(p, p.accent2, 2) }}>
               <Txt v="label" size={9} color={p.onAccent2}>
                 {t('wallets.active')}
               </Txt>
@@ -191,7 +192,7 @@ export default function WalletsScreen() {
                       haptic.tap();
                       set({ icon: id });
                     }}
-                    style={{ width: 52, height: 52, borderRadius: 16, backgroundColor: d.icon === id ? p.accent2 : p.card, borderWidth: 2.2, borderColor: p.ink, alignItems: 'center', justifyContent: 'center' }}
+                    style={{ width: 52, height: 52, borderRadius: 16, backgroundColor: d.icon === id ? p.accent2 : p.card, alignItems: 'center', justifyContent: 'center', ...puff(p, d.icon === id ? p.accent2 : p.card, 3) }}
                   >
                     <IconDisc id={id} size={40} color="transparent" />
                   </Pressable>
@@ -214,7 +215,7 @@ export default function WalletsScreen() {
                       haptic.tap();
                       set({ color: c });
                     }}
-                    style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: c, borderWidth: d.color === c ? 4 : 2.5, borderColor: p.ink, alignItems: 'center', justifyContent: 'center' }}
+                    style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: c, alignItems: 'center', justifyContent: 'center', ...puff(p, c, 3) }}
                   >
                     {d.color === c ? <Glyph name="check" size={16} color="#24120A" stroke={3.2} /> : null}
                   </Pressable>

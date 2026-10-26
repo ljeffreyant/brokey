@@ -18,6 +18,7 @@ import { Btn, Header, RoundBtn } from '../ui/kit';
 import { haptic } from '../ui/haptics';
 import { useLeave } from '../ui/nav';
 import { formatMonth, useNow } from '../ui/useFmt';
+import { puff } from '../ui/clay';
 
 const SLOT_H = 30;
 const LINES = 22;
@@ -148,7 +149,7 @@ export default function ReceiptScreen() {
         ref={stageRef}
         collapsable={false}
         onLayout={(e: LayoutChangeEvent) => setStage({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height })}
-        style={{ flex: 1, marginHorizontal: 18, borderRadius: 28, borderWidth: 2.5, borderColor: p.ink, backgroundColor: stageFill, overflow: 'hidden', alignItems: 'center' }}
+        style={{ flex: 1, marginHorizontal: 18, borderRadius: 28, backgroundColor: stageFill, overflow: 'hidden', alignItems: 'center', ...puff(p, stageFill, 3) }}
       >
         {/* printer */}
         <View style={{ width: '88%', height: SLOT_H, marginTop: 14, borderRadius: 15, backgroundColor: p.ink, alignItems: 'center', justifyContent: 'flex-end', zIndex: 3 }}>

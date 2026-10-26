@@ -11,13 +11,14 @@ import { CategoryPicker } from '../../ui/CategoryPicker';
 import { Sheet } from '../../ui/Sheet';
 import { StickerArt } from '../../ui/StickerArt';
 import { Txt } from '../../ui/Txt';
-import { Btn, Card, Chip, Field, RoundBtn, SectionTitle } from '../../ui/kit';
+import { Btn, Card, Chip, Field, RoundBtn, SectionTitle, Slab } from '../../ui/kit';
 import { Keypad } from '../../ui/Keypad';
 import { haptic } from '../../ui/haptics';
 import { formatDate, useFmt, useNow } from '../../ui/useFmt';
 import { formatTyped } from '../../core/keypad';
 import { currencyDef, parseAmountToCents } from '../../core';
 import { sfx } from '../../ui/sfx';
+import { puff } from '../../ui/clay';
 
 function ShameCard({ item, w, tilt, onPress }: { item: ShameItem; w: number; tilt: number; onPress: () => void }) {
   const p = useTheme();
@@ -26,10 +27,9 @@ function ShameCard({ item, w, tilt, onPress }: { item: ShameItem; w: number; til
   const meta = categoryMeta(item.category ?? 'other');
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={item.label} onPress={() => { haptic.tap(); onPress(); }} style={{ width: w, transform: [{ rotate: `${tilt}deg` }] }}>
-      <View style={{ paddingBottom: 4 }}>
-        <View style={{ position: 'absolute', left: 0, right: 0, top: 4, bottom: 0, borderRadius: 18, backgroundColor: p.ink }} />
-        <View style={{ backgroundColor: p.card, borderRadius: 18, borderWidth: 2.5, borderColor: p.ink, padding: 8, overflow: 'hidden' }}>
-          <View style={{ backgroundColor: p.groups[meta.group].bg, borderRadius: 11, height: w * 0.52, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: p.ink }}>
+      <Slab r={20} depth={5} inner={{ padding: 8 }}>
+        <View>
+          <View style={{ backgroundColor: p.groups[meta.group].bg, borderRadius: 11, height: w * 0.52, alignItems: 'center', justifyContent: 'center', ...puff(p, p.groups[meta.group].bg, 2) }}>
             <IconDisc id={meta.icon} size={w * 0.44} color="transparent" />
           </View>
           <Txt v="bodyBold" numberOfLines={1} style={{ marginTop: 8 }}>
@@ -44,14 +44,14 @@ function ShameCard({ item, w, tilt, onPress }: { item: ShameItem; w: number; til
             </Txt>
           </View>
           {item.source === 'regret' ? (
-            <View style={{ position: 'absolute', top: 6, right: 6, backgroundColor: p.accent, borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, borderWidth: 1.5, borderColor: p.ink }}>
+            <View style={{ position: 'absolute', top: 6, right: 6, backgroundColor: p.accent, borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, ...puff(p, p.accent, 2) }}>
               <Txt v="label" size={8.5} color={p.onAccent}>
                 {t('shelf.nope')}
               </Txt>
             </View>
           ) : null}
         </View>
-      </View>
+      </Slab>
     </Pressable>
   );
 }
@@ -175,7 +175,7 @@ export default function Shelf() {
                   <ShameCard key={it.id} item={it} w={cw} tilt={(ri + ci) % 2 === 0 ? -1.6 : 1.8} onPress={() => setOpen(it)} />
                 ))}
               </View>
-              <View style={{ height: 16, marginTop: 2, marginBottom: 18, borderRadius: 6, backgroundColor: '#B56D36', borderWidth: 2.5, borderColor: p.ink, borderBottomWidth: 5 }} />
+              <View style={{ height: 16, marginTop: 2, marginBottom: 18, backgroundColor: '#B56D36', borderRadius: 8, ...puff(p, '#B56D36', 5) }} />
             </Animated.View>
           ))
         )}

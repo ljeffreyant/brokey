@@ -19,6 +19,7 @@ import { Btn, Card, Chip, Field, RoundBtn } from '../../ui/kit';
 import { haptic } from '../../ui/haptics';
 import { formatClock, formatDate, formatDayName, useFmt } from '../../ui/useFmt';
 import { sfx } from '../../ui/sfx';
+import { puff } from '../../ui/clay';
 
 export default function PurchaseDetail() {
   const p = useTheme();
@@ -118,7 +119,7 @@ export default function PurchaseDetail() {
 
         <Animated.View entering={FadeInDown.delay(170).springify().damping(15)} style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6 }}>
           <Brokey mood={mood} width={92} still />
-          <View style={{ flex: 1, backgroundColor: p.card, borderRadius: 20, borderWidth: 2.5, borderColor: p.ink, padding: 14, marginBottom: 18 }}>
+          <View style={{ flex: 1, backgroundColor: p.card, borderRadius: 20, padding: 14, marginBottom: 18, ...puff(p, p.card, 3) }}>
             <Txt v="label" faint size={10.5}>
               {t('detail.roastLabel')}
             </Txt>

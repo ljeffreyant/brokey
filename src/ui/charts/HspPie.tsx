@@ -5,6 +5,7 @@ import Svg, { Circle, Defs, G, Path, Pattern } from 'react-native-svg';
 import { GroupId, GroupTotal } from '../../core';
 import { useTheme } from '../../theme';
 import { haptic } from '../haptics';
+import { lipOf, mix } from '../clay';
 
 const CX = 100;
 const CY = 100;
@@ -86,13 +87,15 @@ export function HspPie({
             </Pattern>
           </Defs>
           {/* foil tray */}
-          <Circle cx={CX} cy={CY + 3} r={96} fill={p.ink} />
-          <Circle cx={CX} cy={CY} r={96} fill={p.card2} stroke={p.ink} strokeWidth={3} />
+          <Circle cx={CX} cy={CY + 9} r={95} fill={p.dark ? '#000000' : '#6E3700'} opacity={0.16} />
+          <Circle cx={CX} cy={CY + 5} r={96} fill={lipOf(p, p.card2)} />
+          <Circle cx={CX} cy={CY} r={96} fill={p.card2} />
+          <Circle cx={CX} cy={CY} r={95} fill="none" stroke="#FFFFFF" strokeWidth={2} strokeOpacity={p.dark ? 0.1 : 0.7} />
           <Circle cx={CX} cy={CY} r={89} fill="none" stroke={p.ink} strokeWidth={1.2} strokeOpacity={0.18} strokeDasharray="3 5" />
           {ws.length === 0 ? (
             <>
               <Circle cx={CX} cy={CY} r={(R_OUT + R_IN) / 2} fill="none" stroke={p.textFaint} strokeWidth={R_OUT - R_IN} strokeOpacity={0.22} />
-              <Circle cx={CX} cy={CY} r={R_OUT} fill="none" stroke={p.ink} strokeWidth={3} strokeDasharray="6 7" />
+              <Circle cx={CX} cy={CY} r={R_OUT} fill="none" stroke={p.textFaint} strokeWidth={3} strokeDasharray="6 7" />
             </>
           ) : (
             ws.map((w) => {
@@ -102,7 +105,8 @@ export function HspPie({
               const col = p.groups[w.group];
               return (
                 <G key={w.group} transform={`translate(${dx.toFixed(2)} ${dy.toFixed(2)})`} onPress={() => { haptic.tap(); onSelect(on ? null : w.group); }}>
-                  <Path d={slicePath(w.a0, w.a1)} fill={col.bg} stroke={p.ink} strokeWidth={3} strokeLinejoin="round" opacity={selected && !on ? 0.55 : 1} />
+                  <Path d={slicePath(w.a0, w.a1)} transform="translate(0 4)" fill={mix(col.bg, '#2A0F00', 0.34)} stroke={mix(col.bg, '#2A0F00', 0.34)} strokeWidth={3} strokeLinejoin="round" opacity={selected && !on ? 0.55 : 1} />
+                  <Path d={slicePath(w.a0, w.a1)} fill={col.bg} stroke={p.card2} strokeWidth={2.5} strokeLinejoin="round" opacity={selected && !on ? 0.55 : 1} />
                   {w.group === 'garlic' ? <Path d={slicePath(w.a0, w.a1)} fill="url(#garlicDots)" opacity={selected && !on ? 0.55 : 1} /> : null}
                   {/* a little shine so the wedges feel like sauce */}
                   <Path d={slicePath(w.a0 + 2, Math.min(w.a1 - 2, w.a0 + 2 + 26), R_OUT - 7, R_OUT - 12)} fill="#FFFFFF" opacity={0.35} />
@@ -110,7 +114,8 @@ export function HspPie({
               );
             })
           )}
-          <Circle cx={CX} cy={CY} r={R_IN - 1.5} fill={p.card} stroke={p.ink} strokeWidth={3} />
+          <Circle cx={CX} cy={CY + 4} r={R_IN - 1.5} fill={lipOf(p, p.card)} />
+          <Circle cx={CX} cy={CY} r={R_IN - 1.5} fill={p.card} />
         </Svg>
       </Animated.View>
       <View pointerEvents="none" style={{ position: 'absolute', alignItems: 'center', justifyContent: 'center', width: size * 0.34, height: size * 0.34 }}>

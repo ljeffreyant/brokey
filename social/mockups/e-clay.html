@@ -1,0 +1,119 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>E Clay Toy</title>
+<link rel="stylesheet" href="common.css"><script src="common.js"></script>
+<style>
+:root{--y:#FFD23F;--y2:#FFE27A;--cr:#FFF6E6;--br:#3A2113;--br2:#7a5a45;--rd:#E9402B;--gn:#43B867;--sh:#D9A91A}
+.phone{background:linear-gradient(180deg,#FFE27A 0%,#FFD23F 38%,#FFC61F 100%);color:var(--br);font-family:'DM',sans-serif}
+.h{font-family:'Brico',sans-serif;font-weight:800;letter-spacing:-.5px}
+.clay{background:var(--cr);border-radius:30px;box-shadow:inset 0 3px 0 #fff,inset 0 -5px 0 #3a21130d,0 7px 0 var(--sh),0 16px 22px #8a5a0040}
+.disc{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--cr);box-shadow:inset 0 3px 0 #fff,inset 0 -4px 0 #3a21130f,0 5px 0 var(--sh),0 10px 14px #8a5a0033;color:var(--br)}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:9px 15px;font:700 14px 'DM';background:var(--br);color:#fff6e6;box-shadow:inset 0 2px 0 #ffffff30,0 4px 0 #1c0f07}
+.pill.c{background:var(--cr);color:var(--br);box-shadow:inset 0 3px 0 #fff,inset 0 -4px 0 #3a21130d,0 4px 0 var(--sh)}
+.pill.on{background:var(--br);color:#fff6e6;box-shadow:inset 0 2px 0 #ffffff30,0 4px 0 #1c0f07}
+.cbtn{display:flex;align-items:center;justify-content:center;gap:8px;height:60px;border-radius:999px;font:800 20px 'Brico';color:#fff;background:var(--rd);box-shadow:inset 0 4px 0 #ff8f7c,inset 0 -6px 0 #0000001f,0 8px 0 #A8281A,0 16px 20px #7a1a0e44}
+.cbtn.g{background:var(--gn);box-shadow:inset 0 4px 0 #8fe3a6,inset 0 -6px 0 #0000001f,0 8px 0 #2d8a4a,0 16px 20px #1a5a2a44}
+.cbtn.b{background:var(--br);box-shadow:inset 0 3px 0 #ffffff33,inset 0 -6px 0 #0000002a,0 8px 0 #1c0f07,0 16px 20px #0005}
+.cbtn.c{background:var(--cr);color:var(--br);box-shadow:inset 0 3px 0 #fff,inset 0 -5px 0 #3a21130d,0 8px 0 var(--sh)}
+.cap{font:700 12px 'DM';letter-spacing:1.6px;text-transform:uppercase;color:var(--br2)}
+.tabs{position:absolute;left:18px;right:18px;bottom:26px;height:74px;border-radius:999px;background:var(--br);display:flex;justify-content:space-around;align-items:center;box-shadow:inset 0 3px 0 #ffffff22,0 8px 0 #1c0f07,0 18px 24px #0006;color:#bfa593;padding:0 8px}
+.tabs .t{width:52px;height:52px;border-radius:50%;display:grid;place-items:center}
+.tabs .t.on{background:var(--y);color:var(--br);box-shadow:inset 0 3px 0 #fff8,0 3px 0 var(--sh)}
+.tabs .plus{width:66px;height:66px;margin-top:-26px;border-radius:50%;background:var(--rd);color:#fff;display:grid;place-items:center;box-shadow:inset 0 4px 0 #ff8f7c,inset 0 -6px 0 #0000001f,0 7px 0 #A8281A,0 14px 18px #7a1a0e66}
+.key{height:56px;border-radius:20px;background:var(--cr);display:grid;place-items:center;font:800 27px 'Brico';box-shadow:inset 0 3px 0 #fff,inset 0 -4px 0 #3a21130d,0 5px 0 var(--sh)}
+.seg{display:flex;gap:7px}.seg b{flex:1;text-align:center;padding:10px 0;border-radius:999px;background:var(--cr);font:700 13px 'DM';box-shadow:inset 0 3px 0 #fff,0 4px 0 var(--sh)}.seg b.on{background:var(--br);color:#fff6e6;box-shadow:inset 0 2px 0 #ffffff30,0 4px 0 #1c0f07}
+.inset{background:#F2E4C2;border-radius:26px;box-shadow:inset 0 6px 0 #d8c59a,inset 0 -3px 0 #fff8}
+</style></head><body>
+
+<!-- HOME -->
+<div class="phone" data-screen="home">
+  <div class="abs" style="left:18px;top:62px;height:46px;display:flex;align-items:center;gap:8px;padding:0 16px 0 8px;border-radius:999px;background:var(--cr);box-shadow:inset 0 3px 0 #fff,0 5px 0 var(--sh);font:700 15px 'DM'"><span style="width:30px;height:30px;border-radius:50%;background:var(--y);display:grid;place-items:center;font:800 13px 'Brico'">U</span>Uni week <script>document.write(IC.down)</script></div>
+  <div class="disc abs" style="right:18px;top:62px"><script>document.write(IC.gear)</script></div>
+  <img class="stk" src="img/cheer.png" style="left:76px;top:88px;width:250px;z-index:6;filter:drop-shadow(0 10px 10px #8a5a0044)">
+  <div class="clay abs" style="left:18px;right:18px;top:318px;height:196px;padding:20px 22px;border-radius:36px">
+    <div class="cap">Safe to spend today</div>
+    <div style="display:flex;align-items:baseline;gap:8px"><span class="h" style="font-size:112px;line-height:1.02;letter-spacing:-5px">0.9</span><span class="h" style="font-size:30px">HSP</span></div>
+    <div style="display:flex;gap:8px;margin-top:2px"><span class="pill">≈ $16</span><span class="pill c" id="fr"></span></div>
+  </div>
+  <div class="abs" style="left:18px;right:18px;top:540px;display:flex;gap:10px">
+    <div class="clay" style="flex:1;border-radius:24px;padding:11px 14px"><div class="cap" style="font-size:10.5px">Spent</div><div class="h" style="font-size:26px">5.2</div></div>
+    <div class="clay" style="flex:1;border-radius:24px;padding:11px 14px;background:#E3F7E6"><div class="cap" style="font-size:10.5px">Left</div><div class="h" style="font-size:26px;color:#1e7a3a">2.8</div></div>
+    <div class="clay" style="flex:1;border-radius:24px;padding:11px 14px"><div class="cap" style="font-size:10.5px">Days left</div><div class="h" style="font-size:26px">3</div></div>
+  </div>
+  <div class="clay abs" style="left:18px;right:18px;top:630px;height:118px;padding:14px 18px;border-radius:30px">
+    <div class="cap" style="display:flex;justify-content:space-between"><span>Check-in</span><span>1 buy</span></div>
+    <div class="h" style="font-size:19px;margin:4px 0 10px;letter-spacing:-.2px">Was the bubble tea worth $7.80?</div>
+    <div style="display:flex;gap:8px"><span class="pill" style="flex:1;justify-content:center;background:var(--gn);box-shadow:inset 0 2px 0 #ffffff55,0 4px 0 #2d8a4a">Worth it</span><span class="pill c" style="flex:1;justify-content:center">Meh</span><span class="pill" style="flex:1;justify-content:center;background:var(--rd);box-shadow:inset 0 2px 0 #ffffff55,0 4px 0 #A8281A">Nope</span></div>
+  </div>
+  <div class="abs" style="left:24px;top:200px;width:96px;z-index:7;background:var(--cr);border-radius:20px 20px 20px 4px;padding:10px 12px;font:700 13px/1.2 'DM';box-shadow:inset 0 3px 0 #fff,0 5px 0 var(--sh);transform:rotate(-4deg)">Zero crimes so far. Suspicious.</div>
+  <div class="tabs"><div class="t on"><script>document.write(IC.home)</script></div><div class="t"><script>document.write(IC.chill)</script></div><div class="plus"><script>document.write(IC.plus)</script></div><div class="t"><script>document.write(IC.shelf)</script></div><div class="t"><script>document.write(IC.week)</script></div></div>
+</div>
+
+<!-- LOG -->
+<div class="phone" data-screen="log">
+  <div class="disc abs" style="left:18px;top:62px"><script>document.write(IC.back)</script></div>
+  <div class="h abs" style="left:76px;top:66px;font-size:28px">Log a buy</div>
+  <img class="stk" src="img/m-hungry-fork.png" style="right:8px;top:62px;width:132px;z-index:6;transform:rotate(4deg)">
+  <div class="abs" style="left:22px;top:128px"><div class="cap">What was it?</div><div class="h" style="font-size:24px">Bubble tea</div></div>
+  <div class="inset abs" style="left:18px;right:18px;top:190px;height:128px;padding:12px 22px"><div class="h" style="font-size:78px;line-height:1.1;letter-spacing:-3px">$7.80</div><div style="font:700 14px 'DM';color:var(--br2)">0.4 HSP · 26 min of work</div></div>
+  <div class="abs" style="left:18px;top:338px;display:flex;gap:8px"><span class="pill c">Coffee</span><span class="pill on">Bubble tea</span><span class="pill c">HSP</span><span class="pill c">+ New</span></div>
+  <div class="abs" style="left:18px;right:18px;top:392px;display:flex;flex-direction:column;gap:12px"><div class="seg"><b class="on">Tap</b><b>Card</b><b>Cash</b><b>Pay later</b></div><div class="seg"><b class="on">Today</b><b>Yesterday</b><b>2 days ago</b><b>Pick</b></div></div>
+  <div class="abs" style="left:18px;right:18px;top:496px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px 12px">
+    <div class="key">1</div><div class="key">2</div><div class="key">3</div><div class="key">4</div><div class="key">5</div><div class="key">6</div><div class="key">7</div><div class="key">8</div><div class="key">9</div><div class="key">.</div><div class="key">0</div><div class="key"><script>document.write(IC.del)</script></div>
+  </div>
+  <div class="abs" style="left:18px;right:18px;top:752px"><div class="cbtn">Feed Brokey</div></div>
+</div>
+
+<!-- ROAST -->
+<div class="phone" data-screen="roast">
+  <div class="abs h" style="left:0;right:0;top:66px;text-align:center;font-size:18px;letter-spacing:3px;text-transform:uppercase;color:var(--br2)">Roasted</div>
+  <div class="clay abs" style="left:22px;right:22px;top:104px;padding:26px 24px 28px;border-radius:38px">
+    <div class="h" style="font-size:30px;line-height:1.12;letter-spacing:-.8px">$7.80 for boba after class. The CBD has a bubble tea shop every 40 metres and you found them all.</div>
+    <div class="abs" style="left:150px;bottom:-24px;width:44px;height:44px;background:var(--cr);transform:rotate(45deg);border-radius:0 0 10px 0;box-shadow:inset -3px -3px 0 #fff0,6px 6px 0 var(--sh);z-index:-1"></div>
+  </div>
+  <img class="stk" src="img/m-hips-smirk.png" style="left:76px;top:420px;width:240px;z-index:6;filter:drop-shadow(0 10px 10px #8a5a0044)">
+  <div class="abs" style="left:22px;right:22px;top:690px;display:flex;flex-direction:column;gap:14px;z-index:8"><div class="cbtn b">Okay, fair</div><div style="display:flex;gap:12px;align-items:center"><div class="cbtn c" style="flex:1;height:46px;font-size:15px;font-family:DM;font-weight:700;box-shadow:inset 0 3px 0 #fff,0 5px 0 var(--sh)">Share this roast</div><div style="font:700 13px 'DM';color:var(--br2);text-decoration:underline;width:120px;text-align:center">Wrong amount? Undo</div></div></div>
+</div>
+
+<!-- CHILL -->
+<div class="phone" data-screen="chill">
+  <div class="h abs" style="left:22px;top:64px;font-size:44px">Chill</div>
+  <div class="abs" style="left:22px;top:122px;width:200px;font:700 15px/1.3 'DM';color:var(--br2)">Wants cool off here before they cost you.</div>
+  <img class="stk" src="img/m-piggy-calm.png" style="right:8px;top:70px;width:138px;z-index:6;transform:rotate(4deg)">
+  <div class="clay abs" style="left:18px;right:18px;top:236px;padding:16px 18px;border-radius:32px;background:#E2F4FA">
+    <div class="cap">Cooling off</div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><div><div class="h" style="font-size:26px">Nike Dunks</div><div style="font:700 13px 'DM';color:var(--br2)">$180 · 10.0 HSP</div></div>
+      <div style="position:relative;width:78px;height:78px"><svg width="78" height="78" viewBox="0 0 42 42"><circle cx="21" cy="21" r="16" fill="none" stroke="#c4e2ec" stroke-width="6"/><circle cx="21" cy="21" r="16" fill="none" stroke="#3a9fbd" stroke-width="6" stroke-linecap="round" stroke-dasharray="68 100" transform="rotate(-90 21 21)"/></svg><div class="h" style="position:absolute;inset:0;display:grid;place-items:center;font-size:20px;line-height:1;text-align:center;padding-top:6px">23<br><span style="font-size:10px;margin-top:-14px;display:block">HRS</span></div></div></div>
+  </div>
+  <div class="clay abs" style="left:18px;right:18px;top:390px;padding:16px 18px 18px;border-radius:32px;background:#FFF0B8">
+    <div class="cap" style="color:#a0720a">Ready for a verdict</div>
+    <div class="h" style="font-size:26px">Matcha whisk set</div><div style="font:700 13px 'DM';color:var(--br2)">$64 · 3.6 HSP</div>
+    <div style="font:700 16px 'DM';margin:8px 0 12px">Cooled off. Still want it?</div>
+    <div style="display:flex;gap:10px"><div class="cbtn g" style="flex:1;height:48px;font-size:17px">Ditch it</div><div class="cbtn c" style="flex:1;height:48px;font-size:17px">Cave in</div></div>
+  </div>
+  <div class="clay abs" style="left:18px;right:18px;top:622px;padding:14px 20px;border-radius:30px;display:flex;justify-content:space-between;align-items:center;height:94px"><div><div class="cap">Saved by waiting</div><div class="h" style="font-size:46px;line-height:1.05;color:#1e7a3a">$212</div></div><span class="pill" style="background:var(--gn);box-shadow:inset 0 2px 0 #ffffff55,0 4px 0 #2d8a4a">3 things ditched</span></div>
+  <div class="tabs"><div class="t"><script>document.write(IC.home)</script></div><div class="t on"><script>document.write(IC.chill)</script></div><div class="plus"><script>document.write(IC.plus)</script></div><div class="t"><script>document.write(IC.shelf)</script></div><div class="t"><script>document.write(IC.week)</script></div></div>
+</div>
+
+<!-- WEEK -->
+<div class="phone" data-screen="week">
+  <div class="h abs" style="left:22px;top:64px;font-size:44px">Week</div>
+  <div class="pill c abs" style="right:18px;top:74px;font-size:12.5px">‹ 19 Oct to 25 Oct ›</div>
+  <img class="stk" src="img/m-juggle.png" style="right:4px;top:112px;width:164px;z-index:6;transform:rotate(3deg)">
+  <div class="abs" style="left:22px;top:124px"><div class="cap">Spent</div><div class="h" style="font-size:104px;line-height:1.02;letter-spacing:-4px">5.2</div><div style="font:700 15px 'DM'">of 8.0 HSP · <span style="color:#1e7a3a">$50 spare</span></div></div>
+  <div class="abs" style="left:22px;right:22px;top:296px;font:700 15px/1.3 'DM'">Under budget with $50 spare. Do not get cocky, Delivery was still $31.</div>
+  <div class="clay abs" style="left:18px;right:18px;top:358px;height:196px;padding:14px 18px;border-radius:32px">
+    <div class="cap" style="display:flex;justify-content:space-between"><span>Sauce bottles</span><span>1 a day</span></div>
+    <div style="position:relative;height:134px;display:flex;align-items:flex-end;gap:10px;margin-top:8px"><div class="abs" style="left:0;right:0;top:34px;border-top:3px dashed #c9a74a"></div><div id="bot" style="display:contents"></div></div>
+  </div>
+  <div class="abs" style="left:18px;right:18px;top:576px;display:flex;gap:12px">
+    <div class="clay" style="flex:1.1;border-radius:28px;padding:14px;display:flex;align-items:center;gap:12px"><svg width="84" height="84" viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#3A2113" stroke-width="7" stroke-dasharray="46 54" stroke-dashoffset="25"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#E9402B" stroke-width="7" stroke-dasharray="26 74" stroke-dashoffset="-21"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#FFD23F" stroke-width="7" stroke-dasharray="18 82" stroke-dashoffset="-47"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#43B867" stroke-width="7" stroke-dasharray="10 90" stroke-dashoffset="-65"/></svg><div><div class="cap" style="font-size:10.5px">The tray</div><div class="h" style="font-size:18px;line-height:1.1;margin-top:3px">Food 46%</div></div></div>
+    <div class="clay" style="flex:1;border-radius:28px;padding:14px;background:#FFE3DE"><div class="cap" style="font-size:10.5px;color:#a6301f">Regret check</div><div class="h" style="font-size:20px;line-height:1.1;margin-top:5px;color:#a6301f">$14 back, please</div></div>
+  </div>
+  <div class="tabs"><div class="t"><script>document.write(IC.home)</script></div><div class="t"><script>document.write(IC.chill)</script></div><div class="plus"><script>document.write(IC.plus)</script></div><div class="t"><script>document.write(IC.shelf)</script></div><div class="t on"><script>document.write(IC.week)</script></div></div>
+</div>
+
+<script>
+document.getElementById('fr').innerHTML='3 of 9 fries left';
+const d=[['M',.74],['T',.9],['W',1.55],['T',.55],['F',.9],['S',0],['S',0]];
+document.getElementById('bot').innerHTML=d.map(([l,v],i)=>{const h=Math.round(v*64);const fut=i>4;const c=v>1?'#E9402B':'#FFC61F';return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:flex-end;height:100%"><div style="width:100%;height:${Math.max(h,10)}px;border-radius:12px;background:${fut?'#efe0b4':c};box-shadow:inset 0 3px 0 #ffffff77,inset 0 -4px 0 #0000001a;"></div><div class="cap" style="font-size:11px">${l}</div></div>`}).join('');
+</script>
+</body></html>

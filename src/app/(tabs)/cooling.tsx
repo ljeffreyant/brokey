@@ -13,10 +13,11 @@ import { Drawer, EmptyShelf, Fridge, Shelf } from '../../ui/Fridge';
 import { Ladder } from '../../ui/Ladder';
 import { IconDisc } from '../../ui/CatIcon';
 import { Txt } from '../../ui/Txt';
-import { Btn, Card, Group, RoundBtn } from '../../ui/kit';
+import { Btn, Card, Group, Meter, RoundBtn } from '../../ui/kit';
 import { haptic } from '../../ui/haptics';
 import { formatDate, useFmt, useNow } from '../../ui/useFmt';
 import { maybeAskForReview } from '../../ui/review';
+import { puff } from '../../ui/clay';
 
 function WishCard({ w, now, onDitch, onBuy }: { w: WishItem; now: number; onDitch: () => void; onBuy: () => void }) {
   const p = useTheme();
@@ -46,9 +47,7 @@ function WishCard({ w, now, onDitch, onBuy }: { w: WishItem; now: number; onDitc
           </View>
         </View>
         <View>
-          <View style={{ height: 16, borderRadius: 8, backgroundColor: p.card2, borderWidth: 2.2, borderColor: p.ink, overflow: 'hidden' }}>
-            <View style={{ width: `${Math.round(prog * 100)}%`, height: '100%', backgroundColor: ready ? p.good : p.info }} />
-          </View>
+          <Meter frac={prog} fill={ready ? p.good : p.info} h={18} />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 }}>
             <Txt v="small" color={ready ? p.good : p.textDim} style={{ fontFamily: 'DMSans_700Bold' }}>
               {ready ? t('cool.ready') : t('cool.left', { time: formatRemaining(remainingMs(w, now)) })}
@@ -107,7 +106,7 @@ export default function Cooling() {
       <Fridge
         freezer={
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            <Brokey mood={saved > 0 ? 'proud' : 'ok'} width={96} />
+            <Brokey mood={saved > 0 ? 'proud' : 'ok'} pose={saved > 0 ? 'piggy-hug' : 'piggy-calm'} width={96} />
             <View style={{ flex: 1 }}>
               <Txt v="label" color={p.fridge.onDoor} style={{ opacity: 0.7 }}>
                 {t('cool.saved')}

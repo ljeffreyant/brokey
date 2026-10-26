@@ -1,0 +1,27 @@
+@font-face{font-family:'SG';src:url(fonts/SpaceGrotesk_500Medium.ttf);font-weight:500}
+@font-face{font-family:'SG';src:url(fonts/SpaceGrotesk_700Bold.ttf);font-weight:700}
+@font-face{font-family:'Plex';src:url(fonts/IBMPlexMono_400Regular.ttf);font-weight:400}
+@font-face{font-family:'Plex';src:url(fonts/IBMPlexMono_500Medium.ttf);font-weight:500}
+@font-face{font-family:'Plex';src:url(fonts/IBMPlexMono_700Bold.ttf);font-weight:700}
+@font-face{font-family:'Reenie';src:url(fonts/ReenieBeanie_400Regular.ttf)}
+@font-face{font-family:'Barlow';src:url(fonts/BarlowCondensed_600SemiBold.ttf);font-weight:600}
+@font-face{font-family:'Barlow';src:url(fonts/BarlowCondensed_700Bold.ttf);font-weight:700}
+@font-face{font-family:'Dot';src:url(fonts/DotGothic16_400Regular.ttf)}
+@font-face{font-family:'Brico';src:url(fonts/BricolageGrotesque_600SemiBold.ttf);font-weight:600}
+@font-face{font-family:'Brico';src:url(fonts/BricolageGrotesque_800ExtraBold.ttf);font-weight:800}
+@font-face{font-family:'DM';src:url(fonts/DMSans_500Medium.ttf);font-weight:500}
+@font-face{font-family:'DM';src:url(fonts/DMSans_700Bold.ttf);font-weight:700}
+@font-face{font-family:'Elite';src:url(fonts/SpecialElite_400Regular.ttf)}
+@font-face{font-family:'Serif';src:url(fonts/InstrumentSerif_400Regular.ttf)}
+@font-face{font-family:'Anton';src:url(fonts/Anton_400Regular.ttf)}
+@font-face{font-family:'Neon';src:url(fonts/TiltNeon_400Regular.ttf)}
+@font-face{font-family:'Marker';src:url(fonts/PermanentMarker_400Regular.ttf)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#0f0f10}
+body{padding:36px;display:flex;gap:36px;width:max-content;align-items:flex-start}
+.phone{width:393px;height:852px;border-radius:56px;overflow:hidden;position:relative;flex:none;isolation:isolate}
+.sb{position:absolute;top:0;left:0;right:0;height:54px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 34px 9px;z-index:60;font:600 16px/1 'SG',sans-serif;pointer-events:none}
+.sb i{display:inline-block;vertical-align:middle}
+.hi{position:absolute;bottom:8px;left:50%;margin-left:-67px;width:134px;height:5px;border-radius:3px;background:currentColor;opacity:.85;z-index:60}
+.abs{position:absolute}
+.stk{position:absolute;pointer-events:none;filter:drop-shadow(0 6px 8px rgba(0,0,0,.22))}

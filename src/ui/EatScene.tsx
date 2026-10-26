@@ -18,7 +18,7 @@ import { BudgetState, afterBuyCue } from '../core';
 import { ShareUnavailable, exportFileName, shareImage } from '../export/share';
 import { useT } from '../i18n';
 import { useTheme } from '../theme';
-import { Brokey, MOUTH } from './Brokey';
+import { BROKEY_ASPECT, Brokey, MOUTH } from './Brokey';
 import { Burst } from './Burst';
 import { CatIcon } from './CatIcon';
 import { ROAST_CARD_H, ROAST_CARD_W, RoastCard } from './RoastCard';
@@ -74,11 +74,11 @@ export function EatScene({ input, onDone, onUndo }: { input: EatInput; onDone: (
   const ins = useSafeAreaInsets();
   const { width: W, height: H } = useWindowDimensions();
   const bw = Math.min(W * 0.74, 310);
-  const bh = (bw * 276) / 268;
+  const bh = bw * BROKEY_ASPECT;
   const left = (W - bw) / 2;
   const top = Math.max(ins.top + 70, H * 0.17);
   const mouthX = left + MOUTH.x * bw;
-  const mouthY = top + MOUTH.y * bh;
+  const mouthY = top + MOUTH.y * bw;
   const foodSize = Math.min(W * 0.36, 150);
 
   const wBefore = p.weather[weatherOf(input.before.remainingCents, input.before.budgetCents)];

@@ -28,10 +28,11 @@ import { Txt } from '../../ui/Txt';
 import { HspPie } from '../../ui/charts/HspPie';
 import { DayBar, SauceBars } from '../../ui/charts/SauceBars';
 import { haptic } from '../../ui/haptics';
-import { Btn, Card, Row, SectionTitle } from '../../ui/kit';
+import { Btn, Card, Meter, Row, SectionTitle } from '../../ui/kit';
 import { formatDate, formatDayName, useBudget, useFmt } from '../../ui/useFmt';
 import { useWeekModel } from '../../ui/useWeekModel';
 import { useStore } from '../../store';
+import { dent, puff, sheen } from '../../ui/clay';
 
 function Section({ i, children }: { i: number; children: React.ReactNode }) {
   return <Animated.View entering={FadeInDown.delay(80 + i * 70).springify().damping(16)}>{children}</Animated.View>;
@@ -114,7 +115,7 @@ export default function Week() {
           accessibilityLabel={t('week.prev')}
           disabled={!canPrev}
           onPress={() => nav(-1)}
-          style={{ width: 42, height: 42, borderRadius: 21, borderWidth: 2.5, borderColor: p.ink, backgroundColor: p.card, alignItems: 'center', justifyContent: 'center', opacity: canPrev ? 1 : 0.35 }}
+          style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: p.card, alignItems: 'center', justifyContent: 'center', opacity: canPrev ? 1 : 0.35, ...puff(p, p.card, 3) }}
         >
           <Glyph name="back" size={20} color={p.text} />
         </Pressable>
@@ -123,7 +124,7 @@ export default function Week() {
           accessibilityLabel={t('week.next')}
           disabled={!canNext}
           onPress={() => nav(1)}
-          style={{ width: 42, height: 42, borderRadius: 21, borderWidth: 2.5, borderColor: p.ink, backgroundColor: p.card, alignItems: 'center', justifyContent: 'center', opacity: canNext ? 1 : 0.35 }}
+          style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: p.card, alignItems: 'center', justifyContent: 'center', opacity: canNext ? 1 : 0.35, ...puff(p, p.card, 3) }}
         >
           <Glyph name="right" size={20} color={p.text} />
         </Pressable>
@@ -149,24 +150,22 @@ export default function Week() {
                 {f.sum(total)} · {recap.budgetCents > 0 ? t('week.ofBudget', { budget: f.hsp(recap.budgetCents) }) : t('week.noBudget')}
               </Txt>
               {recap.budgetCents > 0 ? (
-                <View style={{ height: 14, borderRadius: 7, borderWidth: 2.5, borderColor: p.ink, backgroundColor: 'rgba(255,255,255,0.45)', marginTop: 12, overflow: 'hidden' }}>
-                  <View style={{ width: `${Math.max(3, frac * 100)}%`, height: '100%', backgroundColor: over ? p.groups.chilli.bg : p.groups.chips.bg, borderRightWidth: 2.5, borderColor: p.ink }} />
-                </View>
+                <Meter frac={frac} fill={over ? p.groups.chilli.bg : p.groups.chips.bg} track="rgba(255,255,255,0.5)" h={16} style={{ marginTop: 12 }} />
               ) : null}
             </View>
             <Brokey mood={mood} width={112} still={offset !== 0} />
           </View>
-          <View style={{ backgroundColor: p.card, borderRadius: 16, borderWidth: 2.5, borderColor: p.ink, padding: 12, marginTop: 14, marginRight: 10 }}>
+          <View style={{ backgroundColor: p.card, borderRadius: 16, padding: 12, marginTop: 14, marginRight: 10, ...puff(p, p.card, 3) }}>
             <Txt v="bodyBold" style={{ fontSize: 14.5, lineHeight: 20 }}>
               {verdict}
             </Txt>
             <View style={{ flexDirection: 'row', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
-              <View style={{ backgroundColor: over ? p.groups.chilli.bg : p.groups.chips.bg, borderRadius: 999, borderWidth: 2, borderColor: p.ink, paddingHorizontal: 10, height: 26, justifyContent: 'center' }}>
+              <View style={{ backgroundColor: over ? p.groups.chilli.bg : p.groups.chips.bg, borderRadius: 999, paddingHorizontal: 10, height: 26, justifyContent: 'center', ...puff(p, over ? p.groups.chilli.bg : p.groups.chips.bg, 2) }}>
                 <Txt v="small" size={12} color={over ? '#FFFFFF' : '#2B1608'} style={{ fontFamily: 'DMSans_700Bold' }}>
                   {recap.budgetCents <= 0 ? t('week.noBudget') : over ? t('week.overBy', { amount: f.hsp(-recap.leftCents) }) : t('week.spare', { amount: f.hsp(recap.leftCents) })}
                 </Txt>
               </View>
-              <View style={{ backgroundColor: p.card2, borderRadius: 999, borderWidth: 2, borderColor: p.ink, paddingHorizontal: 10, height: 26, justifyContent: 'center' }}>
+              <View style={{ backgroundColor: p.card2, borderRadius: 999, paddingHorizontal: 10, height: 26, justifyContent: 'center', ...puff(p, p.card2, 2) }}>
                 <Txt v="small" size={12} color={p.text} style={{ fontFamily: 'DMSans_700Bold' }}>
                   {t.n('week.buys', recap.count)}
                 </Txt>
@@ -282,9 +281,9 @@ export default function Week() {
                     haptic.tap();
                     setGroup(on ? null : g.group);
                   }}
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, paddingHorizontal: 10, borderRadius: 14, backgroundColor: on ? p.card2 : 'transparent', borderWidth: on ? 2 : 0, borderColor: p.ink, opacity: g.cents === 0 ? 0.5 : 1 }}
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, paddingHorizontal: 10, borderRadius: 14, backgroundColor: on ? p.card2 : 'transparent', opacity: g.cents === 0 ? 0.5 : 1, ...puff(p, on ? p.card2 : 'transparent', 3) }}
                 >
-                  <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: p.groups[g.group].bg, borderWidth: 2.5, borderColor: p.ink }} />
+                  <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: p.groups[g.group].bg, ...puff(p, p.groups[g.group].bg, 3) }} />
                   <View style={{ flex: 1 }}>
                     <Txt v="bodyBold" style={{ fontSize: 15, lineHeight: 19 }}>
                       {groupLabel(t, g.group)}
@@ -328,9 +327,7 @@ export default function Week() {
                         {f.hspNum(c.cents)}
                       </Txt>
                     </View>
-                    <View style={{ height: 9, borderRadius: 5, backgroundColor: p.card2, borderWidth: 1.5, borderColor: p.ink, overflow: 'hidden' }}>
-                      <View style={{ width: `${Math.max(6, w * 100)}%`, height: '100%', backgroundColor: meta.group === 'garlic' ? p.groups.garlic.deep : p.groups[meta.group].bg, borderRightWidth: i === 0 && w === 1 ? 0 : 1.5, borderColor: p.ink }} />
-                    </View>
+                    <Meter frac={w} min={0.06} fill={meta.group === 'garlic' ? p.groups.garlic.deep : p.groups[meta.group].bg} h={11} />
                   </View>
                 </View>
               );
@@ -352,9 +349,9 @@ export default function Week() {
               <Txt v="small" dim>
                 {t('week.regretSub')}
               </Txt>
-              <View style={{ flexDirection: 'row', height: 30, borderRadius: 15, borderWidth: 2.5, borderColor: p.ink, overflow: 'hidden' }}>
-                {([['worth', p.good], ['meh', p.groups.chips.bg], ['nah', p.groups.chilli.bg]] as const).map(([k, c], i) => (
-                  <View key={k} style={{ flex: Math.max(rs[k], 0.0001), backgroundColor: c, borderLeftWidth: i > 0 && rs[k] > 0 ? 2.5 : 0, borderColor: p.ink }} />
+              <View style={{ flexDirection: 'row', height: 34, borderRadius: 17, padding: 3, gap: 3, backgroundColor: p.card2, overflow: 'hidden', ...dent(p) }}>
+                {([['worth', p.good], ['meh', p.groups.chips.bg], ['nah', p.groups.chilli.bg]] as const).map(([k, c]) => (
+                  <View key={k} style={{ flex: Math.max(rs[k], 0.0001), borderRadius: 14, backgroundColor: c, boxShadow: sheen(p, c, 3) }} />
                 ))}
               </View>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

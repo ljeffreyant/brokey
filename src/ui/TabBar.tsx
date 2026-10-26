@@ -8,8 +8,9 @@ import { useT } from '../i18n';
 import { useTheme } from '../theme';
 import { Glyph, GlyphName } from './Glyph';
 import { Txt } from './Txt';
-import { PressSlab } from './kit';
+import { PressSlab, Slab } from './kit';
 import { haptic } from './haptics';
+import { puff } from './clay';
 
 const TABS: { name: string; glyph: GlyphName; key: 'tab.home' | 'tab.cool' | 'tab.shelf' | 'tab.week' }[] = [
   { name: 'home', glyph: 'home', key: 'tab.home' },
@@ -29,7 +30,7 @@ function TabItem({ glyph, label, on, onPress }: { glyph: GlyphName; label: strin
   return (
     <Pressable accessibilityRole="tab" accessibilityLabel={label} accessibilityState={{ selected: on }} onPress={onPress} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: 60 }}>
       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Animated.View style={[{ position: 'absolute', width: 52, height: 34, borderRadius: 17, backgroundColor: p.accent2, borderWidth: 2.2, borderColor: p.ink, top: -6 }, pill]} />
+        <Animated.View style={[{ position: 'absolute', width: 52, height: 34, borderRadius: 17, backgroundColor: p.accent2, top: -6, ...puff(p, p.accent2, 3) }, pill]} />
         <Animated.View style={icon}>
           <Glyph name={glyph} size={22} color={on ? p.onAccent2 : p.textDim} stroke={on ? 2.6 : 2.2} />
         </Animated.View>
@@ -65,9 +66,8 @@ export function TabBar({ state, navigation }: BottomTabBarProps) {
   const right = TABS.slice(2);
   return (
     <View pointerEvents="box-none" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, paddingBottom: Math.max(ins.bottom, 10), paddingHorizontal: 14 }}>
-      <View style={{ paddingBottom: 5 }}>
-        <View style={{ position: 'absolute', left: 0, right: 0, top: 5, bottom: 0, borderRadius: 32, backgroundColor: p.ink }} />
-        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: p.card, borderRadius: 32, borderWidth: 2.5, borderColor: p.ink, height: 66, paddingHorizontal: 6 }}>
+      <View style={{ paddingBottom: 2 }}>
+        <Slab r={34} depth={6} weight="hero" inner={{ flexDirection: 'row', alignItems: 'center', height: 68, paddingHorizontal: 6 }}>
           {left.map((x) => (
             <TabItem key={x.name} glyph={x.glyph} label={t(x.key)} on={current === x.name} onPress={() => go(x.name)} />
           ))}
@@ -75,9 +75,9 @@ export function TabBar({ state, navigation }: BottomTabBarProps) {
           {right.map((x) => (
             <TabItem key={x.name} glyph={x.glyph} label={t(x.key)} on={current === x.name} onPress={() => go(x.name)} />
           ))}
-        </View>
-        <Animated.View style={[{ position: 'absolute', alignSelf: 'center', top: -26 }, fab]}>
-          <PressSlab fill={p.accent} r={36} depth={5} border={3} onPress={() => router.push('/log')} tone="medium" label={t('tab.log')} inner={{ width: 72, height: 72, alignItems: 'center', justifyContent: 'center' }}>
+        </Slab>
+        <Animated.View style={[{ position: 'absolute', alignSelf: 'center', top: -28 }, fab]}>
+          <PressSlab fill={p.accent} r={38} depth={7} gloss onPress={() => router.push('/log')} tone="medium" label={t('tab.log')} inner={{ width: 72, height: 72, alignItems: 'center', justifyContent: 'center' }}>
             <Glyph name="plus" size={36} color={p.onAccent} stroke={3.4} />
           </PressSlab>
         </Animated.View>

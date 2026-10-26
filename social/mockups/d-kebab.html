@@ -1,0 +1,141 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>D 3AM Kebab Shop</title>
+<link rel="stylesheet" href="common.css"><script src="common.js"></script>
+<style>
+:root{--bg:#0B0911;--pk:#FF3D8B;--cy:#3DE6FF;--am:#FFB020;--cream:#F4E9D0;--red:#E8352B;--dim:#8d86a0}
+.phone{background:var(--bg);color:var(--cream);font-family:'DM',sans-serif}
+.phone:before{content:"";position:absolute;inset:0;z-index:-1;background:
+ radial-gradient(ellipse at 50% 0%,#ff3d8b22,#0000 55%),radial-gradient(ellipse at 50% 100%,#3de6ff18,#0000 50%),
+ repeating-linear-gradient(0deg,#0000 0 31px,#ffffff07 31px 32px),repeating-linear-gradient(90deg,#0000 0 63px,#ffffff05 63px 64px)}
+.neon{font-family:'Neon',sans-serif}
+.np{color:#fff;text-shadow:0 0 4px #fff,0 0 12px var(--pk),0 0 28px var(--pk),0 0 60px #ff3d8b88}
+.nc{color:#fff;text-shadow:0 0 4px #fff,0 0 12px var(--cy),0 0 30px var(--cy),0 0 64px #3de6ff77}
+.na{color:#fff6dd;text-shadow:0 0 4px #fff,0 0 10px var(--am),0 0 26px var(--am)}
+.cap{font:700 12px 'DM';letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.board{position:absolute;left:18px;right:18px;background:#14111d;border:3px solid #2b2540;border-radius:14px;box-shadow:inset 0 0 0 2px #0008,0 0 24px #0008}
+.menu .r{display:flex;align-items:baseline;gap:8px;padding:8px 0;font:700 18px 'DM';letter-spacing:.3px;color:var(--cream)}
+.menu .r i{flex:1;border-bottom:2px dotted #4a4260;transform:translateY(-4px)}
+.menu .r b{font:400 22px 'Anton';color:var(--am);letter-spacing:.5px}
+.btn{display:flex;align-items:center;justify-content:center;height:58px;border-radius:12px;font:400 25px 'Neon';letter-spacing:1px;color:#fff;background:#ff3d8b33;border:3px solid var(--pk);box-shadow:0 0 12px var(--pk),inset 0 0 14px #ff3d8b66;text-shadow:0 0 8px var(--pk)}
+.btn.c{border-color:var(--cy);background:#3de6ff1f;box-shadow:0 0 12px var(--cy),inset 0 0 14px #3de6ff55;text-shadow:0 0 8px var(--cy)}
+.btn.solid{background:var(--pk);color:#fff;box-shadow:0 0 22px var(--pk),0 0 50px #ff3d8b77}
+.tabs{position:absolute;left:0;right:0;bottom:0;height:96px;background:linear-gradient(#0000,#0B0911 38%);display:flex;justify-content:space-around;padding-top:18px}
+.tabs .t{display:flex;flex-direction:column;align-items:center;gap:4px;font:400 13px 'Neon';letter-spacing:1px;color:#6b6480;width:64px}
+.tabs .t.on{color:#fff;text-shadow:0 0 10px var(--pk)}.tabs .t.on svg{filter:drop-shadow(0 0 6px var(--pk));color:var(--pk)}
+.tabs .plus{width:62px;height:62px;margin-top:-12px;border-radius:50%;border:3px solid var(--cy);color:#fff;display:grid;place-items:center;box-shadow:0 0 14px var(--cy),inset 0 0 14px #3de6ff66;background:#0B0911}
+.pill{display:inline-block;padding:8px 14px;border-radius:999px;border:2px solid #4a4260;font:700 14px 'DM';white-space:nowrap}
+.pill.on{border-color:var(--pk);color:#fff;box-shadow:0 0 10px #ff3d8b99,inset 0 0 10px #ff3d8b55}
+.key{height:54px;background:#17132240;border:2px solid #3a3358;border-radius:12px;display:grid;place-items:center;font:400 30px 'Neon';color:#fff}
+.seg{display:flex;border:2px solid #4a4260;border-radius:12px;overflow:hidden}.seg b{flex:1;text-align:center;padding:9px 0;font:700 13px 'DM';border-right:2px solid #4a4260}.seg b:last-child{border:0}.seg b.on{background:var(--cy);color:#06222a}
+.counter{position:absolute;left:0;right:0;height:44px;background:linear-gradient(#e8e8f0,#a9a9bb 40%,#7e7e92);z-index:7;box-shadow:0 -6px 24px #ff8a2a55}
+.lamp{position:absolute;border-radius:50%;background:radial-gradient(circle,#ff8a2a99,#ff8a2a00 65%)}
+</style></head><body>
+
+<!-- HOME -->
+<div class="phone" data-screen="home">
+  <div class="abs" style="left:18px;top:62px;padding:8px 14px;border:2.5px solid var(--cy);border-radius:10px;font:400 18px 'Neon';color:#fff;text-shadow:0 0 8px var(--cy);box-shadow:0 0 10px var(--cy),inset 0 0 8px #3de6ff55">UNI WEEK ▾</div>
+  <div class="abs" style="right:18px;top:62px;width:42px;height:42px;border-radius:50%;border:2.5px solid #4a4260;display:grid;place-items:center"><script>document.write(IC.gear)</script></div>
+  <div class="abs neon np" style="left:0;right:0;top:122px;text-align:center;font-size:22px;letter-spacing:3px">SAFE TO SPEND TODAY</div>
+  <div class="abs neon nc" style="left:0;right:0;top:140px;text-align:center;font-size:176px;line-height:1.1;letter-spacing:-4px">0.9</div>
+  <div class="abs neon na" style="right:30px;top:262px;font-size:34px;transform:rotate(-4deg)">HSP</div>
+  <div class="lamp" style="left:60px;top:300px;width:280px;height:280px"></div>
+  <img class="stk" src="img/m-wave-happy.png" style="left:100px;top:298px;width:190px;z-index:6;filter:drop-shadow(0 0 22px #ff8a2a88)">
+  <div class="counter" style="top:466px;height:50px"></div>
+  <div class="abs" style="left:24px;top:476px;z-index:8;display:flex;gap:8px"><span class="pill" style="border-color:var(--am);color:var(--am)">≈ $16</span><span class="pill">3 of 9 fries left</span></div>
+  <div class="abs" style="left:296px;top:322px;width:86px;font:400 16px/1.1 'Neon';color:#fff;text-shadow:0 0 8px var(--pk);transform:rotate(3deg)">“Zero crimes so far.”</div>
+  <div class="board menu" style="top:526px;height:108px;padding:10px 18px">
+    <div class="cap" style="display:flex;justify-content:space-between"><span style="color:var(--am)">Today's orders</span><span>See all</span></div>
+    <div class="r" style="padding:5px 0"><span>Coffee</span><i></i><b>$5.50</b></div>
+    <div class="r" style="padding:2px 0"><span>Delivery</span><i></i><b>$31.40</b></div>
+  </div>
+  <div class="board" style="top:646px;height:100px;padding:10px 16px;border-color:#5a2a48;box-shadow:inset 0 0 20px #ff3d8b22">
+    <div class="cap" style="color:var(--pk)">Check-in</div>
+    <div style="font:700 18px 'DM';margin:3px 0 8px">Was the bubble tea worth $7.80?</div>
+    <div style="display:flex;gap:8px"><span class="pill on" style="flex:1;text-align:center;padding:6px 0">Worth it</span><span class="pill" style="flex:1;text-align:center;padding:6px 0">Meh</span><span class="pill" style="flex:1;text-align:center;padding:6px 0;border-color:var(--red);color:#ff8a82">Nope</span></div>
+  </div>
+  <div class="tabs"><div class="t on"><script>document.write(IC.home)</script>Home</div><div class="t"><script>document.write(IC.chill)</script>Chill</div><div class="plus"><script>document.write(IC.plus)</script></div><div class="t"><script>document.write(IC.shelf)</script>Shelf</div><div class="t"><script>document.write(IC.week)</script>Week</div></div>
+</div>
+
+<!-- LOG -->
+<div class="phone" data-screen="log">
+  <div class="abs" style="left:18px;top:62px;width:42px;height:42px;border-radius:50%;border:2.5px solid #4a4260;display:grid;place-items:center"><script>document.write(IC.back)</script></div>
+  <div class="abs neon np" style="left:76px;top:66px;font-size:28px">ORDER UP</div>
+  <img class="stk" src="img/m-hungry-fork.png" style="right:6px;top:72px;width:136px;z-index:6;transform:rotate(3deg);filter:drop-shadow(0 0 18px #ff8a2a77)">
+  <div class="abs" style="left:22px;top:136px"><div class="cap">What was it?</div><div class="neon" style="font-size:28px;margin-top:2px">Bubble tea</div></div>
+  <div class="abs neon nc" style="left:22px;top:200px;font-size:96px;line-height:1.1;letter-spacing:-2px">$7.80</div>
+  <div class="abs" style="left:24px;top:306px;font:500 14px 'DM';color:var(--dim)">0.4 HSP · 26 min of work</div>
+  <div class="abs" style="left:22px;top:340px;display:flex;gap:8px"><span class="pill">Coffee</span><span class="pill on">Bubble tea</span><span class="pill">HSP</span><span class="pill">+ New</span></div>
+  <div class="abs" style="left:22px;right:22px;top:392px;display:flex;flex-direction:column;gap:8px"><div class="seg"><b class="on">Tap</b><b>Card</b><b>Cash</b><b>Pay later</b></div><div class="seg"><b class="on">Today</b><b>Yesterday</b><b>2 days ago</b><b>Pick</b></div></div>
+  <div class="abs" style="left:22px;right:22px;top:494px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+    <div class="key">1</div><div class="key">2</div><div class="key">3</div><div class="key">4</div><div class="key">5</div><div class="key">6</div><div class="key">7</div><div class="key">8</div><div class="key">9</div><div class="key">.</div><div class="key">0</div><div class="key"><script>document.write(IC.del)</script></div>
+  </div>
+  <div class="abs" style="left:22px;right:22px;top:756px"><div class="btn solid">FEED BROKEY</div></div>
+</div>
+
+<!-- ROAST -->
+<div class="phone" data-screen="roast">
+  <div class="abs neon np" style="left:0;right:0;top:68px;text-align:center;font-size:26px;letter-spacing:4px">ROASTED</div>
+  <div class="lamp" style="left:40px;top:90px;width:320px;height:320px"></div>
+  <img class="stk" src="img/m-hips-smirk.png" style="left:92px;top:104px;width:210px;z-index:6;filter:drop-shadow(0 0 22px #ff8a2a88)">
+  <div class="counter" style="top:290px"></div>
+  <div class="abs" style="left:46px;right:46px;top:326px;height:462px;background:#F6F0E2;color:#1b1710;z-index:5;padding:30px 24px 0;box-shadow:0 0 40px #ff3d8b44">
+    <div class="abs" style="left:0;right:0;top:-8px;height:12px;background:repeating-linear-gradient(135deg,#F6F0E2 0 8px,#0000 8px 16px)"></div>
+    <div style="text-align:center;font:700 13px 'Plex';letter-spacing:3px">BROKEY'S TAKE</div>
+    <div style="text-align:center;font:400 11px 'Plex';color:#777;margin-top:3px">Fri 23 Oct · 2:14 AM</div>
+    <div style="border-top:2px dashed #1b1710;margin:14px 0 10px"></div>
+    <div style="display:flex;font:500 15px 'Plex'"><span style="flex:1">1x Bubble tea</span><span>$7.80</span></div>
+    <div style="display:flex;font:400 13px 'Plex';color:#777;margin-top:6px"><span style="flex:1">0.4 HSP</span><span>26 min of work</span></div>
+    <div style="border-top:2px dashed #1b1710;margin:12px 0"></div>
+    <div style="font:400 18px/1.35 'Elite'">$7.80 for boba after class. The CBD has a bubble tea shop every 40 metres and you found them all.</div>
+    <div class="abs" style="left:24px;right:24px;top:284px;display:flex;flex-direction:column;gap:10px">
+      <div style="height:52px;border-radius:8px;background:#1b1710;color:#F6F0E2;display:grid;place-items:center;font:700 15px 'Plex';letter-spacing:1.4px">OKAY, FAIR</div>
+      <div style="height:52px;border-radius:8px;border:2px solid #1b1710;display:grid;place-items:center;font:700 15px 'Plex';letter-spacing:1.4px">SHARE THIS ROAST</div>
+      <div style="text-align:center;font:400 12.5px 'Plex';color:#777;text-decoration:underline">Wrong amount? Undo</div>
+    </div>
+  </div>
+</div>
+
+<!-- CHILL -->
+<div class="phone" data-screen="chill" style="background:#06141A">
+  <style>[data-screen=chill]:before{background:radial-gradient(ellipse at 50% 30%,#3de6ff33,#0000 60%),repeating-linear-gradient(90deg,#0000 0 130px,#ffffff10 130px 134px)}</style>
+  <div class="abs neon nc" style="left:20px;top:64px;font-size:40px">CHILL</div>
+  <div class="abs" style="left:22px;top:118px;width:200px;font:500 15px/1.3 'DM';color:#9fd6e0">Wants cool off here before they cost you.</div>
+  <img class="stk" src="img/m-sleepy.png" style="right:10px;top:70px;width:132px;z-index:6;transform:rotate(4deg)">
+  <div class="abs" style="left:18px;right:18px;top:222px;height:432px;border:4px solid #bfeaf2;border-radius:20px;background:linear-gradient(#3de6ff22,#3de6ff0a);box-shadow:0 0 30px #3de6ff44,inset 0 0 40px #3de6ff22"></div>
+  <div class="abs" style="left:32px;right:32px;top:238px;border-bottom:4px solid #bfeaf2;padding-bottom:12px">
+    <div class="cap" style="color:#7fdcef">Cooling off</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end"><div><div class="neon" style="font-size:30px">Nike Dunks</div><div style="font:500 13px 'DM';color:#9fd6e0">$180 · 10.0 HSP</div></div><div class="neon nc" style="font-size:44px;line-height:1">23<span style="font-size:18px"> HRS</span></div></div>
+    <div style="height:10px;border-radius:5px;background:#0a2a33;margin-top:10px"><div style="width:68%;height:100%;border-radius:5px;background:var(--cy);box-shadow:0 0 10px var(--cy)"></div></div>
+  </div>
+  <div class="abs" style="left:32px;right:32px;top:366px;border-bottom:4px solid #bfeaf2;padding-bottom:14px">
+    <div class="cap" style="color:var(--am)">Ready for a verdict</div>
+    <div class="neon na" style="font-size:30px">Matcha whisk set</div><div style="font:500 13px 'DM';color:#9fd6e0">$64 · 3.6 HSP</div>
+    <div style="font:700 17px 'DM';margin:8px 0 10px">Cooled off. Still want it?</div>
+    <div style="display:flex;gap:10px"><div class="btn c" style="flex:1;height:46px;font-size:20px">DITCH IT</div><div class="btn" style="flex:1;height:46px;font-size:20px">CAVE IN</div></div>
+  </div>
+  <div class="abs" style="left:32px;right:32px;top:586px"><div class="cap" style="color:#7fdcef">Saved by waiting</div><div style="display:flex;justify-content:space-between;align-items:flex-end"><div class="neon nc" style="font-size:44px;line-height:1.1">$212</div><span class="pill" style="border-color:#7fdcef;color:#bfeaf2">3 things ditched</span></div></div>
+  <div class="tabs" style="background:linear-gradient(#0000,#06141A 38%)"><div class="t"><script>document.write(IC.home)</script>Home</div><div class="t on"><script>document.write(IC.chill)</script>Chill</div><div class="plus"><script>document.write(IC.plus)</script></div><div class="t"><script>document.write(IC.shelf)</script>Shelf</div><div class="t"><script>document.write(IC.week)</script>Week</div></div>
+</div>
+
+<!-- WEEK -->
+<div class="phone" data-screen="week">
+  <div class="abs neon np" style="left:20px;top:64px;font-size:40px">WEEK</div>
+  <div class="abs" style="right:20px;top:76px;font:500 12.5px 'DM';color:var(--dim)">‹ 19 Oct to 25 Oct ›</div>
+  <img class="stk" src="img/m-juggle.png" style="right:2px;top:100px;width:164px;z-index:6;transform:rotate(3deg)">
+  <div class="abs" style="left:22px;top:116px"><div class="cap">Spent</div><div class="neon nc" style="font-size:112px;line-height:1.05;letter-spacing:-3px">5.2</div><div style="font:700 15px 'DM';margin-top:-2px">of 8.0 HSP · <span style="color:var(--am)">$50 spare</span></div></div>
+  <div class="abs" style="left:22px;right:22px;top:292px;font:500 15px/1.3 'DM';color:#cfc7e0">Under budget with $50 spare. Do not get cocky, Delivery was still $31.</div>
+  <div class="board" style="top:346px;height:188px;padding:12px 14px">
+    <div class="cap" style="display:flex;justify-content:space-between"><span style="color:var(--am)">Sauce bottles</span><span>1 a day</span></div>
+    <div style="position:relative;height:140px;display:flex;align-items:flex-end;gap:10px;margin-top:6px"><div class="abs" style="left:0;right:0;top:36px;border-top:2px dashed var(--pk)"></div><div id="bot" style="display:contents"></div></div>
+  </div>
+  <div class="board menu" style="top:546px;height:190px;padding:10px 18px">
+    <div class="cap" style="color:var(--am)">The tray</div>
+    <div class="r" style="padding:4px 0"><span>Food</span><i></i><b>46%</b></div><div class="r" style="padding:4px 0"><span>Drinks</span><i></i><b>26%</b></div><div class="r" style="padding:4px 0"><span>Shopping</span><i></i><b>18%</b></div><div class="r" style="padding:4px 0"><span>Other</span><i></i><b>10%</b></div>
+  </div>
+  <div class="tabs"><div class="t"><script>document.write(IC.home)</script>Home</div><div class="t"><script>document.write(IC.chill)</script>Chill</div><div class="plus"><script>document.write(IC.plus)</script></div><div class="t"><script>document.write(IC.shelf)</script>Shelf</div><div class="t on"><script>document.write(IC.week)</script>Week</div></div>
+</div>
+
+<script>
+const d=[['M',.74],['T',.9],['W',1.55],['T',.55],['F',.9],['S',0],['S',0]];
+document.getElementById('bot').innerHTML=d.map(([l,v],i)=>{const h=Math.round(v*60);const fut=i>4;const c=v>1?'#FF3D8B':'#3DE6FF';return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;justify-content:flex-end;height:100%"><div style="width:100%;height:${h}px;border-radius:6px 6px 0 0;background:${c};box-shadow:0 0 14px ${c};opacity:${fut?.18:1}"></div><div class="cap" style="font-size:11px">${l}</div></div>`}).join('');
+</script>
+</body></html>

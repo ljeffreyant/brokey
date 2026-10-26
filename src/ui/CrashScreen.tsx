@@ -34,7 +34,7 @@ export function CrashScreen({ error, retry }: { error: Error; retry: () => void 
     <View style={{ flex: 1, backgroundColor: p.bg, paddingTop: ins.top }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24, gap: 16, paddingBottom: ins.bottom + 24 }} showsVerticalScrollIndicator={false}>
         <View style={{ alignItems: 'center' }}>
-          <Brokey mood="sad" width={190} still />
+          <Brokey mood="sad" pose="worried" width={190} still />
         </View>
         <Txt v="display" align="center">
           {t('crash.title')}

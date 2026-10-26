@@ -17,6 +17,7 @@ import { useNow } from '../ui/useFmt';
 import { formatMonth, useFmt } from '../ui/useFmt';
 import { useLeave } from '../ui/nav';
 import { haptic } from '../ui/haptics';
+import { puff } from '../ui/clay';
 
 type Busy = null | 'xlsx' | 'pdf';
 
@@ -147,7 +148,7 @@ function Action({ glyph, bg, fg, title, body, cta, busy, disabled, onPress, maki
   const p = useTheme();
   return (
     <PressSlab weight="quiet" r={26} onPress={onPress} disabled={disabled} label={title} inner={{ padding: 14, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-      <View style={{ width: 58, height: 58, borderRadius: 18, backgroundColor: bg, borderWidth: 2.5, borderColor: p.ink, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ width: 58, height: 58, borderRadius: 18, backgroundColor: bg, alignItems: 'center', justifyContent: 'center', ...puff(p, bg, 3) }}>
         <Glyph name={glyph} size={28} color={fg} />
       </View>
       <View style={{ flex: 1, gap: 2 }}>

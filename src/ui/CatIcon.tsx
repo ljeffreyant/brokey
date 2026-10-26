@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { SceneView } from '../art/SceneView';
 import { iconScene } from '../art/icons';
 import { useTheme } from '../theme';
+import { puff } from './clay';
 
 /** One of the 117 cartoon icons. */
 export const CatIcon = memo(function CatIcon({ id, size = 44 }: { id: string; size?: number }) {
@@ -20,10 +21,7 @@ export function IconDisc({ id, size = 48, color, ring }: { id: string; size?: nu
         borderRadius: size / 2,
         backgroundColor: color ?? p.card2,
         alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: ring ? 2 : 0,
-        borderColor: p.ink,
-      }}
+        justifyContent: 'center', ...puff(p, color ?? p.card2, 3) }}
     >
       <CatIcon id={id} size={size * 0.74} />
     </View>

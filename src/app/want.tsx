@@ -20,6 +20,7 @@ import { useLeave } from '../ui/nav';
 import { haptic } from '../ui/haptics';
 import { useFmt } from '../ui/useFmt';
 import { sfx } from '../ui/sfx';
+import { puff } from '../ui/clay';
 
 export default function Want() {
   const p = useTheme();
@@ -102,7 +103,7 @@ export default function Want() {
       <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 18, paddingBottom: 12, gap: tiny ? 8 : 12 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
           <Brokey mood="tempted" width={tiny ? 64 : tight ? 90 : 118} still={false} />
-          <View style={{ flex: 1, backgroundColor: p.card, borderRadius: 20, borderWidth: 2.5, borderColor: p.ink, padding: 12 }}>
+          <View style={{ flex: 1, backgroundColor: p.card, borderRadius: 20, padding: 12, ...puff(p, p.card, 3) }}>
             <Txt v="small" style={{ fontFamily: 'DMSans_700Bold' }}>
               {nudge}
             </Txt>

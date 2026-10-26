@@ -1,0 +1,140 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>C The 96</title>
+<link rel="stylesheet" href="common.css"><script src="common.js"></script>
+<style>
+:root{--bg:#101214;--am:#FFB000;--amd:#6b4a00;--gr:#0F6B45;--ty:#FFC20E;--w:#E9ECEF;--red:#FF4B3A;--panel:#000}
+.phone{background:var(--bg);color:var(--w);font-family:'DM',sans-serif}
+.dot{font-family:'Dot',monospace;color:var(--am);text-shadow:0 0 6px #ffb00099,0 0 16px #ffb00044}
+.led{position:absolute;background:#000;border:6px solid #2a2d31;border-radius:18px;box-shadow:inset 0 0 24px #0009,0 0 0 2px #000;overflow:hidden}
+.led:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,#0000 0 3px,#0006 3px 4px);pointer-events:none}
+.cap{font:500 12.5px 'Plex';letter-spacing:1.4px;text-transform:uppercase;color:#8a9097}
+.pill{display:inline-block;padding:8px 14px;border-radius:999px;border:2px solid #3a3f45;font:500 14px 'DM';white-space:nowrap;color:var(--w)}
+.pill.on{background:var(--gr);border-color:var(--gr);color:#fff}
+.btn{display:flex;align-items:center;justify-content:center;height:56px;border-radius:14px;background:var(--gr);color:#fff;font:700 18px 'DM';letter-spacing:.5px;position:relative;overflow:hidden}
+.btn:after{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;background:var(--ty)}
+.btn.am{background:var(--am);color:#000}.btn.am:after{display:none}
+.btn.o{background:transparent;border:2px solid #3a3f45;color:var(--w)}.btn.o:after{display:none}
+.tabs{position:absolute;left:0;right:0;bottom:0;height:96px;background:#0a0b0c;border-top:2px solid #23272b;display:flex;justify-content:space-around;padding:12px 8px 0}
+.tabs .t{display:flex;flex-direction:column;align-items:center;gap:4px;font:500 11px 'Plex';letter-spacing:1.2px;color:#6e757c;width:66px;height:56px;border-radius:14px;padding-top:6px}
+.tabs .t.on{background:var(--gr);color:#fff}
+.tabs .plus{width:64px;height:56px;border-radius:14px;background:var(--ty);color:#000;display:grid;place-items:center}
+.key{height:54px;background:#181b1e;border:2px solid #2a2d31;border-radius:12px;display:grid;place-items:center;font:400 30px 'Dot';color:var(--am);text-shadow:0 0 8px #ffb00077}
+.seg{display:flex;border:2px solid #3a3f45;border-radius:12px;overflow:hidden}.seg b{flex:1;text-align:center;padding:9px 0;font:500 13px 'Plex';border-right:2px solid #3a3f45}.seg b:last-child{border:0}.seg b.on{background:var(--am);color:#000}
+.tram{position:absolute;left:18px;right:18px;border-radius:26px 26px 16px 16px;background:var(--gr);overflow:hidden;box-shadow:0 10px 0 #0006}
+.tram .band{position:absolute;left:0;right:0;height:18px;background:var(--ty)}
+.win{position:absolute;border-radius:16px;background:linear-gradient(160deg,#cfeaf0,#8fb9c4);overflow:hidden;border:4px solid #0a3d28}
+.wh{position:absolute;bottom:-14px;width:34px;height:34px;border-radius:50%;background:#17191b;border:5px solid #2a2d31}
+.alert{position:absolute;left:18px;right:18px;border-radius:18px;background:var(--am);color:#000;padding:14px 16px;overflow:hidden}
+.alert:before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:repeating-linear-gradient(135deg,#000 0 10px,#0000 10px 20px)}
+</style></head><body>
+
+<!-- HOME -->
+<div class="phone" data-screen="home">
+  <div class="abs" style="left:18px;top:62px;display:flex;align-items:center;gap:10px"><span style="background:var(--w);color:#000;font:700 22px 'Barlow';border-radius:8px;padding:3px 10px">96</span><span class="dot" style="font-size:19px">UNI WEEK ▾</span></div>
+  <div class="abs" style="right:18px;top:62px;width:40px;height:40px;border-radius:50%;border:2px solid #3a3f45;display:grid;place-items:center"><script>document.write(IC.gear)</script></div>
+  <div class="led" style="left:18px;right:18px;top:116px;height:214px">
+    <div class="dot" style="position:absolute;left:18px;top:12px;font-size:15px;color:#b57d00">SAFE TO SPEND TODAY</div>
+    <div class="dot" style="position:absolute;left:14px;top:30px;font-size:100px;line-height:1.05;letter-spacing:-3px">0.9</div>
+    <div class="dot" style="position:absolute;left:186px;top:80px;font-size:28px">HSP</div>
+    <div class="dot" style="position:absolute;left:18px;bottom:38px;font-size:17px;color:#b57d00">≈ $16.00 · 3 OF 9 FRIES LEFT</div>
+    <div class="dot" style="position:absolute;left:0;right:0;bottom:0;height:28px;background:#1a1200;border-top:2px solid #3a2a00;font-size:14px;padding:5px 14px;white-space:nowrap">★ ZERO CRIMES SO FAR. SUSPICIOUS. ★</div>
+  </div>
+  <div class="tram" style="top:346px;height:136px">
+    <div class="abs" style="left:0;right:0;top:0;height:9px;background:#d9dde0"></div>
+    <div class="abs dot" style="left:14px;top:18px;background:#000;border-radius:6px;padding:5px 9px;font-size:13px;line-height:1.1">96<br>ST KILDA BEACH</div>
+    <div class="win" style="left:14px;top:62px;width:92px;height:50px"></div>
+    <div class="win" style="left:118px;top:14px;width:224px;height:100px"><img class="stk" src="img/m-wave-happy.png" style="left:56px;top:6px;width:128px;filter:none"></div>
+    <div class="band" style="top:114px"></div>
+    <div class="wh" style="left:40px"></div><div class="wh" style="right:40px"></div>
+  </div>
+  <div class="abs" style="left:24px;right:24px;top:508px">
+    <div class="cap" style="margin-bottom:8px">Next stops</div>
+    <div style="position:relative;padding-left:30px;font:500 16px 'DM'">
+      <div class="abs" style="left:7px;top:8px;bottom:12px;width:5px;background:var(--gr)"></div>
+      <div style="display:flex;justify-content:space-between;height:32px;align-items:center;position:relative"><i class="abs" style="left:-30px;width:19px;height:19px;border-radius:50%;background:var(--ty);border:4px solid #fff"></i><b class="dot" style="font-size:19px">TODAY · FRI</b><span class="dot" style="font-size:19px">0.9 HSP</span></div>
+      <div style="display:flex;justify-content:space-between;height:32px;align-items:center;position:relative;color:#9aa1a8"><i class="abs" style="left:-28px;width:15px;height:15px;border-radius:50%;background:var(--bg);border:4px solid #fff"></i><span class="dot" style="font-size:17px;color:#8a9097;text-shadow:none">SAT</span><span class="dot" style="font-size:17px;color:#8a9097;text-shadow:none">0.9 HSP</span></div>
+      <div style="display:flex;justify-content:space-between;height:32px;align-items:center;position:relative;color:#9aa1a8"><i class="abs" style="left:-28px;width:15px;height:15px;border-radius:50%;background:var(--bg);border:4px solid #fff"></i><span class="dot" style="font-size:17px;color:#8a9097;text-shadow:none">SUN · END OF WEEK</span><span class="dot" style="font-size:17px;color:#8a9097;text-shadow:none">0.9 HSP</span></div>
+    </div>
+  </div>
+  <div class="alert" style="top:628px;padding-top:20px">
+    <div style="font:700 11.5px 'Plex';letter-spacing:1.6px">CHECK-IN · 1 BUY</div>
+    <div style="font:700 20px/1.15 'DM';margin:4px 0 10px">Was the bubble tea worth $7.80?</div>
+    <div style="display:flex;gap:8px"><span style="flex:1;text-align:center;background:#000;color:var(--am);border-radius:10px;padding:9px 0;font:700 14px 'DM'">Worth it</span><span style="flex:1;text-align:center;background:#0002;border-radius:10px;padding:9px 0;font:700 14px 'DM'">Meh</span><span style="flex:1;text-align:center;background:var(--red);color:#fff;border-radius:10px;padding:9px 0;font:700 14px 'DM'">Nope</span></div>
+  </div>
+  <div class="tabs"><div class="t on"><script>document.write(IC.home)</script>HOME</div><div class="t"><script>document.write(IC.chill)</script>CHILL</div><div class="plus"><script>document.write(IC.plus)</script></div><div class="t"><script>document.write(IC.shelf)</script>SHELF</div><div class="t"><script>document.write(IC.week)</script>WEEK</div></div>
+</div>
+
+<!-- LOG -->
+<div class="phone" data-screen="log">
+  <div class="abs" style="left:18px;top:62px;width:40px;height:40px;border-radius:50%;border:2px solid #3a3f45;display:grid;place-items:center"><script>document.write(IC.back)</script></div>
+  <div class="abs dot" style="left:72px;top:68px;font-size:22px">LOG A BUY</div>
+  <img class="stk" src="img/m-hungry-fork.png" style="right:6px;top:70px;width:128px;z-index:6;transform:rotate(3deg)">
+  <div class="led" style="left:18px;right:18px;top:170px;height:164px">
+    <div class="dot" style="position:absolute;left:18px;top:12px;font-size:16px;color:#b57d00">BUBBLE TEA · TAP TO CHANGE</div>
+    <div class="dot" style="position:absolute;left:14px;top:36px;font-size:64px;line-height:1.1;letter-spacing:-2px">$7.80</div>
+    <div class="dot" style="position:absolute;left:18px;bottom:14px;font-size:15px;color:#b57d00">0.4 HSP · 26 MIN OF WORK</div>
+  </div>
+  <div class="abs" style="left:18px;top:352px;display:flex;gap:8px"><span class="pill">Coffee</span><span class="pill on">Bubble tea</span><span class="pill">HSP</span><span class="pill">+ New</span></div>
+  <div class="abs" style="left:18px;right:18px;top:402px;display:flex;flex-direction:column;gap:8px"><div class="seg"><b class="on">Tap</b><b>Card</b><b>Cash</b><b>Pay later</b></div><div class="seg"><b class="on">Today</b><b>Yesterday</b><b>2 days ago</b><b>Pick</b></div></div>
+  <div class="abs" style="left:18px;right:18px;top:500px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+    <div class="key">1</div><div class="key">2</div><div class="key">3</div><div class="key">4</div><div class="key">5</div><div class="key">6</div><div class="key">7</div><div class="key">8</div><div class="key">9</div><div class="key">.</div><div class="key">0</div><div class="key" style="font-size:20px"><script>document.write(IC.del)</script></div>
+  </div>
+  <div class="abs" style="left:18px;right:18px;top:758px"><div class="btn">Feed Brokey</div></div>
+</div>
+
+<!-- ROAST -->
+<div class="phone" data-screen="roast">
+  <div class="alert" style="top:68px;height:78px;border-radius:18px"><div style="font:700 13px 'Plex';letter-spacing:2px;margin-top:2px">SERVICE ALERT · ROAST</div></div>
+  <div class="led" style="left:18px;right:18px;top:112px;height:260px">
+    <div class="dot" style="position:absolute;left:20px;right:20px;top:26px;font-size:25px;line-height:1.28">$7.80 FOR BOBA AFTER CLASS. THE CBD HAS A BUBBLE TEA SHOP EVERY 40 METRES AND YOU FOUND THEM ALL.<span style="animation:none">█</span></div>
+  </div>
+  <div class="tram" style="top:392px;height:268px;border-radius:30px 30px 16px 16px">
+    <div class="abs" style="left:0;right:0;top:0;height:10px;background:#d9dde0"></div>
+    <div class="win" style="left:22px;top:30px;width:303px;height:190px"><img class="stk" src="img/m-hips-smirk.png" style="left:56px;top:10px;width:190px;filter:none"></div>
+    <div class="band" style="top:232px"></div>
+    <div class="wh" style="left:46px"></div><div class="wh" style="right:46px"></div>
+  </div>
+  <div class="abs" style="left:18px;right:18px;top:684px;display:flex;flex-direction:column;gap:10px"><div class="btn">Okay, fair</div><div style="display:flex;justify-content:space-between;font:500 13.5px 'Plex';color:#8a9097"><span style="color:var(--am)">Share this roast</span><span>Wrong amount? Undo</span></div></div>
+</div>
+
+<!-- CHILL -->
+<div class="phone" data-screen="chill">
+  <div class="abs dot" style="left:18px;top:66px;font-size:30px">CHILL</div>
+  <div class="abs" style="left:18px;top:112px;width:210px;font:500 15px/1.3 'DM';color:#9aa1a8">Wants cool off here before they cost you.</div>
+  <img class="stk" src="img/m-sleepy.png" style="right:10px;top:72px;width:130px;z-index:6;transform:rotate(4deg)">
+  <div class="led" style="left:18px;right:18px;top:218px;height:214px">
+    <div class="dot" style="position:absolute;left:16px;right:16px;top:10px;font-size:13px;color:#b57d00;display:flex;justify-content:space-between"><span>WANT</span><span>LEFT</span></div>
+    <div class="dot" style="position:absolute;left:16px;right:16px;top:34px;font-size:23px;display:flex;justify-content:space-between"><span>NIKE DUNKS</span><span>23 HRS</span></div>
+    <div class="dot" style="position:absolute;left:16px;top:66px;font-size:14px;color:#b57d00">$180 · 10.0 HSP</div>
+    <div style="position:absolute;left:16px;right:16px;top:94px;height:10px;border:2px solid var(--amd)"><div style="width:68%;height:100%;background:var(--am)"></div></div>
+    <div style="position:absolute;left:0;right:0;top:130px;bottom:0;background:var(--am);color:#000;padding:10px 16px"><div class="dot" style="color:#000;text-shadow:none;font-size:22px;display:flex;justify-content:space-between"><span>MATCHA WHISK SET</span><span>READY</span></div><div class="dot" style="color:#000;text-shadow:none;font-size:14px;margin-top:2px">$64 · 3.6 HSP · COOLED OFF. STILL WANT IT?</div></div>
+  </div>
+  <div class="abs" style="left:18px;right:18px;top:448px;display:flex;gap:10px"><div class="btn" style="flex:1;height:50px">Ditch it</div><div class="btn o" style="flex:1;height:50px;border-color:var(--red);color:var(--red)">Cave in</div></div>
+  <div class="abs" style="left:18px;right:18px;top:526px"><div class="cap">Saved by waiting</div><div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:4px"><div class="dot" style="font-size:72px;line-height:1">$212</div><span class="pill" style="margin-bottom:10px;border-color:var(--gr);color:#7fe0b0">3 things ditched</span></div></div>
+  <div class="tram" style="top:652px;height:76px;border-radius:20px"><div class="band" style="top:50px;height:12px"></div><div class="abs dot" style="left:16px;top:12px;font-size:14px;background:#000;padding:4px 8px;border-radius:5px">NEXT VERDICT: 23 HRS</div></div>
+  <div class="tabs"><div class="t"><script>document.write(IC.home)</script>HOME</div><div class="t on"><script>document.write(IC.chill)</script>CHILL</div><div class="plus"><script>document.write(IC.plus)</script></div><div class="t"><script>document.write(IC.shelf)</script>SHELF</div><div class="t"><script>document.write(IC.week)</script>WEEK</div></div>
+</div>
+
+<!-- WEEK -->
+<div class="phone" data-screen="week">
+  <div class="abs dot" style="left:18px;top:66px;font-size:30px">WEEK</div>
+  <div class="abs" style="right:18px;top:74px;font:500 12.5px 'Plex';color:#8a9097">‹ 19 Oct to 25 Oct ›</div>
+  <img class="stk" src="img/m-thumbs-up.png" style="right:8px;top:104px;width:136px;z-index:6;transform:rotate(3deg)">
+  <div class="led" style="left:18px;right:150px;top:116px;height:132px"><div class="dot" style="position:absolute;left:14px;top:8px;font-size:13px;color:#b57d00">SPENT</div><div class="dot" style="position:absolute;left:12px;top:22px;font-size:58px;line-height:1.1">5.2</div><div class="dot" style="position:absolute;left:14px;bottom:8px;font-size:12px">OF 8.0 · $50 SPARE</div></div>
+  <div class="abs" style="left:18px;right:18px;top:256px;font:500 15px/1.3 'DM';color:#c6cbd0">Under budget with $50 spare. Do not get cocky, Delivery was still $31.</div>
+  <div class="led" style="left:18px;right:18px;top:318px;height:276px;border-radius:16px">
+    <div class="dot" style="position:absolute;left:14px;top:10px;right:14px;font-size:12.5px;color:#b57d00;display:flex;justify-content:space-between"><span>DAY</span><span style="width:140px">SAUCE BOTTLE</span><span>HSP</span></div>
+    <div id="rows" style="position:absolute;left:14px;right:14px;top:34px"></div>
+  </div>
+  <div class="abs" style="left:18px;right:18px;top:612px;display:flex;gap:10px">
+    <div style="flex:1;background:#171a1d;border-radius:14px;padding:11px 13px"><div class="cap" style="font-size:10.5px">Biggest buy</div><div style="font:700 17px 'DM';margin-top:4px">Delivery · $31.40</div></div>
+    <div style="flex:1;background:#2a1411;border-radius:14px;padding:11px 13px"><div class="cap" style="font-size:10.5px;color:#ff9a8c">Regret check</div><div style="font:700 17px 'DM';margin-top:4px;color:#ff9a8c">$14 back, please</div></div>
+  </div>
+  <div class="abs" style="left:18px;right:18px;top:690px"><div class="cap" style="margin-bottom:6px">The tray</div><div style="display:flex;height:16px;border-radius:8px;overflow:hidden;gap:3px"><i style="flex:46;background:var(--gr)"></i><i style="flex:26;background:var(--ty)"></i><i style="flex:18;background:var(--am)"></i><i style="flex:10;background:#555"></i></div></div>
+  <div class="tabs"><div class="t"><script>document.write(IC.home)</script>HOME</div><div class="t"><script>document.write(IC.chill)</script>CHILL</div><div class="plus"><script>document.write(IC.plus)</script></div><div class="t"><script>document.write(IC.shelf)</script>SHELF</div><div class="t on"><script>document.write(IC.week)</script>WEEK</div></div>
+</div>
+
+<script>
+const D=[['MON',.7],['TUE',.9],['WED',1.6],['THU',.6],['FRI',.9],['SAT',null],['SUN',null]];
+document.getElementById('rows').innerHTML=D.map(([d,v])=>{const n=v==null?0:Math.round(v/0.9*8);const over=v>0.9*1.05&&v>1;const bl=Array.from({length:14},(_,i)=>`<i style="display:inline-block;width:8px;height:16px;margin-right:2px;background:${i<n?(i>=8?'#FF4B3A':'#FFB000'):'#2b2000'}"></i>`).join('');return `<div style="display:flex;align-items:center;justify-content:space-between;height:34px;border-bottom:1px solid #2a2000"><span class="dot" style="font-size:19px;width:52px">${d}</span><span style="flex:1;margin-left:6px">${bl}</span><span class="dot" style="font-size:19px;color:${over?'#FF4B3A':'#FFB000'}">${v==null?'--':v.toFixed(1)}</span></div>`}).join('');
+</script>
+</body></html>

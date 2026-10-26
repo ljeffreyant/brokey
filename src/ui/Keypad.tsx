@@ -22,7 +22,7 @@ export function Keypad({ value, onChange, zeroDecimal, keyH = 54 }: { value: str
             fill={k === 'del' ? p.card2 : p.card}
             r={18}
             depth={3}
-            border={2.2}
+           
             tone="tap"
             label={key === 'del' ? 'Delete' : key}
             onPress={() => onChange(pressKey(value, key, zd))}

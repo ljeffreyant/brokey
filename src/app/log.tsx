@@ -22,6 +22,7 @@ import { useLeave } from '../ui/nav';
 import { useBudget, useFmt } from '../ui/useFmt';
 import { Brokey } from '../ui/Brokey';
 import { sfx } from '../ui/sfx';
+import { puff } from '../ui/clay';
 
 const METHODS: { id: PayMethod; key: 'method.tap' | 'method.card' | 'method.cash' | 'method.bnpl' }[] = [
   { id: 'tap', key: 'method.tap' },
@@ -202,7 +203,7 @@ export default function Log() {
           <View style={{ minHeight: 30, flexDirection: 'row', gap: 8, alignItems: 'center' }}>
             {cents > 0 ? (
               <>
-                <View style={{ backgroundColor: p.accent2, borderRadius: 999, borderWidth: 2, borderColor: p.ink, paddingHorizontal: 12, height: 30, justifyContent: 'center' }}>
+                <View style={{ backgroundColor: p.accent2, borderRadius: 999, paddingHorizontal: 12, height: 30, justifyContent: 'center', ...puff(p, p.accent2, 2) }}>
                   <Txt v="small" color={p.onAccent2} style={{ fontFamily: 'DMSans_700Bold' }}>
                     = {f.hsp(cents)}
                   </Txt>

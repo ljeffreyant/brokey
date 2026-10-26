@@ -64,7 +64,7 @@ export function LockGate() {
   if (!locked) return null;
   return (
     <View style={[StyleSheet.absoluteFill, { backgroundColor: p.bg, alignItems: 'center', justifyContent: 'center', gap: 16, paddingTop: ins.top, paddingBottom: ins.bottom, paddingHorizontal: 28, zIndex: 100 }]}>
-      <Brokey mood="ok" width={200} still />
+      <Brokey mood="ok" pose="peekaboo" width={200} still />
       <Txt v="display" align="center">
         {t('lock.title')}
       </Txt>

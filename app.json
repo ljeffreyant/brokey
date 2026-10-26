@@ -59,7 +59,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FF5A47"
+        "backgroundColor": "#FFD23F"
       },
       "package": "com.nel.brokey",
       "edgeToEdgeEnabled": true,

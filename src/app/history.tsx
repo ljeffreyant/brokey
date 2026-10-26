@@ -10,6 +10,7 @@ import { PurchaseRow } from '../ui/PurchaseRow';
 import { Txt } from '../ui/Txt';
 import { Chip, Field, Header } from '../ui/kit';
 import { formatDate, formatDayName, useBudget, useFmt } from '../ui/useFmt';
+import { groundShadow, lipOf } from '../ui/clay';
 
 type Item = { k: 'h'; key: string; title: string; total: string } | { k: 'p'; key: string; p: Purchase; first: boolean; last: boolean };
 
@@ -89,16 +90,13 @@ export default function History() {
             <View
               style={{
                 backgroundColor: p.card,
-                borderLeftWidth: 2.5,
-                borderRightWidth: 2.5,
-                borderColor: p.ink,
-                borderTopWidth: item.first ? 2.5 : 0,
-                borderBottomWidth: item.last ? 2.5 : 0,
-                borderTopLeftRadius: item.first ? 22 : 0,
-                borderTopRightRadius: item.first ? 22 : 0,
-                borderBottomLeftRadius: item.last ? 22 : 0,
-                borderBottomRightRadius: item.last ? 22 : 0,
+                borderTopLeftRadius: item.first ? 24 : 0,
+                borderTopRightRadius: item.first ? 24 : 0,
+                borderBottomLeftRadius: item.last ? 24 : 0,
+                borderBottomRightRadius: item.last ? 24 : 0,
+                marginBottom: item.last ? 6 : 0,
                 overflow: 'hidden',
+                boxShadow: [item.first ? `inset 0 2px 0 ${p.dark ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.9)'}` : '', item.last ? `0 5px 0 ${lipOf(p, p.card)}, ${groundShadow(p, 5)}` : ''].filter(Boolean).join(', ') || undefined,
               }}
             >
               <PurchaseRow p={item.p} showRoast onPress={() => router.push(`/purchase/${item.p.id}`)} />
