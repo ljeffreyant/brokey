@@ -42,8 +42,8 @@ export interface BrokeyProps {
 
 /** the drawing area is a bit taller than wide so his shadow fits under his feet */
 export const BROKEY_ASPECT = 1.04;
-/** poses are exported at 2x of the sticker sheet, none is wider than this */
-const POSE_REF = 600;
+/** poses are exported at x4 of the sticker sheet (two EDSR passes), none is wider than this */
+const POSE_REF = 900;
 /** Where his mouth is, as a fraction of the width, for things that need to fly into it. */
 export const MOUTH = { x: 0.56, y: 0.67 };
 
