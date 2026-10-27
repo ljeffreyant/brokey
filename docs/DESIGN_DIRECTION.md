@@ -98,13 +98,13 @@ Home hero: clay lip under the colour field instead of the black edge, spotlight 
 
 Regenerating the art:
 
-- `python3 scripts/mascot3d/appassets.py --model EDSR_x2.pb` sharpens the 35 cut-out moods with EDSR x2 and writes `assets/brokey/*.webp`, `src/art/poses.ts` and `src/art/poseThumbs.ts` (inline thumbnails for the PDF). Needs opencv-contrib 4.x for `dnn_superres` (the 5.x wheels ship it empty). `--fast` skips the model for quick iteration.
+- `python3 scripts/mascot3d/appassets.py --model EDSR_x2.pb` sharpens the 35 cut-out moods with two tiled EDSR x2 passes (x4, shipped at 900px, about 3 min per pose on 2 cores) and writes `assets/brokey/*.webp`, `src/art/poses.ts` and `src/art/poseThumbs.ts` (inline thumbnails for the PDF). Needs opencv-contrib 4.x for `dnn_superres` (the 5.x wheels ship it empty). `--fast` skips the model for quick iteration; `--passes N`, `--max PX`, `--out DIR`, `--no-index` for experiments.
 - `python3 scripts/mascot3d/appicons.py` rebuilds `splash-icon.png` and `adaptive-icon.png`.
 
 Still to do:
 
 - Check the shadows on a real iPhone. They use RN `boxShadow` (new architecture, iOS and Android 9+, inset on Android 10+); only the web build was verified here.
-- Regenerate the poses you ship at 2048px. Hero size on a 3x phone needs about 700px, the moods are 600px after sharpening.
+- Regenerate the poses you ship at 2048px. The moods are only ~300px native, so the 900px files are sharpened, not truly detailed. Few poses per sheet is what gives real detail.
 - Pick one box design (closed or open lid). The app icon is the open-lid art, the in-app poses are the closed box.
 
 ## Sources
